@@ -22,7 +22,7 @@
  * quedó guardada de la última visita.
  */
 export const initialStore = () => {
-  let user = null;
+  let user;
 
   try {
     // localStorage solo guarda texto: hay que reconstruir el objeto.
