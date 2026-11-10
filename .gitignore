@@ -53,7 +53,6 @@ dist/*
 # dotfiles that must be tracked
 !.gitkeep
 !.htaccess
-!.eslintrc
 !.env.example
 .now
 
