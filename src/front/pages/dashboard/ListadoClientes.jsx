@@ -1,10 +1,10 @@
 /**
- * CLIENTES (ENCARGADO).
+ * CLIENTES (ENCARGADO, maqueta 06, PANEL-04).
  *
- * La otra mitad de la gente que gestiona el encargado. Misma forma que
- * Trabajadores —pestañas, buscador y un interruptor por fila— para que
- * las dos pantallas se lean igual. Cada fila (ClientRow.jsx) se despliega
- * y enseña sus direcciones y su historial.
+ * La otra mitad de la gente que gestiona el encargado. El patrón de todas
+ * las listas del encargado: las vistas en tarjetas (Todos, Activos y Dados
+ * de baja) y un solo bloque con el buscador, la tabla y el pie. Cada fila
+ * (ClientRow.jsx) se despliega y enseña sus direcciones y su historial.
  *
  * La diferencia está debajo: aquí la lista viene paginada del servidor,
  * porque son los clientes de toda la empresa. Por eso la búsqueda, la
@@ -23,12 +23,14 @@ import useGlobalReducer from "../../hooks/useGlobalReducer"
 import { getClients, toggleClientStatus } from "../../services/clientService"
 import { SearchBox } from "../../components/dashboard/SearchBox"
 import { ClientRow } from "../../components/dashboard/clients/ClientRow"
+import { PageHead } from "../../components/dashboard/PageHead"
+import { ListViews } from "../../components/dashboard/list/ListViews"
 import "../../dashboard.css"
 
 const FILTERS = [
-    { value: "all", label: "Todos" },
-    { value: "active", label: "Activos" },
-    { value: "inactive", label: "Dados de baja" },
+    { value: "all", label: "Todos", hint: "clientes registrados", icon: "fa-address-book" },
+    { value: "active", label: "Activos", hint: "pueden reservar", icon: "fa-user-check" },
+    { value: "inactive", label: "Dados de baja", hint: "sin acceso", icon: "fa-user-slash" },
 ]
 
 // Cuántos se piden por tanda. El mismo número que usa el backend por
@@ -42,16 +44,10 @@ const SEARCH_DELAY = 300
 const SKELETON_ROWS = 5
 
 const PageHeader = () => (
-    <div className="cf-clients__header">
-        <div>
-            <p className="cf-dash-eyebrow">Operativa</p>
-            <h1 className="cf-clients__title">Clientes</h1>
-            <p className="cf-clients__lede">
-                Quién contrata, cómo contactarle y cuánto lleva con nosotros. Dar de baja a un cliente le
-                cierra el acceso y cancela lo que tenga pendiente, sin borrar su historial.
-            </p>
-        </div>
-    </div>
+    <PageHead
+        title="Clientes"
+        subtitle="Quién contrata, cómo contactarle y cuánto lleva con nosotros. Darle de baja cierra su acceso y cancela lo pendiente, sin borrar su historial."
+    />
 )
 
 export const ListadoClientes = () => {
@@ -226,7 +222,7 @@ export const ListadoClientes = () => {
 
                 <p className="sr-only">Cargando clientes...</p>
 
-                <ul className="cf-clients__list" aria-hidden="true">
+                <ul className="cf-lpanel cf-clients__list" aria-hidden="true">
                     {Array.from({ length: SKELETON_ROWS }, (_, index) => (
                         <li className="cf-clients__row" key={index}>
                             <div className="cf-clients__main">
@@ -298,100 +294,88 @@ export const ListadoClientes = () => {
                 </p>
             )}
 
-            <div className="cf-clients__toolbar">
-                <div className="cf-services__tabs" role="group" aria-label="Filtrar clientes">
-                    {FILTERS.map((option) => (
-                        <button
-                            key={option.value}
-                            type="button"
-                            className="cf-services__tab"
-                            aria-pressed={filter === option.value}
-                            onClick={() => setFilter(option.value)}
-                        >
-                            {option.label}
-                            {/* Los de baja, en terracota: son los que llaman la atención. */}
-                            <span
-                                className={`cf-services__count${
-                                    option.value === "inactive" && counts.inactive > 0 ? " cf-dash-count--attention" : ""
-                                }`}
-                            >
-                                {counts[option.value]}
-                            </span>
-                        </button>
-                    ))}
+            <ListViews
+                label="Vistas de clientes"
+                active={filter}
+                onChange={setFilter}
+                views={FILTERS.map((option) => ({ ...option, count: counts[option.value] }))}
+            />
+
+            {/* Un solo bloque: el buscador (con sugerencias), la tabla y el pie. */}
+            <div className="cf-lpanel">
+                <div className="cf-lbar cf-clients__bar">
+                    <SearchBox
+                        id="client-search"
+                        label="Buscar por nombre, correo o teléfono"
+                        value={query}
+                        onChange={setQuery}
+                        options={searchOptions}
+                        inactiveLabel="De baja"
+                        onSelect={(option) => setQuery(option.name)}
+                    />
                 </div>
 
-                <SearchBox
-                    id="client-search"
-                    label="Buscar por nombre, correo o teléfono"
-                    value={query}
-                    onChange={setQuery}
-                    options={searchOptions}
-                    inactiveLabel="De baja"
-                    onSelect={(option) => setQuery(option.name)}
-                />
-            </div>
-
-            {clients.length === 0 ? (
-                <div className="cf-dash-state">
-                    <span className="cf-dash-state__icon">
-                        <i className={`fa-solid ${searching ? "fa-magnifying-glass" : "fa-address-book"}`} aria-hidden="true" />
-                    </span>
-                    <p className="cf-dash-state__title">
-                        {searching ? `Nadie coincide con «${search.trim()}»` : "Todavía no hay clientes"}
-                    </p>
-                    <p className="cf-dash-state__text">
-                        {searching
-                            ? "Prueba con otra palabra: se busca en el nombre, el correo y el teléfono."
-                            : "Aparecerán aquí en cuanto alguien se registre."}
-                    </p>
-                    {searching && (
-                        <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
-                            Borrar búsqueda
-                        </button>
-                    )}
-                </div>
-            ) : (
-                <>
-                    <ul className="cf-clients__list">
-                        <li className="cf-clients__head" aria-hidden="true">
-                            <span />
-                            <span>Cliente</span>
-                            <span>Contacto</span>
-                            <span>Servicios</span>
-                            <span>Dirección principal</span>
-                            <span>Estado</span>
-                        </li>
-
-                        {clients.map((client) => (
-                            <ClientRow
-                                key={client.user_id}
-                                client={client}
-                                query={search}
-                                busy={togglingId === client.user_id}
-                                onSwitch={handleSwitch}
-                            />
-                        ))}
-                    </ul>
-
-                    <div className="cf-clients__foot">
-                        <span role="status">
-                            Mostrando {clients.length} de {total} {total === 1 ? "cliente" : "clientes"}
+                {clients.length === 0 ? (
+                    <div className="cf-dash-state">
+                        <span className="cf-dash-state__icon">
+                            <i className={`fa-solid ${searching ? "fa-magnifying-glass" : "fa-address-book"}`} aria-hidden="true" />
                         </span>
-
-                        {quedan > 0 && (
-                            <button
-                                type="button"
-                                className="cf-dash-btn cf-dash-btn--ghost"
-                                onClick={loadMore}
-                                disabled={loadingMore}
-                            >
-                                {loadingMore ? "Cargando..." : "Ver más"}
+                        <p className="cf-dash-state__title">
+                            {searching ? `Nadie coincide con «${search.trim()}»` : "Todavía no hay clientes"}
+                        </p>
+                        <p className="cf-dash-state__text">
+                            {searching
+                                ? "Prueba con otra palabra: se busca en el nombre, el correo y el teléfono."
+                                : "Aparecerán aquí en cuanto alguien se registre."}
+                        </p>
+                        {searching && (
+                            <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
+                                Borrar búsqueda
                             </button>
                         )}
                     </div>
-                </>
-            )}
+                ) : (
+                    <>
+                        <ul className="cf-clients__list">
+                            <li className="cf-clients__head" aria-hidden="true">
+                                <span />
+                                <span>Cliente</span>
+                                <span>Contacto</span>
+                                <span>Servicios</span>
+                                <span>Dirección principal</span>
+                                <span>Estado</span>
+                            </li>
+
+                            {clients.map((client) => (
+                                <ClientRow
+                                    key={client.user_id}
+                                    client={client}
+                                    query={search}
+                                    busy={togglingId === client.user_id}
+                                    onSwitch={handleSwitch}
+                                />
+                            ))}
+                        </ul>
+
+                        <div className="cf-lpanel__foot">
+                            <p role="status">
+                                Mostrando {clients.length} de {total} {total === 1 ? "cliente" : "clientes"}
+                            </p>
+
+                            {quedan > 0 && (
+                                <button
+                                    type="button"
+                                    className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
+                                    onClick={loadMore}
+                                    disabled={loadingMore}
+                                >
+                                    {loadingMore ? "Cargando..." : "Ver más"}
+                                </button>
+                            )}
+                        </div>
+                    </>
+                )}
+            </div>
 
             {confirming && (
                 <dialog

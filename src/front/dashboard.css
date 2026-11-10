@@ -4277,8 +4277,7 @@ textarea.cf-dash-input {
 
 .cf-workers,
 .cf-worker-form,
-.cf-absences,
-.cf-clients {
+.cf-absences {
   container-type: inline-size;
   max-width: 1180px;
   color: var(--cf-text);
@@ -4286,8 +4285,7 @@ textarea.cf-dash-input {
 }
 
 .cf-workers__header,
-.cf-absences__header,
-.cf-clients__header {
+.cf-absences__header {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -4298,8 +4296,7 @@ textarea.cf-dash-input {
 
 .cf-workers__title,
 .cf-worker-form__title,
-.cf-absences__title,
-.cf-clients__title {
+.cf-absences__title {
   margin: 0;
   font-family: var(--cf-font-heading);
   font-size: var(--cf-text-2xl);
@@ -4308,8 +4305,7 @@ textarea.cf-dash-input {
 
 .cf-workers__lede,
 .cf-worker-form__lede,
-.cf-absences__lede,
-.cf-clients__lede {
+.cf-absences__lede {
   margin: var(--cf-space-2) 0 0;
   max-width: 62ch;
   color: var(--cf-muted);
@@ -10789,24 +10785,27 @@ textarea.cf-dash-input {
 /* ======================================================================
    CLIENTES (ENCARGADO)
    ======================================================================
-   La sección gemela de Trabajadores. El contenedor, la cabecera y la
-   barra de pestañas se reaprovechan de allí; aquí solo va lo que esta
-   pantalla tiene de distinto: la rejilla de seis columnas, la fila que
-   se despliega y el pie con el "Ver más".
+   Las vistas, el bloque y el pie son las piezas comunes (sección 20,
+   PANEL-04). Aquí va lo que esta pantalla tiene de distinto: el buscador
+   con sugerencias, la rejilla de seis columnas y la fila que se despliega.
    ====================================================================== */
 
-.cf-clients__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-4);
+/* El contenedor: sin ancho máximo, como el resto de listas. */
+.cf-clients {
+  container-type: inline-size;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+}
+
+/* El buscador de siempre (SearchBox), a todo lo ancho de la barra. */
+.cf-clients__bar .cf-dash-search {
+  flex: 1 1 320px;
+  width: auto;
+  max-width: 520px;
+  margin-bottom: 0;
 }
 
 .cf-clients__list {
-  display: grid;
-  gap: var(--cf-space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -10828,12 +10827,15 @@ textarea.cf-dash-input {
 
 /* Borde transparente: el mismo grosor que la fila, así las columnas de
    la cabecera caen justo encima de las de abajo. */
+/* La cabecera de la tabla, con el degradado suave de todas las listas. */
 .cf-clients__head {
-  border: 1px solid transparent;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -10843,26 +10845,20 @@ textarea.cf-dash-input {
 }
 
 .cf-clients__row {
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-top: 1px solid var(--cf-border);
   background-color: var(--cf-surface);
-  transition:
-    border-color var(--cf-transition),
-    box-shadow var(--cf-transition);
+  transition: background-color var(--cf-transition);
 }
 
 .cf-clients__row:hover {
-  border-color: var(--cf-primary);
-  box-shadow: var(--cf-shadow-sm);
+  background-color: #fafcfc;
 }
 
 /* De baja: un tono suave y el texto apagado, el mismo criterio que un
    trabajador desactivado. Así las dos pantallas se leen igual. */
 .cf-clients__row--inactive,
 .cf-clients__row--inactive:hover {
-  border-color: var(--cf-border);
   background-color: var(--cf-brand-50);
-  box-shadow: none;
 }
 
 .cf-clients__row--inactive .cf-clients__person,
@@ -11082,19 +11078,6 @@ textarea.cf-dash-input {
   display: block;
   margin: var(--cf-space-3) 0 0;
   text-align: left;
-}
-
-/* ---------- EL PIE ---------- */
-
-.cf-clients__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--cf-space-4);
-  margin-top: var(--cf-space-6);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
 }
 
 /* ---------- ESTRECHO ----------
