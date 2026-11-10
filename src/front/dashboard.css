@@ -9128,124 +9128,95 @@ textarea.cf-dash-input {
 }
 
 /* ======================================================================
-   15. INICIO DEL ENCARGADO (pages/dashboard/home/ManagerHome.jsx)
+   15. INICIO DEL ENCARGADO (pages/dashboard/home/ManagerHome.jsx,
+       maqueta 06, PANEL-04)
    ======================================================================
 
-   La entrada del panel, y la única pantalla que no se parece al resto.
-   A propósito: las demás son para trabajar y esta es para mirar. De ahí
-   el verde de fondo, la letra grande y los bloques sin borde.
-
-   El hero es la única superficie oscura de todo el panel. Eso es lo que
-   hace que al entrar se note que estás en otro sitio. */
+   La entrada del panel: arriba el saludo con los avisos y la cifra del
+   mes, en la banda oscura; luego las cuatro cifras en una fila y la
+   agenda del día. Al tocar un servicio se abre su ficha por la derecha. */
 
 .cf-home {
+  container-type: inline-size;
   display: grid;
-  gap: var(--cf-space-4);
+  gap: 20px;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
 }
 
-/* ---------- EL HERO ---------- */
+.cf-home p {
+  margin: 0;
+}
+
+/* ---------- LA BANDA ---------- */
 
 .cf-home__hero {
   position: relative;
   overflow: hidden;
-  padding: 34px 36px;
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-band);
-  color: var(--cf-on-primary);
+  padding: 30px 32px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--cf-brand-900) 0%, var(--cf-brand-700) 60%, #0f7f88 100%);
+  box-shadow: 0 18px 40px -22px rgba(var(--cf-brand-900-rgb), 0.65);
+  color: var(--cf-white);
 }
 
-/* Dos manchas muy suaves para que el verde no sea un rectángulo plano.
-   ⚠️ A mano: los tokens no tienen versiones translúcidas. */
-.cf-home__hero::before,
+/* El brillo menta de la esquina, como en la cabecera común. */
 .cf-home__hero::after {
   content: "";
   position: absolute;
+  top: -150px;
+  right: -110px;
+  width: 400px;
+  height: 400px;
   border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--cf-accent-rgb), 0.3), transparent 65%);
   pointer-events: none;
 }
 
-.cf-home__hero::before {
-  width: 420px;
-  height: 420px;
-  top: -220px;
-  right: -90px;
-  background: radial-gradient(
-    circle,
-    rgba(var(--cf-accent-rgb), 0.26),
-    transparent 68%
-  );
-}
-
-.cf-home__hero::after {
-  width: 320px;
-  height: 320px;
-  bottom: -200px;
-  left: 18%;
-  background: radial-gradient(
-    circle,
-    rgba(var(--cf-white-rgb), 0.14),
-    transparent 70%
-  );
-}
-
-/* position: relative para que quede por encima de las manchas. */
 .cf-home__in {
   position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
-  align-items: center;
-  gap: var(--cf-space-8);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 24px;
 }
 
-.cf-home__date {
-  margin: 0 0 10px;
-  color: rgba(var(--cf-white-rgb), 0.62);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* clamp: en una pantalla estrecha el saludo no puede ocupar tres líneas. */
-/* color: inherit y no un token suelto. El `h1` global de index.css lo
-   pinta de --cf-primary, y una regla directa gana siempre a lo heredado:
-   el saludo salía verde oscuro sobre el verde del hero, o sea invisible.
-   Con inherit sigue al hero si algún día cambia de fondo. */
+/* color: inherit: el h1 global de index.css lo pinta de --cf-primary, y
+   sobre la banda oscura no se vería. */
 .cf-home__hi {
   margin: 0;
   color: inherit;
   font-family: var(--cf-font-heading);
-  font-size: clamp(2rem, 4.2vw, 2.9rem);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.75rem, 3.4vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.1;
 }
 
 .cf-home__sub {
-  margin: 12px 0 0;
-  max-width: 40ch;
-  color: rgba(var(--cf-white-rgb), 0.74);
+  margin-top: 6px;
+  color: rgba(var(--cf-white-rgb), 0.82);
   font-size: 0.9375rem;
-  line-height: 1.55;
 }
 
-/* ---------- LAS BANDEJAS ---------- */
-
+/* Los avisos: en rojo lo que quema, en blanco lo que solo espera. */
 .cf-home__pills {
   display: flex;
   flex-wrap: wrap;
   gap: var(--cf-space-2);
-  margin-top: 20px;
+  margin-top: var(--cf-space-4);
 }
 
 .cf-home__pill {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 13px;
+  gap: var(--cf-space-2);
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.22);
   border-radius: 999px;
   background-color: rgba(var(--cf-white-rgb), 0.12);
-  color: var(--cf-on-primary);
+  color: var(--cf-white);
   font-size: 0.8125rem;
   font-weight: 600;
   text-decoration: none;
@@ -9253,215 +9224,185 @@ textarea.cf-dash-input {
 
 .cf-home__pill:hover {
   background-color: rgba(var(--cf-white-rgb), 0.2);
-  color: var(--cf-on-primary);
+  color: var(--cf-white);
 }
 
-/* Lo que quema, en ámbar de aviso. Lo que solo espera, no. */
 .cf-home__pill--hot {
-  background-color: var(--cf-warning);
+  border-color: rgba(239, 107, 107, 0.55);
+  background-color: rgba(239, 107, 107, 0.24);
 }
 
 .cf-home__pill--hot:hover {
-  background-color: var(--cf-warning-dark);
-}
-
-.cf-home__pill b {
-  font-variant-numeric: tabular-nums;
+  background-color: rgba(239, 107, 107, 0.34);
 }
 
 .cf-home__pill:focus-visible {
-  outline: 3px solid var(--cf-on-primary);
+  outline: 3px solid var(--cf-accent);
   outline-offset: 2px;
 }
 
-/* ---------- LA CIFRA DEL MES, DENTRO DEL HERO ---------- */
-
+/* La cifra del mes, en su cristal. */
 .cf-home__money {
-  padding: 20px 22px;
-  border-radius: var(--cf-radius-md);
+  padding: 18px 20px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.18);
+  border-radius: 18px;
   background-color: rgba(var(--cf-white-rgb), 0.1);
+  backdrop-filter: blur(6px);
 }
 
 .cf-home__tag {
-  display: inline-block;
-  margin-bottom: 10px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background-color: var(--cf-accent);
-  color: var(--cf-on-accent);
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  color: rgba(var(--cf-white-rgb), 0.78);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .cf-home__fig {
-  margin: 0;
+  margin: 6px 0 10px;
   font-family: var(--cf-font-heading);
-  font-size: 1.875rem;
-  font-weight: 600;
-  line-height: 1;
+  font-size: 2.125rem;
+  font-weight: 800;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-.cf-home__what {
-  margin: 8px 0 0;
-  font-size: 0.9375rem;
-  font-weight: 600;
-}
-
-.cf-home__where {
-  margin: 3px 0 0;
-  color: rgba(var(--cf-white-rgb), 0.7);
+.cf-home__m2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  color: rgba(var(--cf-white-rgb), 0.85);
   font-size: 0.8125rem;
 }
 
-/* Los cortes van sobre la VENTANA, pero el contenido tiene 268 px menos
-   por el menú lateral: a 1280 de ventana quedan unos 964. Por eso los
-   números parecen altos.
-
-   Aquí el hero se apila: con menos de ~700 px de contenido, el panel de
-   la derecha y el saludo se estrujan los dos. */
-@media (max-width: 1020px) {
-  .cf-home__hero {
-    padding: 26px 22px;
-  }
-
-  .cf-home__in {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--cf-space-6);
-  }
-}
-
-/* ---------- LAS CIFRAS ----------
-   Rejilla asimétrica a propósito: con cuatro cajas iguales esto sería
-   una tabla, y una tabla no se mira, se consulta. La de reservas ocupa
-   el doble porque es la única que tiene algo que contar por dentro. */
+/* ---------- LAS CUATRO CIFRAS ----------
+   En una fila; la de reservas, el doble de ancha, porque lleva su barra. */
 
 .cf-home__bento {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
   gap: var(--cf-space-4);
 }
 
 .cf-home__kpi {
-  padding: 20px 22px;
-  border-radius: var(--cf-radius-lg);
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
 
-.cf-home__kpi--wide {
-  grid-column: span 2;
-  background-color: var(--cf-primary-soft);
-  box-shadow: none;
+.cf-home__kpi--grad {
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
 }
 
 .cf-home__kpi-label {
-  margin: 0 0 10px;
   color: var(--cf-muted);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
 .cf-home__num {
-  color: var(--cf-primary);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--cf-space-2);
+  margin: 8px 0 4px;
   font-family: var(--cf-font-heading);
-  font-size: 2.25rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
+.cf-home__num--rating {
+  align-items: center;
+}
+
 .cf-home__unit {
-  margin-left: 9px;
   color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+  font-family: var(--cf-font-body);
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
+.cf-home__name {
+  margin: 8px 0 4px;
+  font-family: var(--cf-font-heading);
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
 .cf-home__note {
-  margin: 9px 0 0;
   color: var(--cf-muted);
   font-size: 0.8125rem;
 }
 
-/* ---------- LA BARRA DE ESTADOS ----------
-   Los tres trozos en una sola línea, cada uno con su ancho en
-   porcentaje. Sin hueco entre ellos: es un total repartido, no tres
-   barras sueltas. */
-
+/* La barra de reservas vivas: un trozo por estado. */
 .cf-home__bar {
   display: flex;
-  height: 6px;
-  margin-top: 14px;
+  gap: 3px;
+  height: 12px;
+  margin: 14px 0 10px;
   border-radius: 999px;
-  background-color: var(--cf-border);
   overflow: hidden;
 }
 
 .cf-home__bar span {
+  display: block;
   height: 100%;
 }
 
-/* En curso en menta porque está pasando ahora; confirmadas en el
-   verde de marca; pendientes en el beige, que es esperar. */
-.cf-home__bar-doing {
-  background-color: var(--cf-accent);
+.cf-home__bar-ok {
+  background-color: var(--cf-info);
 }
 
-.cf-home__bar-ok {
-  background-color: var(--cf-primary);
+.cf-home__bar-doing {
+  background-color: var(--cf-brand-500);
 }
 
 .cf-home__bar-wait {
-  background-color: var(--cf-border);
+  background-color: var(--cf-warning);
 }
 
 .cf-home__legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin: 11px 0 0;
+  gap: 6px 16px;
   color: var(--cf-muted);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 
-.cf-home__legend i {
+.cf-home__legend span::before {
+  content: "";
   display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 5px;
-  border-radius: 50%;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 3px;
+  background-color: var(--c);
 }
 
-/* Cuatro columnas piden unos 1.085 px de contenido, o sea ventana de
-   1.400. Por debajo, dos: la ancha ocupa la fila entera y las otras dos
-   se reparten la siguiente. */
-@media (max-width: 1400px) {
-  .cf-home__bento {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.cf-home__legend-ok {
+  --c: var(--cf-info);
 }
 
-@media (max-width: 620px) {
-  .cf-home__bento {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .cf-home__kpi--wide {
-    grid-column: span 1;
-  }
+.cf-home__legend-doing {
+  --c: var(--cf-brand-500);
 }
 
-/* ---------- CÓMO VA EL DÍA ----------
-   El seguimiento: qué hay hoy, quién ha empezado y qué se ha torcido.
-   Es lo único de esta pantalla que cambia solo, cada minuto. */
+.cf-home__legend-wait {
+  --c: var(--cf-warning);
+}
+
+/* ---------- CÓMO VA EL DÍA ---------- */
 
 .cf-home__day {
-  padding: 24px 26px;
-  border-radius: var(--cf-radius-lg);
+  padding: 24px;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
@@ -9472,29 +9413,45 @@ textarea.cf-dash-input {
   align-items: center;
   justify-content: space-between;
   gap: var(--cf-space-3);
-  margin-bottom: var(--cf-space-4);
+  margin-bottom: 6px;
 }
 
+/* color: el h2 global de index.css lo pinta de --cf-primary. */
 .cf-home__t {
   margin: 0;
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.cf-home__dayhead .cf-home__t::first-letter {
+  text-transform: uppercase;
 }
 
 .cf-home__picks {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--cf-space-2);
 }
 
-.cf-home__chip {
-  padding: 7px 15px;
+/* Ayer · Hoy · Mañana, en una píldora. */
+.cf-home__chips {
+  display: inline-flex;
+  padding: 3px;
   border: 1px solid var(--cf-border);
   border-radius: 999px;
-  background-color: var(--cf-surface);
-  color: var(--cf-text);
+  background-color: var(--cf-bg);
+}
+
+.cf-home__chip {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--cf-muted);
   font-family: var(--cf-font-body);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -9502,144 +9459,87 @@ textarea.cf-dash-input {
 }
 
 .cf-home__chip:hover {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary-soft);
+  color: var(--cf-text);
 }
 
-/* aria-pressed y no una clase: el estado ya se lo dice al lector de
-   pantalla, así que pintarlo desde ahí evita que se descuadren. */
+.cf-home__chip:focus-visible,
+.cf-home__pick-date:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
 .cf-home__chip[aria-pressed="true"] {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
+  background: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
+  color: var(--cf-white);
 }
 
-/* El calendario nativo: no se puede maquetar por dentro, así que se le
-   da la misma forma de pastilla por fuera. */
 .cf-home__pick-date {
-  padding: 6px 12px;
+  height: 40px;
+  padding: 0 12px;
   border: 1px solid var(--cf-border);
   border-radius: 999px;
   background-color: var(--cf-surface);
   color: var(--cf-text);
   font-family: var(--cf-font-body);
   font-size: 0.8125rem;
-  font-weight: 600;
 }
 
 .cf-home__sum {
-  margin: 0 0 var(--cf-space-4);
+  margin-bottom: 14px;
   color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+  font-size: 0.8125rem;
 }
 
-.cf-home__sum b {
-  color: var(--cf-text);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- CADA SERVICIO ---------- */
+/* ---------- CADA SERVICIO ----------
+   Toda la fila abre la ficha: el ::after del botón del nombre la cubre,
+   y el de cancelar queda por encima. */
 
 .cf-home__svc {
+  position: relative;
   display: grid;
-  grid-template-columns: 8px 104px minmax(0, 1.2fr) minmax(0, 1fr) auto;
+  grid-template-columns: 10px 110px minmax(0, 1.5fr) minmax(0, 1.3fr) 140px 96px;
   align-items: center;
-  gap: var(--cf-space-3);
-  padding: 14px 0;
-  border-bottom: 1px solid var(--cf-border);
+  gap: 14px;
+  padding: 14px 6px;
+  border-top: 1px solid var(--cf-border);
+  border-radius: 10px;
   font-size: var(--cf-text-sm);
 }
 
-.cf-home__svc:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
+.cf-home__svc:hover {
+  background-color: #f7fbfb;
 }
 
 .cf-home__dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: var(--cf-border);
+  background-color: var(--cf-warning);
 }
 
 .cf-home__dot--doing {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-brand-500);
 }
+
 .cf-home__dot--done {
-  background-color: var(--cf-primary);
+  background-color: var(--cf-success);
 }
+
 .cf-home__dot--not_done {
-  background-color: var(--cf-danger-dark);
+  background-color: var(--cf-danger);
 }
 
 .cf-home__hour {
-  font-weight: 600;
+  font-family: var(--cf-font-heading);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.cf-home__who {
-  color: var(--cf-muted);
-}
-
-.cf-home__who b {
-  color: var(--cf-text);
-  font-weight: 600;
-}
-
-/* El estado arriba y el botón debajo, alineados a la derecha. En
-   columna y no en fila: en la última columna no hay sitio para los dos
-   seguidos sin estrujar el resto. */
-.cf-home__end {
+.cf-home__svc-name {
   display: grid;
-  justify-items: end;
-  gap: 7px;
-  color: var(--cf-muted);
-  font-size: 0.8125rem;
-  text-align: right;
-  white-space: nowrap;
+  gap: 2px;
+  min-width: 0;
 }
-
-.cf-home__warn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 3px;
-  color: var(--cf-warning-dark);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.cf-home__empty {
-  margin: 0;
-  padding: var(--cf-space-8) 0;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-  text-align: center;
-}
-
-/* La fila se parte: el punto y la hora arriba, y el resto debajo
-   alineado con el servicio. Con cinco columnas en menos de ~700 px de
-   contenido, el nombre del servicio y el del cliente no caben. */
-@media (max-width: 1020px) {
-  .cf-home__svc {
-    grid-template-columns: 8px minmax(0, 1fr);
-  }
-
-  /* Todo lo que va debajo de la hora, en la segunda columna. El nombre
-     del servicio también: sin decírselo se colocaba solo en la columna
-     de 8px, se salía por la derecha y se pisaba con el trabajador. */
-  .cf-home__svc-name,
-  .cf-home__who,
-  .cf-home__end {
-    grid-column: 2;
-    justify-items: start;
-    text-align: left;
-  }
-}
-
-/* ---------- EL DETALLE DE UN SERVICIO ----------
-   Una hoja ancha y no un modal de confirmación: aquí se viene a mirar
-   fotos y una línea de tiempo, no a decir que sí. */
 
 .cf-home__open {
   padding: 0;
@@ -9648,42 +9548,114 @@ textarea.cf-dash-input {
   color: var(--cf-text);
   font-family: var(--cf-font-body);
   font-size: var(--cf-text-sm);
+  font-weight: 700;
   text-align: left;
   cursor: pointer;
 }
 
-.cf-home__open:hover {
-  color: var(--cf-accent-dark);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.cf-home__open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 }
 
 .cf-home__open:focus-visible {
-  outline: 3px solid var(--cf-ring);
-  outline-offset: 2px;
-  border-radius: var(--cf-radius-sm);
+  outline: none;
 }
 
-.cf-home__sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
+.cf-home__open:focus-visible::after {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: -2px;
+}
+
+.cf-home__warn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--cf-danger);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Trabajador y cliente, cada uno con su etiqueta delante. */
+.cf-home__who,
+.cf-home__sheet-who {
   display: grid;
-  place-items: center;
-  width: 100%;
+  gap: 4px;
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+
+.cf-home__who span,
+.cf-home__sheet-who span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cf-home__who em,
+.cf-home__sheet-who em {
+  width: 92px;
+  flex: none;
+  color: var(--cf-muted);
+  font-size: 0.6875rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cf-home__end {
+  display: grid;
+  gap: 2px;
+}
+
+.cf-home__end small {
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+.cf-home__act {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cf-home__empty {
+  padding: var(--cf-space-6) 0 var(--cf-space-2);
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  text-align: center;
+}
+
+/* ---------- LA FICHA DE UN SERVICIO ----------
+   Por la derecha, a toda la altura, con showModal(): su fondo tapa la
+   pantalla entera. */
+
+.cf-home__sheet {
+  width: min(560px, 100vw);
   max-width: none;
+  height: 100dvh;
   max-height: none;
-  padding: var(--cf-space-4);
+  margin: 0 0 0 auto;
+  padding: 0;
   border: 0;
-  background-color: rgba(var(--cf-text-rgb), 0.5);
+  border-radius: 24px 0 0 24px;
+  background-color: var(--cf-surface);
+  box-shadow: -20px 0 50px -20px rgba(var(--cf-brand-900-rgb), 0.45);
+}
+
+.cf-home__sheet::backdrop {
+  background-color: rgba(var(--cf-brand-900-rgb), 0.5);
+  backdrop-filter: blur(3px);
 }
 
 .cf-home__sheet-in {
-  width: min(760px, 100%);
-  max-height: 88vh;
+  height: 100%;
   padding: 24px 26px;
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-surface);
   overflow-y: auto;
 }
 
@@ -9696,11 +9668,13 @@ textarea.cf-dash-input {
 }
 
 .cf-home__close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
   flex: none;
-  width: 34px;
-  height: 34px;
   border: 1px solid var(--cf-border);
-  border-radius: 50%;
+  border-radius: 12px;
   background-color: var(--cf-surface);
   color: var(--cf-muted);
   cursor: pointer;
@@ -9711,42 +9685,115 @@ textarea.cf-dash-input {
   color: var(--cf-primary);
 }
 
-/* Los bloques que vienen de la pantalla del cliente traen su propio
-   marco, así que aquí solo se separan. */
+.cf-home__close:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
+/* Los bloques que vienen del detalle del cliente traen su propio marco,
+   así que aquí solo se separan. */
 .cf-home__sheet-body {
   display: grid;
   gap: var(--cf-space-4);
 }
 
 .cf-home__sheet-who {
-  margin: 0;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: var(--cf-bg);
 }
 
-.cf-home__sheet-who b {
-  color: var(--cf-text);
-  font-weight: 600;
-}
-
-/* ---------- MIENTRAS CARGA ----------
-   Tres alturas, una por tipo de bloque, para que el hueco tenga el
-   tamaño de lo que va a ocupar. La animación la pone cf-dash-skel;
-   aquí solo se le da la forma. */
+/* ---------- MIENTRAS CARGA ---------- */
 
 .cf-home__skel--hero {
-  height: 208px;
-  border-radius: var(--cf-radius-lg);
+  height: 190px;
+  border-radius: 24px;
 }
 
 .cf-home__skel--kpi {
   height: 116px;
-  border-radius: var(--cf-radius-lg);
+  border-radius: 20px;
 }
 
 .cf-home__skel--day {
   height: 280px;
-  border-radius: var(--cf-radius-lg);
+  border-radius: 20px;
+}
+
+/* ---------- ESTRECHO ---------- */
+
+@container (max-width: 900px) {
+  .cf-home__bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cf-home__svc {
+    grid-template-columns: 10px 96px minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .cf-home__end {
+    display: none;
+  }
+}
+
+@container (max-width: 720px) {
+  .cf-home__hero {
+    padding: 24px 20px;
+  }
+
+  .cf-home__in {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--cf-space-4);
+  }
+
+  .cf-home__day {
+    padding: 20px var(--cf-space-4);
+  }
+
+  /* La fila, en dos líneas: la hora y el servicio arriba; trabajador y
+     cliente con su etiqueta debajo. */
+  .cf-home__svc {
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    padding: 14px 4px;
+  }
+
+  .cf-home__hour {
+    grid-column: 2;
+  }
+
+  .cf-home__svc-name,
+  .cf-home__who {
+    grid-column: 2 / -1;
+  }
+
+  .cf-home__end {
+    display: grid;
+    grid-column: 2 / -1;
+  }
+
+  .cf-home__act {
+    grid-row: 1;
+    grid-column: 3;
+  }
+
+  .cf-home__who em,
+  .cf-home__sheet-who em {
+    width: 84px;
+  }
+}
+
+@container (max-width: 520px) {
+  .cf-home__bento {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .cf-home__sheet {
+    width: 100vw;
+    border-radius: 0;
+  }
 }
 
 /* ======================================================================
