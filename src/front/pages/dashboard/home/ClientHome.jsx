@@ -1,4 +1,15 @@
+/**
+ * INICIO DEL CLIENTE (maqueta 04, PANEL-02).
+ *
+ * Lo que importa nada más entrar: la próxima limpieza en grande y, al
+ * lado, lo que le toca hacer (confirmar, valorar). Debajo, «Volver a
+ * contratar». Sin ninguna reserva, la invitación a la primera.
+ *
+ * Estilos: dashboard.css (cf-client-home*).
+ */
+
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
 import { getMyBookings } from "../../../services/bookingService";
@@ -6,6 +17,19 @@ import { NextBooking } from "../../../components/dashboard/home/NextBooking";
 import { ClientPendingActions } from "../../../components/dashboard/home/ClientPendingActions";
 import { RebookServices } from "../../../components/dashboard/home/RebookServices";
 import { EmptyClientHome } from "../../../components/dashboard/home/EmptyClientHome";
+import { PageHead } from "../../../components/dashboard/PageHead";
+
+// "Miércoles, 11 de noviembre": hoy, en Madrid.
+const todayText = () => {
+    const text = new Intl.DateTimeFormat("es-ES", {
+        timeZone: "Europe/Madrid",
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+    }).format(new Date());
+    return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
 const nextConfirmedBooking = (bookings) => {
     const now = new Date();
 
@@ -101,6 +125,7 @@ export const ClientHome = () => {
         return (
             <EmptyClientHome
                 firstName={firstName}
+                today={todayText()}
                 services={store.services}
             />
         );
@@ -108,22 +133,29 @@ export const ClientHome = () => {
 
     return (
         <div className="cf-client-home">
-            <header className="cf-client-home__header">
-                <p className="cf-dash-eyebrow">Inicio</p>
-
-                <h1>Hola, {firstName}</h1>
-
-                <p>
-                    Aquí tienes lo próximo y todo lo que espera tu respuesta.
-                </p>
-            </header>
-
-            <NextBooking
-                booking={nextBooking?.booking}
-                day={nextBooking?.day}
+            <PageHead
+                plain
+                title={`Hola, ${firstName}`}
+                subtitle={todayText()}
+                actions={
+                    <Link to="/dashboard/book" className="cf-dash-btn">
+                        <i className="fa-solid fa-plus" aria-hidden="true"></i>
+                        Reservar limpieza
+                    </Link>
+                }
             />
 
-            <ClientPendingActions bookings={bookings} />
+            {/* La próxima limpieza y, al lado, lo pendiente. Sin pendientes,
+                la tarjeta ocupa todo el ancho. */}
+            <div className="cf-client-home__grid">
+                <NextBooking
+                    booking={nextBooking?.booking}
+                    day={nextBooking?.day}
+                />
+
+                <ClientPendingActions bookings={bookings} />
+            </div>
+
             <RebookServices
                 bookings={bookings}
                 services={store.services}

@@ -26,7 +26,8 @@
     14. Cambiar la fecha de una reserva (cf-resched__*)
     15. Inicio del encargado (cf-home__*)
     16. Inicio del trabajador (cf-worker-home__*)
-    17. Inicio del cliente (cf-client-home__*, cf-client-empty__*)
+    17. Inicio del cliente (cf-client-home__*, cf-client-next__*,
+        cf-client-pending__*, cf-client-rebook__*)
     18. Movimiento reducido
     19. Grupos de botones: los de una decisión, iguales
 
@@ -9547,405 +9548,470 @@ textarea.cf-dash-input {
 }
 
 /* ======================================================================
-   17. INICIO DEL CLIENTE (cf-client-home__*, cf-client-empty__*)
+   17. INICIO DEL CLIENTE (ClientHome.jsx y home/*, maqueta 04, PANEL-02)
+   La próxima limpieza en una tarjeta oscura, lo pendiente al lado y
+   «Volver a contratar» debajo.
    ====================================================================== */
 
-.cf-client-home,
-.cf-client-empty {
-  width: min(100%, 1180px);
-  margin: 0 auto;
+.cf-client-home {
   display: grid;
   gap: 32px;
 }
 
-.cf-client-home__header h1,
-.cf-client-empty__hero h1 {
-  margin: 4px 0 8px;
-  color: var(--cf-text);
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  line-height: 1.05;
+/* La cabecera ya lleva su margen: aquí lo pone el gap. */
+.cf-client-home > .cf-pagehead {
+  margin-bottom: 0;
 }
 
-.cf-client-home__header > p:last-child,
-.cf-client-empty__hero > p {
-  max-width: 650px;
-  margin: 0;
-  color: var(--cf-muted);
-  line-height: 1.7;
-}
-
+/* Mientras carga. */
 .cf-client-home__skel-title {
-  width: min(360px, 80%);
-  height: 48px;
+  width: min(320px, 70%);
+  height: 40px;
 }
 
 .cf-client-home__skel-card {
-  width: 100%;
-  height: 240px;
+  height: 260px;
   border-radius: 24px;
 }
 
-/* ---------- LO SIGUIENTE ---------- */
-
-.cf-client-next {
+/* La próxima limpieza y lo pendiente, una al lado de la otra. Sin
+   pendientes, la tarjeta ocupa todo el ancho. */
+.cf-client-home__grid {
   display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  align-items: start;
   gap: 20px;
-  padding: clamp(24px, 4vw, 42px);
-  border: 1px solid var(--cf-border);
-  border-radius: 28px;
-  background-color: var(--cf-primary-soft);
-  overflow: hidden;
 }
 
-.cf-client-next__intro h2,
-.cf-client-pending__header h2,
-.cf-client-rebook__header h2,
-.cf-client-empty__heading h2 {
-  margin: 4px 0 8px;
-  color: var(--cf-text);
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
+.cf-client-home__grid > :only-child {
+  grid-column: 1 / -1;
+}
+
+/* ---------- LA PRÓXIMA LIMPIEZA (NextBooking.jsx) ---------- */
+
+.cf-client-next {
+  position: relative;
+  padding: 28px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--cf-brand-900) 0%, #0a5560 60%, #0f7f88 100%);
+  box-shadow: 0 18px 40px -22px rgba(var(--cf-brand-900-rgb), 0.65);
+  color: var(--cf-white);
+  isolation: isolate;
+}
+
+.cf-client-next::after {
+  content: "";
+  position: absolute;
+  top: -140px;
+  right: -120px;
+  z-index: -1;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--cf-accent-rgb), 0.32), transparent 65%);
+  pointer-events: none;
+}
+
+.cf-client-next__eyebrow {
+  margin: 0;
+  color: var(--cf-accent);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cf-client-next__when {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 14px 0 22px;
+}
+
+/* La fecha en su cajita: el día de la semana y el número. */
+.cf-client-next__datebox {
+  display: grid;
+  flex: none;
+  place-content: center;
+  width: 72px;
+  height: 76px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.16);
+  border-radius: 16px;
+  background-color: rgba(var(--cf-white-rgb), 0.1);
+  text-align: center;
+}
+
+.cf-client-next__datebox small {
+  color: var(--cf-accent);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cf-client-next__datebox b {
+  font-family: var(--cf-font-heading);
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cf-client-next__title {
+  margin: 0;
+  color: var(--cf-white);
+  font-family: var(--cf-font-heading);
+  font-size: 1.625rem;
+  font-weight: 800;
   line-height: 1.15;
 }
 
-.cf-client-next__intro > p:last-child {
-  margin: 0;
-  color: var(--cf-muted);
+.cf-client-next__meta {
+  margin: 4px 0 0;
+  color: rgba(var(--cf-white-rgb), 0.78);
 }
 
-.cf-client-next__card {
+.cf-client-next__grid {
   display: grid;
-  grid-template-columns: minmax(120px, 0.7fr) minmax(240px, 2fr) auto;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cf-client-next__item {
+  display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.12);
+  border-radius: 14px;
+  background-color: rgba(var(--cf-white-rgb), 0.07);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-client-next__item > div {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cf-client-next__item > i {
+  flex: none;
+  width: 18px;
+  color: var(--cf-accent);
+  text-align: center;
+}
+
+.cf-client-next__item small {
+  display: block;
+  color: rgba(var(--cf-white-rgb), 0.7);
+  font-size: 0.75rem;
+}
+
+.cf-client-next__item .cf-dash-avatar {
+  flex: none;
+}
+
+/* La nota de quien viene, en amarillo, junto a su nombre. */
+.cf-client-next__rating {
+  margin-left: 6px;
+  color: var(--cf-sun);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cf-client-next__rating i {
+  margin-right: 3px;
+}
+
+.cf-client-next__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cf-client-next__actions .cf-dash-btn {
+  min-height: 44px;
+}
+
+/* El botón secundario, en blanco sobre la tarjeta oscura. */
+.cf-client-next__ghost {
+  border-color: rgba(var(--cf-white-rgb), 0.35);
+  background: transparent;
+  color: var(--cf-white);
+  box-shadow: none;
+}
+
+.cf-client-next__ghost:hover {
+  background: rgba(var(--cf-white-rgb), 0.1);
+  color: var(--cf-white);
+}
+
+/* Sin próxima limpieza: la misma tarjeta, con la invitación. */
+.cf-client-next--empty .cf-client-next__title {
+  margin-top: 14px;
+}
+
+/* ---------- LO QUE TE TOCA (ClientPendingActions.jsx) ---------- */
+
+.cf-client-pending {
   padding: 24px;
   border: 1px solid var(--cf-border);
   border-radius: 20px;
   background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
 }
 
-.cf-client-next__date {
-  display: grid;
-  gap: 5px;
-  padding-right: 24px;
-  border-right: 1px solid var(--cf-border);
-}
-
-.cf-client-next__date strong {
-  color: var(--cf-primary);
-  font-size: 1.25rem;
-}
-
-.cf-client-next__date span {
-  color: var(--cf-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.cf-client-next__details h3 {
-  margin: 0 0 10px;
-  color: var(--cf-text);
-  font-size: 1.2rem;
-}
-
-.cf-client-next__details p {
+.cf-client-pending__head {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin: 5px 0;
-  color: var(--cf-muted);
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
-.cf-client-next__details i {
-  width: 16px;
+.cf-client-pending__eyebrow,
+.cf-client-rebook__eyebrow {
+  margin: 0 0 6px;
   color: var(--cf-primary);
-  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-/* ---------- LO QUE TE TOCA ---------- */
+.cf-client-pending__title {
+  margin: 0;
+  color: var(--cf-text);
+  font-size: 1rem;
+  font-weight: 700;
+}
 
-.cf-client-pending {
-  display: grid;
-  gap: 18px;
+.cf-client-pending__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cf-client-pending__count::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
 }
 
 .cf-client-pending__list {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .cf-client-action {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 20px;
+  gap: 14px;
+  padding: 14px;
   border: 1px solid var(--cf-border);
-  border-radius: 18px;
-  background-color: var(--cf-surface);
+  border-radius: 14px;
 }
 
+/* Lo que caduca, destacado en ámbar. */
 .cf-client-action--urgent {
   border-color: var(--cf-warning-line);
-  background-color: var(--cf-warning-soft);
+  background: linear-gradient(90deg, #fffaf0, #fff4de);
 }
 
 .cf-client-action__icon {
   display: grid;
-  width: 42px;
-  height: 42px;
+  flex: none;
   place-items: center;
-  border-radius: 50%;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
 }
 
 .cf-client-action--urgent .cf-client-action__icon {
-  background-color: var(--cf-surface);
+  background-color: var(--cf-warning-soft);
   color: var(--cf-warning-dark);
 }
 
-.cf-client-action__content h3 {
-  margin: 0 0 5px;
-  color: var(--cf-text);
-  font-size: 1rem;
+.cf-client-action--review .cf-client-action__icon {
+  background-color: #fff4d1;
+  color: #8a6200;
 }
 
-.cf-client-action__content p {
-  margin: 0;
-  color: var(--cf-muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
+.cf-client-action--info .cf-client-action__icon {
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
 }
 
-/* ---------- VOLVER A CONTRATAR ---------- */
-
-.cf-client-rebook {
+.cf-client-action__content {
   display: grid;
-  gap: 20px;
+  gap: 2px;
+  min-width: 0;
 }
 
-.cf-client-rebook__header {
+.cf-client-action__content b {
+  color: var(--cf-text);
+  font-size: var(--cf-text-sm);
+  font-weight: 600;
+}
+
+.cf-client-action__content span {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-client-action .cf-dash-btn {
+  flex: none;
+  margin-left: auto;
+}
+
+/* ---------- VOLVER A CONTRATAR (RebookServices.jsx) ---------- */
+
+.cf-client-rebook__head {
   display: flex;
-  align-items: end;
+  flex-wrap: wrap;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 20px;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cf-client-rebook__title {
+  margin: 0;
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
 }
 
 .cf-client-rebook__catalog {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
   color: var(--cf-primary);
-  font-size: 0.9rem;
   font-weight: 600;
+  text-decoration: none;
+}
+
+.cf-client-rebook__catalog:hover {
   text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 .cf-client-rebook__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .cf-client-rebook__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--cf-border);
   border-radius: 20px;
   background-color: var(--cf-surface);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.cf-client-rebook__card:hover {
+  box-shadow: var(--cf-shadow-md);
+  transform: translateY(-2px);
 }
 
 .cf-client-rebook__card > img {
+  display: block;
   width: 100%;
-  height: 180px;
+  height: auto;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
 }
 
 .cf-client-rebook__body {
-  display: grid;
-  gap: 10px;
-  padding: 20px;
-}
-
-.cf-client-rebook__times {
-  margin: 0;
-  color: var(--cf-accent-dark);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px;
 }
 
 .cf-client-rebook__body h3 {
   margin: 0;
   color: var(--cf-text);
-  font-size: 1.2rem;
-}
-
-.cf-client-rebook__price {
-  margin: 0 0 6px;
-  color: var(--cf-muted);
-}
-
-/* ---------- CLIENTE SIN RESERVAS ---------- */
-
-.cf-client-empty__hero {
-  display: grid;
-  justify-items: start;
-  gap: 14px;
-  padding: clamp(32px, 6vw, 72px);
-  border-radius: 28px;
-  background: linear-gradient(
-    115deg,
-    var(--cf-primary-soft),
-    var(--cf-surface)
-  );
-}
-
-.cf-client-empty__hero .cf-dash-btn {
-  margin-top: 8px;
-}
-
-.cf-client-empty__services {
-  display: grid;
-  gap: 22px;
-}
-
-.cf-client-empty__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.cf-client-empty__card {
-  display: grid;
-  grid-template-columns: minmax(150px, 0.8fr) 1fr;
-  min-height: 240px;
-  overflow: hidden;
-  border: 1px solid var(--cf-border);
-  border-radius: 20px;
-  background-color: var(--cf-surface);
-}
-
-.cf-client-empty__card > img {
-  width: 100%;
-  height: 100%;
-  min-height: 240px;
-  object-fit: cover;
-}
-
-.cf-client-empty__body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-}
-
-.cf-client-empty__body h3 {
-  margin: 0 0 8px;
-  color: var(--cf-text);
-  font-size: 1.25rem;
-}
-
-.cf-client-empty__body p {
-  margin: 0 0 14px;
-  color: var(--cf-muted);
-  font-size: 0.9rem;
-  line-height: 1.55;
-}
-
-.cf-client-empty__body span {
-  margin-bottom: 18px;
-  color: var(--cf-text);
-  font-weight: 600;
-}
-
-.cf-client-empty__body a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: auto;
-  color: var(--cf-primary);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
 }
 
-@media (max-width: 900px) {
-  .cf-client-next__card {
-    grid-template-columns: 1fr 2fr;
-  }
+.cf-client-rebook__last {
+  margin: 4px 0 0;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
 
-  .cf-client-next__card > .cf-dash-btn {
-    grid-column: 1 / -1;
-    justify-self: start;
-  }
+/* El precio y «Repetir», siempre abajo: las tarjetas miden lo mismo. */
+.cf-client-rebook__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 12px;
+}
 
-  .cf-client-rebook__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.cf-client-rebook__foot b {
+  font-family: var(--cf-font-heading);
+}
 
-  .cf-client-empty__grid {
-    grid-template-columns: 1fr;
+.cf-client-rebook__foot .cf-dash-btn {
+  margin-left: auto;
+}
+
+@media (max-width: 1100px) {
+  .cf-client-home__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@media (max-width: 640px) {
-  .cf-client-home,
-  .cf-client-empty {
-    gap: 24px;
-  }
-
+@media (max-width: 767.98px) {
   .cf-client-next {
     padding: 22px;
-    border-radius: 20px;
   }
 
-  .cf-client-next__card {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 18px;
-  }
-
-  .cf-client-next__date {
-    padding: 0 0 14px;
-    border-right: 0;
-    border-bottom: 1px solid var(--cf-border);
-  }
-
-  .cf-client-next__card > .cf-dash-btn {
-    grid-column: auto;
-    width: 100%;
-  }
-
-  .cf-client-action {
-    grid-template-columns: auto 1fr;
-  }
-
-  .cf-client-action > .cf-dash-btn {
-    grid-column: 1 / -1;
-    width: 100%;
-  }
-
-  .cf-client-rebook__header {
-    align-items: start;
-    flex-direction: column;
-  }
-
+  .cf-client-next__grid,
   .cf-client-rebook__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .cf-client-empty__hero {
-    padding: 28px 22px;
-    border-radius: 20px;
+  /* Los dos botones, uno encima de otro y del mismo ancho. */
+  .cf-client-next__actions .cf-dash-btn {
+    flex: 1 1 100%;
   }
 
-  .cf-client-empty__card {
-    grid-template-columns: 1fr;
+  /* Lo pendiente: el botón debajo del texto. Al lado, el texto se quedaba
+     en una columna de dos palabras. */
+  .cf-client-action {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    align-items: start;
   }
 
-  .cf-client-empty__card > img {
-    height: 190px;
-    min-height: 0;
+  .cf-client-action .cf-dash-btn {
+    grid-column: 2;
+    justify-self: start;
+    margin-left: 0;
   }
 }
 
