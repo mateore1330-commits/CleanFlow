@@ -157,7 +157,7 @@
 
   /* Ancho máximo del contenido: sin él, en pantallas anchas las líneas
      de texto se alargan tanto que cuesta leerlas. */
-  --cf-container: 1440px;
+  --cf-container: 1280px; /* el de la maqueta 02: unos 1200px de contenido */
   /* Margen lateral de la página: crece con la ventana, entre un mínimo y
      un máximo. Por encima de 769px sube de escalón (ver @media). */
   --cf-gutter: clamp(var(--cf-space-8), 3.5vw, var(--cf-space-12));
