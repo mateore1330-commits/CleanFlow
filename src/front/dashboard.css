@@ -7058,13 +7058,12 @@ textarea.cf-dash-input {
 }
 
 /* ---------- DETALLE DE UN SERVICIO ----------
-   Donde el trabajador trabaja. En el móvil se lee de arriba abajo; en
-   escritorio, dos columnas: a la izquierda las tareas, que es lo que se
-   toca, y a la derecha lo que solo se consulta. */
+   A la izquierda lo que se toca (hoy y las tareas); a la derecha lo que
+   se consulta (el cliente y el progreso) y las acciones. En el móvil, una
+   columna y el botón del momento en una barra fija abajo. */
 
 .cf-wdetail {
   container-type: inline-size;
-  max-width: 1000px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
@@ -7073,9 +7072,11 @@ textarea.cf-dash-input {
   display: inline-flex;
   align-items: center;
   gap: var(--cf-space-2);
-  margin-bottom: var(--cf-space-3);
+  min-height: 44px;
+  margin-bottom: var(--cf-space-2);
   color: var(--cf-muted);
   font-size: var(--cf-text-sm);
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -7083,454 +7084,302 @@ textarea.cf-dash-input {
   color: var(--cf-primary);
 }
 
-.cf-wdetail__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--cf-space-3);
-  padding-bottom: var(--cf-space-4);
-  border-bottom: 1px solid var(--cf-border);
+.cf-wdetail__back:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
 }
 
-.cf-wdetail__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-xl);
-  font-weight: 600;
-  line-height: 1.15;
-}
-
-.cf-wdetail__sub {
-  margin: var(--cf-space-1) 0 0;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-  font-variant-numeric: tabular-nums;
+/* El estado, sobre el degradado de la cabecera: como en el detalle del
+   cliente, en una píldora casi blanca con el color de su estado. */
+.cf-wdetail .cf-pagehead .cf-bookstate {
+  padding: 6px 14px;
+  background-color: rgba(var(--cf-white-rgb), 0.94);
+  font-size: 0.8125rem;
 }
 
 .cf-wdetail__grid {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: var(--cf-space-3);
-  margin-top: var(--cf-space-3);
+  align-items: start;
+  gap: 20px;
 }
 
 .cf-wdetail__col {
   display: grid;
-  gap: var(--cf-space-3);
+  gap: var(--cf-space-4);
   align-content: start;
+  min-width: 0;
 }
 
-.cf-wblock {
-  padding: var(--cf-space-4);
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-}
-
-.cf-wblock__title {
-  margin: 0 0 var(--cf-space-3);
-  color: var(--cf-muted);
-  font-family: var(--cf-font-brand);
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* ---------- LÍNEA DE TIEMPO ----------
-   Tumbada y con tres hitos. En vertical se comería media pantalla del
-   móvil, que es donde se usa esto. */
-
-.cf-wtrack {
-  display: flex;
-  align-items: flex-start;
-}
-
-.cf-wtrack__step {
-  position: relative;
-  flex: 1;
-  display: grid;
-  justify-items: center;
-  gap: 5px;
-  text-align: center;
-}
-
-/* La línea une los hitos por detrás de las bolas. */
-.cf-wtrack__step::before {
-  content: "";
-  position: absolute;
-  top: 12px;
-  left: -50%;
-  width: 100%;
-  height: 2px;
-  background-color: var(--cf-primary);
-}
-
-.cf-wtrack__step:first-child::before {
-  display: none;
-}
-
-.cf-wtrack__step--todo::before {
-  background-color: var(--cf-border);
-}
-
-/* position y z-index: la línea es un ::before del paso y, sin esto, se
-   pinta por encima de la bola y la cruza por la mitad. */
-.cf-wtrack__mark {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
-  font-size: 0.6875rem;
-}
-
-.cf-wtrack__step--todo .cf-wtrack__mark {
-  border: 2px dashed var(--cf-border);
-  background-color: var(--cf-surface);
-  color: var(--cf-muted);
-}
-
-.cf-wtrack__step--fail .cf-wtrack__mark {
-  background-color: var(--cf-danger);
-  color: var(--cf-surface);
-}
-
-.cf-wtrack__name {
-  font-size: 0.7188rem;
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.cf-wtrack__step--todo .cf-wtrack__name {
-  color: var(--cf-muted);
-  font-weight: 500;
-}
-
-.cf-wtrack__when {
-  color: var(--cf-muted);
-  font-size: 0.6875rem;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- HOY ----------
-   El bloque verde: en qué punto está el día que se está trabajando. */
-
-.cf-wtoday {
-  display: grid;
-  gap: var(--cf-space-2);
-  padding: var(--cf-space-4);
-  border: 1px solid var(--cf-primary);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-primary-soft);
-}
-
-.cf-wtoday__when {
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  color: var(--cf-primary);
-  font-size: var(--cf-text-base);
-  font-weight: 600;
-}
-
-.cf-wtoday__note {
+.cf-wdetail__sub {
   margin: 0;
-  color: var(--cf-primary);
-  font-size: 0.7813rem;
-  opacity: 0.85;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
 }
 
-/* ---------- DÓNDE Y CON QUIÉN ---------- */
+/* El bloque del detalle: el mismo que el del cliente (radio 20). */
+.cf-wblock {
+  padding: var(--cf-space-6);
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+}
 
-.cf-wrow {
+.cf-wblock__head {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--cf-space-2);
-  padding: var(--cf-space-2) 0;
-  border-bottom: 1px solid var(--cf-border);
-  font-size: var(--cf-text-sm);
+  gap: var(--cf-space-1) var(--cf-space-3);
+  margin-bottom: var(--cf-space-3);
 }
 
-.cf-wrow:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.cf-wrow dt {
-  color: var(--cf-muted);
-}
-
-.cf-wrow dd {
-  margin: 0;
-  font-weight: 500;
-  text-align: right;
-}
-
-.cf-wrow a {
-  color: var(--cf-primary);
-}
-
-/* Lo que todavía no se puede ver, dicho sin alarmar. */
-.cf-wrow__locked {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--cf-space-1);
-  color: var(--cf-muted);
-  font-size: 0.7813rem;
-  font-weight: 400;
-}
-
-/* Las notas del cliente, tal y como las escribió. */
-.cf-wnotes {
-  margin: var(--cf-space-3) 0 0;
-  padding: var(--cf-space-3);
-  border-left: 3px solid var(--cf-accent);
-  border-radius: 0 var(--cf-radius-sm) var(--cf-radius-sm) 0;
-  background-color: var(--cf-bg);
-  font-size: var(--cf-text-sm);
-  font-style: italic;
-  white-space: pre-wrap;
-}
-
-/* ---------- LOS DÍAS DEL SERVICIO ----------
-   Lo previsto y, debajo, lo que se hizo de verdad. Con un solo día
-   apenas se mira; con varios es la referencia para organizarse. */
-
-.cf-wday {
-  display: grid;
-  gap: 2px;
-  padding: var(--cf-space-2) 0;
-  border-bottom: 1px solid var(--cf-border);
-}
-
-.cf-wday:first-of-type {
-  padding-top: 0;
-}
-
-.cf-wday:last-of-type {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.cf-wday__when {
-  font-size: var(--cf-text-sm);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-/* El día que toca hoy, para encontrarlo entre varios sin leerlos todos. */
-.cf-wday--today .cf-wday__when {
-  color: var(--cf-primary);
-  font-weight: 600;
-}
-
-.cf-wday__real {
-  color: var(--cf-primary);
-  font-size: 0.75rem;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- RESUMEN DEL FINAL ----------
-   Lo que se trabajó, en cuatro números. Se enseña solo cuando el
-   servicio ya está cerrado: antes, todos serían provisionales. */
-
-.cf-wrecap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--cf-space-4) var(--cf-space-6);
-}
-
-.cf-wrecap__item {
-  display: grid;
-  gap: 1px;
-}
-
-.cf-wrecap__n {
+.cf-wblock__title {
+  margin: 0 0 var(--cf-space-4);
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: 1.3125rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.cf-wblock__head .cf-wblock__title {
+  margin: 0;
+}
+
+.cf-wblock__aside {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+/* La barra de tareas hechas, debajo del título. */
+.cf-wblock__track {
+  display: block;
+  height: 8px;
+  margin-bottom: var(--cf-space-4);
+  border-radius: 999px;
+  background-color: var(--cf-border);
+  overflow: hidden;
+}
+
+.cf-wblock__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--cf-brand-600), var(--cf-brand-500));
+  transition: width var(--cf-transition);
+}
+
+/* ---------- HOY ----------
+   Una franja con su icono: cuándo empezó y si quedan más días. */
+
+.cf-wtoday {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--cf-brand-50), var(--cf-accent-soft));
+}
+
+.cf-wtoday__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 12px;
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+  color: var(--cf-brand-600);
+}
+
+.cf-wtoday__when {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.cf-wrecap__label {
+.cf-wtoday__note {
+  margin: 0;
   color: var(--cf-muted);
-  font-family: var(--cf-font-brand);
-  font-size: 0.5938rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: var(--cf-text-sm);
 }
 
-/* ---------- LA ACCIÓN DEL MOMENTO ----------
-   Empezar, cerrar el día o finalizar: solo una de las tres tiene sentido
-   en cada instante, así que solo se enseña una.
+/* ---------- LO QUE HAY QUE HACER (sin empezar) ----------
+   Antes de empezar no hay fotos que hacer: solo la lista, agrupada. */
 
-   En el móvil va pegada abajo, al alcance del pulgar, y no al final de
-   una lista de ocho tareas. Encima, el motivo por el que no se puede
-   pulsar todavía: un botón apagado sin explicación desespera. */
-
-.cf-wact {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
-  margin-top: var(--cf-space-4);
-  padding: var(--cf-space-3) 0 var(--cf-space-4);
-  border-top: 1px solid var(--cf-border);
-  background-color: var(--cf-bg);
+.cf-wtodo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--cf-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.cf-wact__note {
-  margin: 0 0 var(--cf-space-2);
-  color: var(--cf-muted);
-  font-size: 0.75rem;
-  text-align: center;
-}
-
-.cf-wact .cf-dash-btn {
-  width: 100%;
-  justify-content: center;
-}
-
-/* En escritorio no hace falta perseguir el pulgar: la acción vive en su
-   bloque, dentro de la columna estrecha. */
-@container (min-width: 721px) {
-  .cf-wact {
-    position: static;
-    margin-top: 0;
-    padding: var(--cf-space-4);
-    border: 1px solid var(--cf-border);
-    border-radius: var(--cf-radius-md);
-    background-color: var(--cf-surface);
-  }
-
-  .cf-wact__note {
-    text-align: left;
-  }
-}
-
-/* Separador entre la acción del servicio y las salidas de emergencia:
-   "¿ha pasado algo?" no es una acción más, es otra conversación. */
-.cf-wact__sep {
+.cf-wtodo li {
   display: flex;
   align-items: center;
-  gap: var(--cf-space-2);
-  margin: var(--cf-space-3) 0 var(--cf-space-2);
-  color: var(--cf-muted);
-  font-size: 0.7188rem;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background-color: var(--cf-bg);
+  font-size: var(--cf-text-sm);
 }
 
-.cf-wact__sep::before,
-.cf-wact__sep::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background-color: var(--cf-border);
+.cf-wtodo i {
+  color: var(--cf-brand-600);
 }
 
-.cf-wact__more {
-  display: grid;
-  gap: 6px;
-}
-
-/* Lo que cierra el servicio para siempre no lleva botón llamativo: va
-   en gris y solo se enciende al pasar por encima. */
-.cf-wact__quiet {
-  border-color: transparent;
-  background: none;
-  color: var(--cf-muted);
-}
-
-.cf-wact__quiet:hover {
-  border-color: var(--cf-border);
-  background: var(--cf-surface);
-  color: var(--cf-accent-dark);
+.cf-wtodo b {
+  color: var(--cf-brand-600);
+  font-size: 0.8125rem;
 }
 
 /* ---------- TAREAS Y SUS FOTOS ----------
-   Lo que el trabajador toca de verdad. Cada tarea lleva dos huecos: el
-   antes y el después. Sin las dos fotos no se puede cerrar, así que el
-   hueco vacío ES el botón de la cámara; no hay un "subir foto" aparte. */
+   Cada tarea: nombre y estado a la izquierda, sus dos fotos a la derecha
+   y el botón abajo. Sin las dos fotos no se puede cerrar, así que el
+   hueco vacío ES el botón de la cámara. */
 
-.cf-wtask {
-  padding: var(--cf-space-3);
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-bg);
+.cf-wtasks {
+  display: grid;
+  gap: var(--cf-space-3);
 }
 
-.cf-wtask + .cf-wtask {
-  margin-top: var(--cf-space-2);
+.cf-wtask {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: var(--cf-space-4);
+  border: 1px solid var(--cf-border);
+  border-radius: 16px;
+  background-color: var(--cf-surface);
 }
 
 .cf-wtask--done {
-  border-color: var(--cf-primary-soft);
-  background-color: var(--cf-primary-soft);
+  border-color: #cbe9d7;
+  background: linear-gradient(135deg, #f4fbf7, #e9f7ef);
 }
 
-.cf-wtask__top {
+/* Desde el Inicio se llega a una tarea o a un día concretos (#tarea-12). */
+.cf-wtask[id],
+.cf-wday[id] {
+  scroll-margin-block: var(--cf-space-8);
+}
+
+.cf-wtask[id]:focus,
+.cf-wday[id]:focus {
+  outline: 3px solid var(--cf-accent-dark);
+  outline-offset: 4px;
+}
+
+.cf-wtask__main {
+  min-width: 0;
+}
+
+.cf-wtask__name {
   display: flex;
   align-items: center;
-  gap: var(--cf-space-2);
+  gap: 10px;
+  margin: 0;
+  font-weight: 600;
 }
 
 .cf-wtask__check {
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   flex: none;
-  border: 1.5px dashed var(--cf-border);
+  border: 2px solid var(--cf-border);
   border-radius: 50%;
-  color: var(--cf-primary);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
 }
 
 .cf-wtask--done .cf-wtask__check {
-  border: 0;
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
+  border-color: var(--cf-success);
+  background-color: var(--cf-success);
+  color: var(--cf-white);
 }
 
-.cf-wtask__name {
-  font-size: 0.9063rem;
+.cf-wtask__state {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: var(--cf-space-1) 0 0 34px;
+  color: var(--cf-warning-dark);
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
-.cf-wtask--done .cf-wtask__name {
-  color: var(--cf-primary);
+.cf-wtask__state--done {
+  color: var(--cf-success);
 }
 
-.cf-wtask__undo {
-  margin-left: auto;
-  padding: var(--cf-space-1) 6px;
-  border: 0;
-  background: none;
+.cf-wtask__hint {
+  margin: var(--cf-space-2) 0 0 34px;
   color: var(--cf-muted);
-  font-family: var(--cf-font-body);
-  font-size: 0.7813rem;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-}
-
-.cf-wtask__undo:hover {
-  color: var(--cf-primary);
+  font-size: 0.75rem;
 }
 
 .cf-wtask__shots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: var(--cf-space-2);
-  margin-top: var(--cf-space-3);
-  max-width: 340px;
+}
+
+/* Una foto que pesa demasiado: el aviso, debajo de su tarea. */
+.cf-wtask__warn {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cf-space-2);
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--cf-danger-line);
+  border-radius: 12px;
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger-dark);
+  font-size: 0.8125rem;
+}
+
+.cf-wtask__warn i {
+  margin-top: 2px;
+}
+
+.cf-wtask__foot {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Desmarcar: un enlace, con los 44 px de alto de cualquier botón. */
+.cf-wtask__undo {
+  min-height: 44px;
+  padding: 0 var(--cf-space-1);
+  border: 0;
+  background: none;
+  color: var(--cf-primary);
+  font-family: var(--cf-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cf-wtask__undo:hover:not(:disabled) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cf-wtask__undo:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
 }
 
 /* ---------- UN HUECO DE FOTO ---------- */
@@ -7538,25 +7387,26 @@ textarea.cf-dash-input {
 .cf-wshot {
   position: relative;
   display: grid;
-  place-items: center;
-  gap: 5px;
-  width: 100%;
-  aspect-ratio: 4 / 3;
+  place-content: center;
+  justify-items: center;
+  gap: 2px;
+  width: 74px;
+  height: 74px;
+  flex: none;
   padding: 0;
-  border: 1.5px dashed var(--cf-border);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-surface);
-  color: var(--cf-muted);
+  border: 2px dashed #b9cccf;
+  border-radius: 12px;
+  background-color: var(--cf-brand-50);
+  color: var(--cf-brand-600);
   font-family: var(--cf-font-body);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.6875rem;
+  font-weight: 600;
   overflow: hidden;
   cursor: pointer;
 }
 
 .cf-wshot:hover {
-  border-color: var(--cf-primary);
-  color: var(--cf-primary);
+  border-color: var(--cf-brand-600);
 }
 
 .cf-wshot:focus-visible {
@@ -7567,18 +7417,15 @@ textarea.cf-dash-input {
 /* Deshabilitado no es "espera": es que ahora no toca. */
 .cf-wshot[disabled] {
   border-style: solid;
-  color: var(--cf-border);
+  border-color: var(--cf-border);
+  background-color: var(--cf-bg);
+  color: var(--cf-muted);
   cursor: not-allowed;
 }
 
-.cf-wshot[disabled]:hover {
-  border-color: var(--cf-border);
-  color: var(--cf-border);
-}
-
-/* Con foto: borde entero y la imagen llenando el hueco. */
+/* Con foto: la imagen llenando el hueco y su etiqueta abajo. */
 .cf-wshot--full {
-  border-style: solid;
+  border: 0;
   cursor: default;
 }
 
@@ -7592,23 +7439,20 @@ textarea.cf-dash-input {
 
 .cf-wshot__tag {
   position: absolute;
-  top: 6px;
-  left: 6px;
-  padding: 2px 8px;
+  bottom: 4px;
+  left: 4px;
+  padding: 2px 6px;
   border-radius: 999px;
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
-  font-family: var(--cf-font-brand);
-  font-size: 0.5625rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  background-color: rgba(var(--cf-brand-900-rgb), 0.82);
+  color: var(--cf-white);
+  font-size: 0.625rem;
+  font-weight: 600;
 }
 
 .cf-wshot__del {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 4px;
+  right: 4px;
   display: grid;
   place-items: center;
   width: 24px;
@@ -7617,7 +7461,7 @@ textarea.cf-dash-input {
   border: 0;
   border-radius: 50%;
   background-color: rgba(var(--cf-text-rgb), 0.7);
-  color: var(--cf-on-primary);
+  color: var(--cf-white);
   font-size: 0.625rem;
   cursor: pointer;
 }
@@ -7654,18 +7498,343 @@ textarea.cf-dash-input {
   }
 }
 
-/* El motivo por el que la tarea todavía no se puede cerrar. */
-.cf-wtask__hint {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin: var(--cf-space-3) 0 0;
-  color: var(--cf-accent-dark);
-  font-size: 0.7813rem;
+/* ---------- INFORMACIÓN DEL CLIENTE ----------
+   Cada dato con su icono; al lado, su botón (Maps o llamar). */
+
+.cf-winfo {
+  display: grid;
+  margin: 0;
 }
 
-.cf-wtask__actions {
-  margin-top: var(--cf-space-3);
+.cf-winfo__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--cf-space-3);
+  padding: var(--cf-space-3) 0;
+  border-top: 1px solid var(--cf-border);
+}
+
+.cf-winfo__row:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.cf-winfo__row dt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.cf-winfo__row dt i {
+  width: 18px;
+  color: var(--cf-brand-600);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.cf-winfo__row dd {
+  grid-column: 1;
+  margin: 2px 0 0 32px;
+  font-size: var(--cf-text-sm);
+}
+
+.cf-winfo__row .cf-winfo__act {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  margin: 0;
+}
+
+.cf-winfo__btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--cf-border);
+  border-radius: 50%;
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  text-decoration: none;
+  transition: border-color var(--cf-transition), color var(--cf-transition);
+}
+
+.cf-winfo__btn:hover {
+  border-color: var(--cf-primary);
+  color: var(--cf-primary);
+}
+
+.cf-winfo__btn:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
+.cf-winfo__locked {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+/* ---------- PROGRESO ----------
+   En vertical en la columna de la derecha; tumbado en el móvil (ver
+   @container al final). */
+
+.cf-wtrack {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-wtrack__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: center;
+}
+
+/* La línea que une un paso con el siguiente. */
+.cf-wtrack__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 30px;
+  bottom: -14px;
+  left: 13px;
+  width: 2px;
+  background-color: var(--cf-border);
+}
+
+.cf-wtrack__mark {
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
+  font-size: 0.75rem;
+}
+
+.cf-wtrack__step--now .cf-wtrack__mark {
+  background-color: var(--cf-brand-100);
+  color: var(--cf-brand-700);
+  box-shadow: 0 0 0 4px var(--cf-brand-50);
+}
+
+.cf-wtrack__step--todo .cf-wtrack__mark {
+  background-color: var(--cf-bg);
+  color: var(--cf-muted);
+  font-size: 0.4375rem;
+}
+
+.cf-wtrack__step--fail .cf-wtrack__mark {
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
+}
+
+.cf-wtrack__name {
+  font-size: var(--cf-text-sm);
+  font-weight: 600;
+}
+
+.cf-wtrack__when {
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- LOS DÍAS DEL SERVICIO ----------
+   Solo con varios días, una fecha cambiada o un día por cerrar. Lo
+   previsto y, debajo, lo que se hizo de verdad. */
+
+.cf-wday {
+  display: grid;
+  justify-items: start;
+  gap: var(--cf-space-1);
+  padding: var(--cf-space-3) 0;
+  border-bottom: 1px solid var(--cf-border);
+}
+
+.cf-wday:first-of-type {
+  padding-top: 0;
+}
+
+.cf-wday:last-of-type {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.cf-wday__when {
+  font-size: var(--cf-text-sm);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* El día que toca hoy, para encontrarlo entre varios sin leerlos todos. */
+.cf-wday--today .cf-wday__when {
+  color: var(--cf-primary);
+  font-weight: 700;
+}
+
+.cf-wday__real {
+  color: var(--cf-primary);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-wday__moved {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  margin: var(--cf-space-3) 0 0;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- RESUMEN DEL FINAL ----------
+   Lo que se trabajó, en cuatro números. Solo con el servicio cerrado:
+   antes, todos serían provisionales. */
+
+.cf-wrecap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-4) var(--cf-space-6);
+}
+
+.cf-wrecap__item {
+  display: grid;
+  gap: 1px;
+}
+
+.cf-wrecap__n {
+  font-family: var(--cf-font-heading);
+  font-size: 1.3125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-wrecap__label {
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+/* ---------- LA ACCIÓN DEL MOMENTO ----------
+   Empezar, cerrar el día o finalizar (solo una tiene sentido en cada
+   instante) y, debajo, «¿Ha pasado algo?». El motivo de un botón apagado
+   va justo debajo: un botón sin explicación desespera. */
+
+.cf-wact {
+  display: grid;
+  gap: 10px;
+}
+
+.cf-wact .cf-dash-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.cf-wact__main {
+  display: grid;
+  gap: 10px;
+}
+
+.cf-wact__note {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+/* Separador entre la acción del servicio y las salidas de emergencia:
+   «¿Ha pasado algo?» no es una acción más, es otra conversación. */
+.cf-wact__sep {
+  margin: var(--cf-space-2) 0 0;
+  padding-top: var(--cf-space-4);
+  border-top: 1px solid var(--cf-border);
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+/* Lo que cierra el servicio para siempre: un enlace rojo, sin botón
+   llamativo, y con su confirmación detrás. */
+.cf-wact__danger {
+  min-height: 44px;
+  padding: 0 var(--cf-space-2);
+  border: 0;
+  background: none;
+  color: var(--cf-danger);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cf-wact__danger:hover:not(:disabled) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cf-wact__danger:focus-visible {
+  outline: 2px solid var(--cf-danger);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
+}
+
+.cf-wact__danger:disabled {
+  color: var(--cf-disabled-text);
+  cursor: not-allowed;
+}
+
+/* La barra fija del móvil (WorkerActionBar): el mismo botón, pegado
+   abajo y al alcance del pulgar. En pantallas anchas no se ve. */
+.cf-wbar {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .cf-wbar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px var(--cf-space-4) calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--cf-border);
+    background-color: rgba(var(--cf-surface-rgb), 0.96);
+    backdrop-filter: blur(12px);
+  }
+
+  .cf-wbar .cf-dash-btn {
+    flex: 1;
+    justify-content: center;
+    min-height: 48px;
+  }
+
+  .cf-wbar .cf-wact__note {
+    max-width: 130px;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    text-align: left;
+  }
+
+  /* El botón ya está en la barra: en el bloque sobraría. */
+  .cf-wact__main {
+    display: none;
+  }
+
+  /* Hueco para que la barra no tape lo último de la pantalla. */
+  .cf-wdetail {
+    padding-bottom: 96px;
+  }
 }
 
 /* ---------- ESTRECHO ----------
@@ -7673,6 +7842,55 @@ textarea.cf-dash-input {
 
 @container (max-width: 720px) {
   .cf-wdetail__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cf-wblock {
+    padding: 20px var(--cf-space-4);
+  }
+
+  /* Las fotos, debajo del nombre y a lo ancho: con el pulgar se acierta
+     mejor en un hueco grande. */
+  .cf-wtask {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cf-wtask__shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cf-wshot {
+    width: 100%;
+    height: 110px;
+  }
+
+  /* El progreso, tumbado: tres pasos en columna se comerían la pantalla. */
+  .cf-wtrack {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: var(--cf-space-2);
+  }
+
+  .cf-wtrack__step {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    row-gap: var(--cf-space-1);
+    text-align: center;
+  }
+
+  .cf-wtrack__mark {
+    grid-row: auto;
+  }
+
+  .cf-wtrack__step:not(:last-child)::after {
+    top: 13px;
+    bottom: auto;
+    left: calc(50% + 20px);
+    width: calc(100% - 32px);
+    height: 2px;
+  }
+
+  .cf-wtodo {
     grid-template-columns: minmax(0, 1fr);
   }
 }

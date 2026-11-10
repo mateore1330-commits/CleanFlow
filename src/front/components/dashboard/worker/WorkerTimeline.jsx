@@ -1,12 +1,12 @@
 /**
  * LÍNEA DE TIEMPO DEL SERVICIO, PARA EL TRABAJADOR.
  *
- * Tres hitos tumbados: asignado, en curso y finalizado, cada uno con su
- * hora real. Y dos finales que cortan el camino: cancelado y no
+ * Tres hitos: asignado, en curso y finalizado, cada uno con su hora real
+ * (o «Pendiente»). Y dos finales que cortan el camino: cancelado y no
  * realizado.
  *
- * Va tumbada y no en vertical como la del cliente: esta pantalla se usa
- * en el móvil y tres hitos en columna se comerían media pantalla.
+ * En vertical en la columna de la derecha, como en la maqueta 05. En el
+ * móvil va tumbada: tres hitos en columna se comerían media pantalla.
  *
  * Estilos: dashboard.css, sección 10 (cf-wtrack).
  */
@@ -16,10 +16,15 @@ import { shortMoment } from "../bookings/bookingFormat";
 const DONE = { icon: "fa-check", tone: "" };
 const TODO = { icon: "fa-circle", tone: "--todo" };
 const STOPPED = { icon: "fa-xmark", tone: "--fail" };
+// El paso en el que se está: en marcha, con el play (maqueta 05).
+const NOW = { icon: "fa-play", tone: "--now" };
 
 /** Los hitos de este servicio, en orden. */
 const stepsOf = (booking) => {
-    const assigned = { ...DONE, name: "Asignado" };
+    // Pendiente todavía no es «Asignado»: se dice tal cual (PANEL-03).
+    const assigned = booking.status === "pending"
+        ? { icon: "fa-clock", tone: "--now", name: "Pendiente de confirmar" }
+        : { ...DONE, name: "Asignado" };
 
     if (booking.status === "cancelled") {
         return [assigned, { ...STOPPED, name: "Cancelado" }];
@@ -39,11 +44,11 @@ const stepsOf = (booking) => {
     return [
         assigned,
         booking.started_at
-            ? { ...DONE, name: "En curso", when: shortMoment(booking.started_at) }
-            : { ...TODO, name: "En curso" },
+            ? { ...(booking.completed_at ? DONE : NOW), name: "En curso", when: shortMoment(booking.started_at) }
+            : { ...TODO, name: "En curso", when: "Pendiente" },
         booking.completed_at
             ? { ...DONE, name: "Finalizado", when: shortMoment(booking.completed_at) }
-            : { ...TODO, name: "Finalizado" },
+            : { ...TODO, name: "Finalizado", when: "Pendiente" },
     ];
 };
 
