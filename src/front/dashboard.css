@@ -5892,14 +5892,31 @@ textarea.cf-dash-input {
   display: inline-flex;
   align-items: center;
   gap: var(--cf-space-2);
-  margin-bottom: var(--cf-space-3);
+  min-height: 44px;
+  margin-bottom: var(--cf-space-2);
   color: var(--cf-muted);
   font-size: var(--cf-text-sm);
+  font-weight: 600;
   text-decoration: none;
 }
 
 .cf-bookdetail__back:hover {
   color: var(--cf-primary);
+}
+
+.cf-bookdetail__back:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
+}
+
+/* El estado, sobre el degradado de la cabecera: en una píldora casi
+   blanca y con el color de su estado, que así se lee bien en los dos
+   extremos del degradado. */
+.cf-bookdetail .cf-pagehead .cf-bookstate {
+  padding: 6px 14px;
+  background-color: rgba(var(--cf-white-rgb), 0.94);
+  font-size: 0.8125rem;
 }
 
 .cf-bookdetail__header {
@@ -5934,8 +5951,7 @@ textarea.cf-dash-input {
 .cf-bookdetail__grid {
   display: grid;
   grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-  gap: var(--cf-space-4);
-  margin-top: var(--cf-space-5, 20px);
+  gap: 20px;
 }
 
 .cf-bookdetail__col {
@@ -5945,20 +5961,67 @@ textarea.cf-dash-input {
 }
 
 .cf-bookblock {
-  padding: var(--cf-space-5, 20px) var(--cf-space-5, 22px);
+  padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: 20px;
   background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
 }
 
 .cf-bookblock__title {
-  margin: 0 0 var(--cf-space-3);
-  color: var(--cf-muted);
-  font-family: var(--cf-font-brand);
-  font-size: 0.6875rem;
+  margin: 0 0 var(--cf-space-4);
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+}
+
+/* ---------- LO QUE TE TOCA ----------
+   Arriba del detalle: confirmar que fue bien y valorar, en un solo
+   bloque ámbar mientras quede algo por hacer (maqueta 04). Cuando ya no,
+   cada pieza vuelve a ser un bloque normal. */
+
+.cf-bookdetail__todo {
+  display: grid;
+  gap: var(--cf-space-4);
+}
+
+.cf-bookdetail__todo:empty {
+  display: none;
+}
+
+.cf-bookdetail__todo--active {
+  display: block;
+  padding: var(--cf-space-6);
+  border: 1px solid var(--cf-warning-line);
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fffaf0, #fff4de);
+  box-shadow: var(--cf-shadow-sm);
+}
+
+/* Doble clase: las piezas (cf-ask, cf-review…) van después en la hoja. */
+.cf-bookdetail__todo.cf-bookdetail__todo--active > * {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* Respondido y sin más que hacer: con el redondeo de los bloques. */
+.cf-bookdetail__todo > .cf-answered {
+  border-radius: 20px;
+}
+
+/* Aquí «¿Qué tal fue?» ya hace de título: «Tu valoración» sobraría. */
+.cf-bookdetail__todo--active > .cf-bookblock > .cf-bookblock__title {
+  display: none;
+}
+
+.cf-bookdetail__todo.cf-bookdetail__todo--active > * + * {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cf-warning-line);
 }
 
 /* ---------- LÍNEA DE TIEMPO ----------
@@ -6229,6 +6292,17 @@ textarea.cf-dash-input {
   font-size: 0.8125rem;
 }
 
+/* La nota media, si ya tiene valoraciones: la estrella en dorado. */
+.cf-bookworker__rating {
+  color: var(--cf-muted);
+  white-space: nowrap;
+}
+
+.cf-bookworker__rating i {
+  margin-right: 3px;
+  color: #d99a1c;
+}
+
 /* ---------- POR QUÉ SE CANCELÓ ----------
    El motivo va en su propio bloque y no en una línea de la línea de
    tiempo: cuando cancela CleanFlow, es lo primero que el cliente quiere
@@ -6360,8 +6434,8 @@ textarea.cf-dash-input {
 }
 
 /* ---------- ¿QUEDÓ TODO BIEN? ----------
-   La respuesta del cliente (#83), debajo de las fotos: se decide después
-   de verlas, no antes. Cuatro situaciones, cada una con su aspecto. */
+   La respuesta del cliente (#83), arriba del detalle: es lo que le toca
+   hacer (maqueta 04). Cuatro situaciones, cada una con su aspecto. */
 
 .cf-ask {
   display: grid;
@@ -6414,6 +6488,12 @@ textarea.cf-dash-input {
 
 .cf-ask__buttons .cf-dash-btn {
   justify-content: center;
+}
+
+/* Arriba del detalle hay sitio: los dos botones, uno al lado del otro y
+   del mismo ancho; en estrecho bajan uno debajo del otro. */
+.cf-bookdetail__todo .cf-ask__buttons {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 /* ---------- YA RESPONDIDO ---------- */
@@ -8725,9 +8805,10 @@ textarea.cf-dash-input {
   align-items: center;
   justify-content: space-between;
   gap: var(--cf-space-4) var(--cf-space-6);
-  margin-top: var(--cf-space-6);
+  /* El hueco y el redondeo de los bloques del detalle (maqueta 04). */
+  margin-top: 20px;
   padding: var(--cf-space-4) var(--cf-space-6);
-  border-radius: var(--cf-radius-md);
+  border-radius: 20px;
   /* El tinte: --cf-text al 3,5 %. */
   background-color: rgba(var(--cf-text-rgb), 0.035);
 }

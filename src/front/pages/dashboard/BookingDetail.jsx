@@ -1,9 +1,10 @@
 /**
- * DETALLE DE UN SERVICIO CONTRATADO.
+ * DETALLE DE UN SERVICIO CONTRATADO (maqueta 04, PANEL-02).
  *
- * Lo que se abre al pulsar una tarjeta de Mis servicios: en qué punto
- * está, qué se contrató, cuánto costó, quién lo hizo, cómo quedó y si
- * hubo alguna incidencia.
+ * Lo que se abre al pulsar una fila de Servicios contratados. Arriba, lo
+ * que le toca al cliente (confirmar y valorar, en el mismo bloque); luego
+ * cómo quedó, qué se contrató y en qué punto está. A la derecha, cuánto
+ * costó, quién fue, cuándo y dónde, y si hubo alguna incidencia.
  *
  * Desde aquí también responde: da el servicio por bueno o cuenta que
  * algo no fue bien (#83), cambiar la fecha o cancelar mientras esté en
@@ -33,6 +34,7 @@ import { ClaimForm } from "../../components/dashboard/bookings/ClaimForm";
 import { BookingIncidents } from "../../components/dashboard/bookings/BookingIncidents";
 import { BookingZoom } from "../../components/dashboard/bookings/BookingZoom";
 import { longDate, timeOf } from "../../components/dashboard/bookings/bookingFormat";
+import { PageHead } from "../../components/dashboard/PageHead";
 
 const LIST_PATH = "/dashboard/contracted-services";
 
@@ -94,6 +96,17 @@ export const BookingDetail = () => {
     const [claiming, setClaiming] = useState(false);
     const [answering, setAnswering] = useState(false);
 
+    /**
+     * Pinta la reserva que devuelve una acción (confirmar, reclamar,
+     * valorar, cambiar la fecha o cancelar).
+     *
+     * La nota media del trabajador solo viene en la lista de reservas, no
+     * en esas respuestas: se conserva la que ya había para que no
+     * desaparezca de «Quién vino».
+     */
+    const updateBooking = (next) =>
+        setBooking((previous) => ({ ...next, worker_rating: next.worker_rating ?? previous?.worker_rating }));
+
     /** Cierra sesión si el token caducó. true si no hay que seguir. */
     const expired = (result) => {
         if (result.status !== 401) return false;
@@ -114,7 +127,7 @@ export const BookingDetail = () => {
 
         // Devuelve la reserva con su confirmation ya recalculada: se pinta
         // la que llega y el bloque cambia solo.
-        if (result.ok) setBooking(result.data.booking);
+        if (result.ok) updateBooking(result.data.booking);
         else setError(result.data.message);
     };
 
@@ -142,7 +155,7 @@ export const BookingDetail = () => {
 
         // Se cierra solo si salió bien: con un error, lo escrito y las
         // fotos siguen ahí y se puede reintentar sin empezar de cero.
-        setBooking(result.data.booking);
+        updateBooking(result.data.booking);
         setClaiming(false);
     };
 
@@ -175,7 +188,7 @@ export const BookingDetail = () => {
             return;
         }
 
-        setBooking(result.data.booking);
+        updateBooking(result.data.booking);
     };
 
     // ---------- MIENTRAS LLEGA LA RESERVA ----------
@@ -202,7 +215,7 @@ export const BookingDetail = () => {
             <div className="cf-bookdetail">
                 <Link to={LIST_PATH} className="cf-bookdetail__back">
                     <i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                    Mis servicios
+                    Servicios contratados
                 </Link>
                 <p className="cf-dash-alert" role="alert">{error}</p>
             </div>
@@ -222,7 +235,7 @@ export const BookingDetail = () => {
                     <p className="cf-dash-state__text">
                         Puede que se haya borrado o que el enlace no sea correcto.
                     </p>
-                    <Link to={LIST_PATH} className="cf-dash-btn">Volver a mis servicios</Link>
+                    <Link to={LIST_PATH} className="cf-dash-btn">Volver a Servicios contratados</Link>
                 </div>
             </div>
         );
@@ -232,55 +245,55 @@ export const BookingDetail = () => {
 
     const [first] = booking.days;
 
+    // ¿Le toca al cliente hacer algo? Confirmar cómo fue, o valorarlo. Si
+    // sí, las dos cosas van juntas y destacadas arriba (maqueta 04).
+    const toDo = awaitsConfirmation(booking) ||
+        (["confirmed", "auto_confirmed"].includes(booking.confirmation) && !booking.review);
+
     return (
         <div className="cf-bookdetail">
 
             <Link to={LIST_PATH} className="cf-bookdetail__back">
-                <i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                Mis servicios
+                <i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                Servicios contratados
             </Link>
 
-            <div className="cf-bookdetail__header">
-                <div>
-                    {/* La sección de la que viene, como en el resto del panel. */}
-                    <p className="cf-dash-eyebrow">Mis servicios</p>
-                    <h1 className="cf-bookdetail__title">
-                        {booking.service?.name || "Servicio no disponible"}
-                    </h1>
-                    <p className="cf-bookdetail__sub">
-                        {longDate(first.starts_at)} · {timeOf(first.starts_at)} – {timeOf(first.ends_at)}
-                        {" · "}Reserva n.º {booking.booking_id}
-                    </p>
-                </div>
-
-                {/* Aquí no hay sitio para un aviso aparte, así que es la
-                    propia pastilla la que pide la confirmación. */}
-                <BookingStatusPill
-                    status={booking.status}
-                    awaitingConfirmation={awaitsConfirmation(booking)}
-                />
-            </div>
+            <PageHead
+                title={booking.service?.name || "Servicio no disponible"}
+                subtitle={`${longDate(first.starts_at)} · ${timeOf(first.starts_at)} – ${timeOf(first.ends_at)} · Reserva n.º ${booking.booking_id}`}
+                actions={
+                    // La propia pastilla pide la confirmación si hace falta.
+                    <BookingStatusPill
+                        status={booking.status}
+                        awaitingConfirmation={awaitsConfirmation(booking)}
+                    />
+                }
+            />
 
             {/* La columna ancha se lee en orden; la estrecha se consulta. */}
             <div className="cf-bookdetail__grid">
 
                 <div className="cf-bookdetail__col">
-                    <BookingTimeline booking={booking} />
+                    {/* Lo que le toca al cliente, arriba: confirmar y valorar
+                        en el mismo bloque. Respondido, se ve como los demás. */}
+                    <div className={toDo ? "cf-bookdetail__todo cf-bookdetail__todo--active" : "cf-bookdetail__todo"}>
+                        <BookingConfirm
+                            booking={booking}
+                            saving={answering}
+                            onConfirm={handleConfirm}
+                            onClaim={() => setClaiming(true)}
+                        />
+                        <BookingReview
+                            booking={booking}
+                            saving={rating}
+                            error={rateError}
+                            onSubmit={handleRate}
+                        />
+                    </div>
                     <BookingCancelled booking={booking} />
-                    <BookingWhat booking={booking} />
                     <BookingPhotos tasks={booking.tasks} onZoom={setZoomed} />
-                    <BookingConfirm
-                        booking={booking}
-                        saving={answering}
-                        onConfirm={handleConfirm}
-                        onClaim={() => setClaiming(true)}
-                    />
-                    <BookingReview
-                        booking={booking}
-                        saving={rating}
-                        error={rateError}
-                        onSubmit={handleRate}
-                    />
+                    <BookingWhat booking={booking} />
+                    <BookingTimeline booking={booking} />
                 </div>
 
                 <div className="cf-bookdetail__col">
@@ -297,7 +310,7 @@ export const BookingDetail = () => {
             <BookingChanges
                 key={booking.booking_id}
                 booking={booking}
-                onChanged={setBooking}
+                onChanged={updateBooking}
             />
 
             <BookingZoom photo={zoomed} onClose={() => setZoomed(null)} />
