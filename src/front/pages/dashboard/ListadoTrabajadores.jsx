@@ -401,7 +401,7 @@ export const ListadoTrabajadores = () => {
                         </h2>
                         <p className="cf-dash-modal__text" id="confirm-text">
                             Dejará de aparecer libre para reservas nuevas y no podrá entrar en la aplicación. Si
-                            tiene reservas pendientes, pasarán a Reservas afectadas para que las reasignes. Su
+                            tiene reservas pendientes, aparecerán en Reservas, en la vista Afectadas, para que las reasignes. Su
                             historial se conserva y puedes volver a activarlo cuando quieras.
                         </p>
                         <div className="cf-dash-modal__actions">

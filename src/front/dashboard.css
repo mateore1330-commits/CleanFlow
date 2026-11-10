@@ -16,7 +16,7 @@
      8. Trabajadores, ausencias y reservas afectadas (cf-workers__*,
         cf-worker-form__*, cf-absences__*, cf-affected__*)
      9. Mis servicios del cliente y el detalle de una reserva
-        (cf-myservices__*, cf-bookcard__*, cf-bookdetail__*)
+        (cf-myservices__*, cf-mybooking__*, cf-bookdetail__*)
     10. Mis servicios del trabajador y su detalle (cf-mytasks__*,
         cf-wcard__*, cf-wdetail__*, cf-wtask__*, cf-wact__*)
     11. Incidencias: formulario y pantalla del encargado
@@ -31,6 +31,7 @@
         cf-client-pending__*, cf-client-rebook__*)
     18. Movimiento reducido
     19. Grupos de botones: los de una decisión, iguales
+    20. Listas del encargado: piezas comunes (cf-views, cf-lbar, cf-ldrop)
 
    Prefijo cf-dash- y no cf-: web.css sigue cargado en el dashboard y un
    .cf-btn de aquí pisaría el de la web pública.
@@ -4276,10 +4277,7 @@ textarea.cf-dash-input {
 
 .cf-workers,
 .cf-worker-form,
-.cf-absences,
-.cf-affected,
-.cf-clients,
-.cf-bookings {
+.cf-absences {
   container-type: inline-size;
   max-width: 1180px;
   color: var(--cf-text);
@@ -4287,10 +4285,7 @@ textarea.cf-dash-input {
 }
 
 .cf-workers__header,
-.cf-absences__header,
-.cf-affected__header,
-.cf-clients__header,
-.cf-bookings__header {
+.cf-absences__header {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -4301,10 +4296,7 @@ textarea.cf-dash-input {
 
 .cf-workers__title,
 .cf-worker-form__title,
-.cf-absences__title,
-.cf-affected__title,
-.cf-clients__title,
-.cf-bookings__title {
+.cf-absences__title {
   margin: 0;
   font-family: var(--cf-font-heading);
   font-size: var(--cf-text-2xl);
@@ -4313,10 +4305,7 @@ textarea.cf-dash-input {
 
 .cf-workers__lede,
 .cf-worker-form__lede,
-.cf-absences__lede,
-.cf-affected__lede,
-.cf-clients__lede,
-.cf-bookings__lede {
+.cf-absences__lede {
   margin: var(--cf-space-2) 0 0;
   max-width: 62ch;
   color: var(--cf-muted);
@@ -4702,102 +4691,9 @@ textarea.cf-dash-input {
   gap: var(--cf-space-2);
 }
 
-/* ---------- RESERVAS AFECTADAS ---------- */
-
-.cf-affected__count {
-  margin: 0 0 var(--cf-space-4);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-affected__list {
-  display: grid;
-  gap: var(--cf-space-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Borde ámbar a la izquierda: todas piden atención. */
-.cf-affected__card {
-  padding: var(--cf-space-6);
-  border: 1px solid var(--cf-border);
-  border-left: 4px solid var(--cf-warning);
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
-}
-
-.cf-affected__top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--cf-space-3);
-}
-
-.cf-affected__id {
-  margin: 0;
-  font-size: var(--cf-text-lg);
-  font-weight: 600;
-}
-
-.cf-affected__client {
-  display: block;
-  margin-top: 2px;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-  font-weight: 400;
-}
-
-.cf-affected__reasons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.cf-affected__reason {
-  padding: 4px 10px;
-  border-radius: 999px;
-  background-color: var(--cf-warning-soft);
-  color: var(--cf-warning-dark);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.cf-affected__worker {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-3);
-  margin: var(--cf-space-4) 0 var(--cf-space-3);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-affected__link {
-  color: var(--cf-primary);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.cf-affected__days {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--cf-space-2);
-  margin: 0 0 var(--cf-space-4);
-  padding: 0;
-  list-style: none;
-}
-
-.cf-affected__day {
-  padding: 6px 12px;
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-bg);
-  font-size: var(--cf-text-sm);
-  font-variant-numeric: tabular-nums;
-}
+/* ---------- RESOLVER UNA AFECTADA (ResolveAffected.jsx) ----------
+   Dentro del diálogo de Reservas. La página suelta de reservas afectadas
+   se quitó en PANEL-04: su dirección lleva a Reservas › Afectadas. */
 
 /* Lo que se puede hacer con la reserva, separado por una línea. */
 .cf-affected__resolve {
@@ -5070,7 +4966,6 @@ textarea.cf-dash-input {
 
 /* Los bloques de texto gris ocupan el hueco que dejan pastilla y botón. */
 .cf-absences__skel-head,
-.cf-affected__skel-head,
 .cf-worker-form__skel-head {
   flex: 1;
 }
@@ -5175,45 +5070,6 @@ textarea.cf-dash-input {
   border-radius: 999px;
 }
 
-/* Reservas afectadas */
-.cf-affected__skel-count {
-  width: 220px;
-  margin-bottom: var(--cf-space-4);
-}
-
-.cf-affected__skel-id {
-  width: 30%;
-  height: 18px;
-}
-
-.cf-affected__skel-client {
-  width: 20%;
-  height: 10px;
-  margin-top: 8px;
-}
-
-.cf-affected__skel-pill {
-  width: 90px;
-  height: 24px;
-  border-radius: 999px;
-}
-
-.cf-affected__skel-line {
-  width: 160px;
-}
-
-.cf-affected__skel-day {
-  width: 150px;
-  height: 30px;
-  border-radius: 999px;
-}
-
-.cf-affected__skel-btn {
-  width: 170px;
-  height: 40px;
-  border-radius: 999px;
-}
-
 /* ---------- PANTALLAS ESTRECHAS ----------
    860px: cada trabajador pasa a tarjeta (nombre arriba, datos en medio y
    acciones abajo), sin cabecera de columnas. 640px: formularios a una
@@ -5274,7 +5130,6 @@ textarea.cf-dash-input {
   }
 
   .cf-absences__form,
-  .cf-affected__card,
   .cf-worker-form__form,
   .cf-worker-form__aside {
     padding: var(--cf-space-4);
@@ -5722,133 +5577,6 @@ textarea.cf-dash-input {
   transform: translateX(2px);
 }
 
-/* ---------- TARJETA ----------
-   Tres columnas: fecha, servicio y, a la derecha, estado y precio. El
-   aviso de confirmación pendiente ocupa una fila entera debajo. */
-
-.cf-bookcard {
-  display: grid;
-  grid-template-columns: 74px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--cf-space-5, 20px);
-  width: 100%;
-  padding: var(--cf-space-4) var(--cf-space-5, 20px);
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color var(--cf-transition),
-    box-shadow var(--cf-transition),
-    transform var(--cf-transition);
-}
-
-.cf-bookcard:hover {
-  border-color: var(--cf-primary);
-  box-shadow: var(--cf-shadow-md);
-  transform: translateY(-1px);
-}
-
-.cf-bookcard:focus-visible {
-  outline: 2px solid var(--cf-primary);
-  outline-offset: 2px;
-}
-
-/* El bloque de fecha ancla la tarjeta: es lo primero que se busca. */
-.cf-bookcard__date {
-  display: grid;
-  justify-items: center;
-  gap: 1px;
-  padding: var(--cf-space-2) 0;
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-}
-
-.cf-bookcard__day {
-  font-family: var(--cf-font-heading);
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.cf-bookcard__month {
-  font-family: var(--cf-font-brand);
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.cf-bookcard__main {
-  min-width: 0;
-}
-
-.cf-bookcard__service {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-lg);
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.cf-bookcard__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-1) var(--cf-space-4);
-  margin-top: 5px;
-  color: var(--cf-muted);
-  font-size: 0.8438rem;
-}
-
-.cf-bookcard__meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--cf-space-1);
-}
-
-.cf-bookcard__meta i,
-.cf-bookcard__meta svg {
-  font-size: 0.8125rem;
-}
-
-/* Iniciales del trabajador: el mismo círculo de acento del avatar. */
-
-.cf-bookcard__side {
-  display: grid;
-  justify-items: end;
-  gap: var(--cf-space-1);
-}
-
-.cf-bookcard__price {
-  font-family: var(--cf-font-heading);
-  font-size: 1.1875rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Aviso de que la pelota está en el tejado del cliente. Va en su propia
-   fila para no competir con el estado, que está justo encima. */
-.cf-bookcard__notice {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  margin: 0;
-  padding: var(--cf-space-2) var(--cf-space-3);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-warning-soft);
-  color: var(--cf-warning-dark);
-  font-size: 0.8438rem;
-  font-weight: 500;
-}
-
 /* ---------- ESTADO ----------
    Píldora con fondo suave y un punto o un icono, como en las maquetas: el
    color solo no basta, porque no todo el mundo lo ve igual. Los tonos los
@@ -5928,45 +5656,6 @@ textarea.cf-dash-input {
     opacity: 0.45;
     transform: scale(0.82);
   }
-}
-
-/* ---------- CARGANDO ----------
-   Barras grises con la forma de la tarjeta, como en el resto del panel. */
-
-.cf-bookcard--skel {
-  cursor: default;
-}
-
-.cf-bookcard--skel:hover {
-  transform: none;
-  border-color: var(--cf-border);
-  box-shadow: var(--cf-shadow-sm);
-}
-
-.cf-bookcard__skel-date {
-  height: 52px;
-}
-
-.cf-bookcard__skel-title {
-  width: 42%;
-  height: 17px;
-}
-
-.cf-bookcard__skel-meta {
-  width: 64%;
-  height: 13px;
-  margin-top: var(--cf-space-2);
-}
-
-.cf-bookcard__skel-state {
-  width: 88px;
-  height: 17px;
-}
-
-.cf-bookcard__skel-price {
-  width: 66px;
-  height: 17px;
-  margin-top: var(--cf-space-2);
 }
 
 /* La fila del cliente mientras carga. */
@@ -6801,22 +6490,9 @@ textarea.cf-dash-input {
 }
 
 /* ---------- ESTRECHO ----------
-   Sin sitio para tres columnas: el estado y el precio bajan a su fila. */
+   Sin sitio para seis columnas: la fila se compacta. */
 
 @container (max-width: 640px) {
-  .cf-bookcard {
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: var(--cf-space-3);
-    padding: var(--cf-space-3);
-  }
-
-  .cf-bookcard__side {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    gap: var(--cf-space-3);
-  }
-
   .cf-mybooking {
     grid-template-columns: 54px minmax(0, 1fr) auto;
     gap: 4px var(--cf-space-3);
@@ -8273,136 +7949,57 @@ textarea.cf-dash-input {
   font-size: 0.7813rem;
 }
 
-/* ---------- PANTALLA DEL ENCARGADO ----------
+/* ---------- PANTALLA DEL ENCARGADO (maqueta 06, PANEL-04) ----------
    Todo lo que ha salido mal, venga del trabajador (#18) o del cliente
-   (#83). Es la pantalla que cierra el círculo: hasta la #19, se
-   registraban problemas que nadie podía resolver. */
+   (#83). Las vistas y la barra son las piezas comunes (sección 20); aquí
+   va la tarjeta de cada incidencia. */
 
 .cf-incidents {
   container-type: inline-size;
-  max-width: 1180px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
 
-.cf-incidents__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-incidents__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-}
-
-.cf-incidents__lede {
-  margin: var(--cf-space-2) 0 0;
-  max-width: 62ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-/* La barra: las pestañas del catálogo y, a la derecha, los dos
-   desplegables. Misma estructura que Mis servicios. */
-.cf-incidents__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-2) var(--cf-space-6);
+/* La barra sola, sin tabla debajo: las tarjetas van fuera del bloque. */
+.cf-incidents__bar {
   margin-bottom: var(--cf-space-4);
-  border-bottom: 1px solid var(--cf-border);
 }
 
-.cf-incidents__toolbar .cf-services__tabs {
-  margin-bottom: 0;
+.cf-incidents__bar .cf-lbar {
   border-bottom: 0;
 }
 
-.cf-incidents__picks {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-2);
-  margin-bottom: var(--cf-space-2);
-}
-
-/* Desplegable en píldora, a juego con el buscador del panel. La flecha
-   se dibuja con dos degradados porque la nativa no se puede teñir. */
-.cf-incidents__pick {
-  height: 38px;
-  padding: 0 34px 0 var(--cf-space-4);
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
-  color: var(--cf-text);
-  font-family: var(--cf-font-body);
-  font-size: var(--cf-text-sm);
-  cursor: pointer;
-  appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--cf-muted) 50%),
-    linear-gradient(135deg, var(--cf-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 18px) 17px,
-    calc(100% - 13px) 17px;
-  background-size:
-    5px 5px,
-    5px 5px;
-  background-repeat: no-repeat;
-}
-
-.cf-incidents__pick:focus-visible {
-  outline: none;
-  border-color: var(--cf-primary);
-  box-shadow: 0 0 0 3px var(--cf-ring);
-}
-
-/* Con un filtro puesto se enciende, para saber que la lista está
-   recortada sin tener que leer los desplegables. */
-.cf-incidents__pick--on {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  font-weight: 500;
+.cf-incidents__bar .cf-lbar__filters {
+  margin-left: 0;
 }
 
 .cf-incidents__list {
   display: grid;
-  gap: var(--cf-space-3);
+  gap: 14px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* ---------- LA FICHA ---------- */
+/* ---------- LA TARJETA ----------
+   El borde izquierdo dice el estado: rojo abierta, verde resuelta. */
 
 .cf-incard {
-  display: grid;
-  gap: var(--cf-space-3);
-  padding: var(--cf-space-4) var(--cf-space-5, 18px);
+  padding: 20px 22px;
   border: 1px solid var(--cf-border);
-  border-left: 3px solid var(--cf-danger);
-  border-radius: 0 var(--cf-radius-md) var(--cf-radius-md) 0;
+  border-left: 4px solid var(--cf-danger);
+  border-radius: var(--cf-radius-lg);
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
 
-/* Resuelta: el borde se apaga, ya no pide nada. */
 .cf-incard--done {
-  border-left-color: var(--cf-primary-soft);
+  border-left-color: var(--cf-success);
 }
 
-/* No realizada: borde más grueso. No es una figura rota, es un cliente
-   sin servicio y un hueco que decidir qué hacer con él. */
-.cf-incard--notdone {
-  border-left-width: 5px;
+.cf-incard p,
+.cf-incard h2 {
+  margin: 0;
 }
 
 .cf-incard__top {
@@ -8410,85 +8007,72 @@ textarea.cf-dash-input {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--cf-space-2);
+  color: var(--cf-muted);
+  font-size: 0.75rem;
 }
 
 .cf-incard__tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   padding: 3px 10px;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
-  white-space: nowrap;
 }
 
 .cf-incard__tag--client {
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
 }
 
 .cf-incard__tag--company {
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
-/* La etiqueta que lo cambia todo: el servicio no llegó a hacerse. */
 .cf-incard__tag--notdone {
-  background-color: var(--cf-danger-dark);
-  color: var(--cf-on-primary);
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
 }
 
-.cf-incard__who {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--cf-muted);
-  font-size: 0.7813rem;
-}
-
-.cf-incard__when {
-  margin-left: auto;
-  color: var(--cf-muted);
-  font-size: 0.7813rem;
-  font-variant-numeric: tabular-nums;
-}
-
-/* De qué servicio habla: sin esto la incidencia no dice nada. */
 .cf-incard__ref {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--cf-space-1) var(--cf-space-4);
-  padding-bottom: var(--cf-space-2);
-  border-bottom: 1px solid var(--cf-border);
-  font-size: var(--cf-text-sm);
+  margin: 10px 0 0;
 }
 
+/* color: el h2 global de index.css lo pinta de --cf-primary. */
 .cf-incard__service {
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-base);
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .cf-incard__meta {
+  margin-top: 2px;
   color: var(--cf-muted);
+  font-size: 0.8125rem;
 }
 
+/* Lo que pasó, entre comillas y en su recuadro: son palabras de alguien. */
 .cf-incard__text {
-  margin: 0;
-  font-size: 0.9063rem;
-  white-space: pre-wrap;
+  margin-top: var(--cf-space-3);
+  padding: 12px 14px;
+  border-radius: 12px;
+  background-color: var(--cf-bg);
+  font-size: var(--cf-text-sm);
+  line-height: 1.55;
 }
 
 .cf-incard__shots {
   display: flex;
   flex-wrap: wrap;
   gap: var(--cf-space-2);
+  margin-top: var(--cf-space-3);
 }
 
 .cf-incard__shots .cf-bookshot {
-  width: 72px;
+  width: 64px;
 }
 
 .cf-incard__shots .cf-bookshot__img {
@@ -8499,24 +8083,32 @@ textarea.cf-dash-input {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-2);
+  justify-content: flex-end;
+  gap: var(--cf-space-3);
+  margin-top: var(--cf-space-3);
 }
 
+.cf-incard__note {
+  margin-right: auto;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+/* Ya resuelta: lo que se decidió, en verde. */
 .cf-incard__fix {
-  margin: 0;
-  padding: var(--cf-space-3);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
+  margin-top: var(--cf-space-3);
+  padding: 12px 14px;
+  border-radius: 12px;
+  background-color: var(--cf-success-soft);
+  color: var(--cf-text);
   font-size: var(--cf-text-sm);
-  white-space: pre-wrap;
 }
 
 .cf-incard__fix strong {
   display: block;
   margin-bottom: 2px;
-  font-size: 0.7188rem;
+  color: var(--cf-success);
+  font-size: 0.8125rem;
 }
 
 /* ---------- CARGANDO ---------- */
@@ -8529,19 +8121,24 @@ textarea.cf-dash-input {
 .cf-incard__skel-ref {
   width: 66%;
   height: 14px;
+  margin-top: 12px;
 }
 
 .cf-incard__skel-text {
   width: 84%;
-  height: 13px;
+  height: 40px;
+  margin-top: 12px;
+  border-radius: 12px;
 }
 
 /* ======================================================================
-   12. BANDEJAS: CANDIDATURAS Y MENSAJES (Inbox.jsx)
-   ====================================================================== */
+   12. BANDEJAS: CANDIDATURAS Y MENSAJES (Inbox.jsx, maqueta 06, PANEL-04)
+   ======================================================================
+
+   La cabecera es PageHead y las vistas son las comunes (sección 20); aquí
+   va la tarjeta de cada mensaje o candidatura. */
 
 .cf-applications {
-  max-width: 1180px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
@@ -8553,33 +8150,6 @@ textarea.cf-dash-input {
 
 .cf-applications__subject {
   overflow-wrap: anywhere;
-}
-
-/* ---------- CABECERA ---------- */
-
-.cf-applications__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-applications__title {
-  margin: 0;
-  color: var(--cf-primary);
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-  line-height: 1.15;
-}
-
-.cf-applications__lede {
-  max-width: 60ch;
-  margin: var(--cf-space-1) 0 0;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
 }
 
 /* ---------- ERROR ---------- */
@@ -8605,9 +8175,9 @@ textarea.cf-dash-input {
 }
 
 .cf-applications__card {
-  padding: var(--cf-space-5, 20px);
+  padding: 20px 22px;
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: var(--cf-radius-lg);
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
@@ -8623,8 +8193,9 @@ textarea.cf-dash-input {
 .cf-applications__name {
   margin: 0;
   color: var(--cf-text);
+  font-family: var(--cf-font-heading);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
 }
 
@@ -8657,13 +8228,17 @@ textarea.cf-dash-input {
   font-size: var(--cf-text-sm);
 }
 
-/* ---------- ESTADOS ---------- */
+/* ---------- ESTADOS ----------
+   En píldora, como los estados de las reservas: lo nuevo en ámbar, porque
+   pide algo; lo respondido en verde; lo descartado en gris. */
 
 .cf-applications__state {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: var(--cf-text-sm);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -8673,30 +8248,22 @@ textarea.cf-dash-input {
   height: 6px;
   flex-shrink: 0;
   border-radius: 50%;
+  background-color: currentColor;
 }
 
 .cf-applications__state--new {
-  color: var(--cf-accent-dark);
-}
-
-.cf-applications__state--new .cf-applications__dot {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 .cf-applications__state--contacted {
-  color: var(--cf-primary);
-}
-
-.cf-applications__state--contacted .cf-applications__dot {
-  background-color: var(--cf-primary);
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
 }
 
 .cf-applications__state--discarded {
-  color: var(--cf-muted);
-}
-
-.cf-applications__state--discarded .cf-applications__dot {
-  background-color: var(--cf-muted);
+  background-color: var(--cf-neutral-soft);
+  color: var(--cf-neutral);
 }
 
 /* ---------- DETALLE ---------- */
@@ -8761,14 +8328,6 @@ textarea.cf-dash-input {
 /* ---------- RESPONSIVE ---------- */
 
 @media (max-width: 640px) {
-  .cf-applications__header {
-    align-items: stretch;
-  }
-
-  .cf-applications__header .cf-dash-btn {
-    width: 100%;
-  }
-
   .cf-applications__card {
     padding: var(--cf-space-4);
   }
@@ -9448,124 +9007,95 @@ textarea.cf-dash-input {
 }
 
 /* ======================================================================
-   15. INICIO DEL ENCARGADO (pages/dashboard/home/ManagerHome.jsx)
+   15. INICIO DEL ENCARGADO (pages/dashboard/home/ManagerHome.jsx,
+       maqueta 06, PANEL-04)
    ======================================================================
 
-   La entrada del panel, y la única pantalla que no se parece al resto.
-   A propósito: las demás son para trabajar y esta es para mirar. De ahí
-   el verde de fondo, la letra grande y los bloques sin borde.
-
-   El hero es la única superficie oscura de todo el panel. Eso es lo que
-   hace que al entrar se note que estás en otro sitio. */
+   La entrada del panel: arriba el saludo con los avisos y la cifra del
+   mes, en la banda oscura; luego las cuatro cifras en una fila y la
+   agenda del día. Al tocar un servicio se abre su ficha por la derecha. */
 
 .cf-home {
+  container-type: inline-size;
   display: grid;
-  gap: var(--cf-space-4);
+  gap: 20px;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
 }
 
-/* ---------- EL HERO ---------- */
+.cf-home p {
+  margin: 0;
+}
+
+/* ---------- LA BANDA ---------- */
 
 .cf-home__hero {
   position: relative;
   overflow: hidden;
-  padding: 34px 36px;
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-band);
-  color: var(--cf-on-primary);
+  padding: 30px 32px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--cf-brand-900) 0%, var(--cf-brand-700) 60%, #0f7f88 100%);
+  box-shadow: 0 18px 40px -22px rgba(var(--cf-brand-900-rgb), 0.65);
+  color: var(--cf-white);
 }
 
-/* Dos manchas muy suaves para que el verde no sea un rectángulo plano.
-   ⚠️ A mano: los tokens no tienen versiones translúcidas. */
-.cf-home__hero::before,
+/* El brillo menta de la esquina, como en la cabecera común. */
 .cf-home__hero::after {
   content: "";
   position: absolute;
+  top: -150px;
+  right: -110px;
+  width: 400px;
+  height: 400px;
   border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--cf-accent-rgb), 0.3), transparent 65%);
   pointer-events: none;
 }
 
-.cf-home__hero::before {
-  width: 420px;
-  height: 420px;
-  top: -220px;
-  right: -90px;
-  background: radial-gradient(
-    circle,
-    rgba(var(--cf-accent-rgb), 0.26),
-    transparent 68%
-  );
-}
-
-.cf-home__hero::after {
-  width: 320px;
-  height: 320px;
-  bottom: -200px;
-  left: 18%;
-  background: radial-gradient(
-    circle,
-    rgba(var(--cf-white-rgb), 0.14),
-    transparent 70%
-  );
-}
-
-/* position: relative para que quede por encima de las manchas. */
 .cf-home__in {
   position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
-  align-items: center;
-  gap: var(--cf-space-8);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 24px;
 }
 
-.cf-home__date {
-  margin: 0 0 10px;
-  color: rgba(var(--cf-white-rgb), 0.62);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* clamp: en una pantalla estrecha el saludo no puede ocupar tres líneas. */
-/* color: inherit y no un token suelto. El `h1` global de index.css lo
-   pinta de --cf-primary, y una regla directa gana siempre a lo heredado:
-   el saludo salía verde oscuro sobre el verde del hero, o sea invisible.
-   Con inherit sigue al hero si algún día cambia de fondo. */
+/* color: inherit: el h1 global de index.css lo pinta de --cf-primary, y
+   sobre la banda oscura no se vería. */
 .cf-home__hi {
   margin: 0;
   color: inherit;
   font-family: var(--cf-font-heading);
-  font-size: clamp(2rem, 4.2vw, 2.9rem);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.75rem, 3.4vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.1;
 }
 
 .cf-home__sub {
-  margin: 12px 0 0;
-  max-width: 40ch;
-  color: rgba(var(--cf-white-rgb), 0.74);
+  margin-top: 6px;
+  color: rgba(var(--cf-white-rgb), 0.82);
   font-size: 0.9375rem;
-  line-height: 1.55;
 }
 
-/* ---------- LAS BANDEJAS ---------- */
-
+/* Los avisos: en rojo lo que quema, en blanco lo que solo espera. */
 .cf-home__pills {
   display: flex;
   flex-wrap: wrap;
   gap: var(--cf-space-2);
-  margin-top: 20px;
+  margin-top: var(--cf-space-4);
 }
 
 .cf-home__pill {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 13px;
+  gap: var(--cf-space-2);
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.22);
   border-radius: 999px;
   background-color: rgba(var(--cf-white-rgb), 0.12);
-  color: var(--cf-on-primary);
+  color: var(--cf-white);
   font-size: 0.8125rem;
   font-weight: 600;
   text-decoration: none;
@@ -9573,215 +9103,185 @@ textarea.cf-dash-input {
 
 .cf-home__pill:hover {
   background-color: rgba(var(--cf-white-rgb), 0.2);
-  color: var(--cf-on-primary);
+  color: var(--cf-white);
 }
 
-/* Lo que quema, en ámbar de aviso. Lo que solo espera, no. */
 .cf-home__pill--hot {
-  background-color: var(--cf-warning);
+  border-color: rgba(239, 107, 107, 0.55);
+  background-color: rgba(239, 107, 107, 0.24);
 }
 
 .cf-home__pill--hot:hover {
-  background-color: var(--cf-warning-dark);
-}
-
-.cf-home__pill b {
-  font-variant-numeric: tabular-nums;
+  background-color: rgba(239, 107, 107, 0.34);
 }
 
 .cf-home__pill:focus-visible {
-  outline: 3px solid var(--cf-on-primary);
+  outline: 3px solid var(--cf-accent);
   outline-offset: 2px;
 }
 
-/* ---------- LA CIFRA DEL MES, DENTRO DEL HERO ---------- */
-
+/* La cifra del mes, en su cristal. */
 .cf-home__money {
-  padding: 20px 22px;
-  border-radius: var(--cf-radius-md);
+  padding: 18px 20px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.18);
+  border-radius: 18px;
   background-color: rgba(var(--cf-white-rgb), 0.1);
+  backdrop-filter: blur(6px);
 }
 
 .cf-home__tag {
-  display: inline-block;
-  margin-bottom: 10px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background-color: var(--cf-accent);
-  color: var(--cf-on-accent);
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  color: rgba(var(--cf-white-rgb), 0.78);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .cf-home__fig {
-  margin: 0;
+  margin: 6px 0 10px;
   font-family: var(--cf-font-heading);
-  font-size: 1.875rem;
-  font-weight: 600;
-  line-height: 1;
+  font-size: 2.125rem;
+  font-weight: 800;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-.cf-home__what {
-  margin: 8px 0 0;
-  font-size: 0.9375rem;
-  font-weight: 600;
-}
-
-.cf-home__where {
-  margin: 3px 0 0;
-  color: rgba(var(--cf-white-rgb), 0.7);
+.cf-home__m2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  color: rgba(var(--cf-white-rgb), 0.85);
   font-size: 0.8125rem;
 }
 
-/* Los cortes van sobre la VENTANA, pero el contenido tiene 268 px menos
-   por el menú lateral: a 1280 de ventana quedan unos 964. Por eso los
-   números parecen altos.
-
-   Aquí el hero se apila: con menos de ~700 px de contenido, el panel de
-   la derecha y el saludo se estrujan los dos. */
-@media (max-width: 1020px) {
-  .cf-home__hero {
-    padding: 26px 22px;
-  }
-
-  .cf-home__in {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--cf-space-6);
-  }
-}
-
-/* ---------- LAS CIFRAS ----------
-   Rejilla asimétrica a propósito: con cuatro cajas iguales esto sería
-   una tabla, y una tabla no se mira, se consulta. La de reservas ocupa
-   el doble porque es la única que tiene algo que contar por dentro. */
+/* ---------- LAS CUATRO CIFRAS ----------
+   En una fila; la de reservas, el doble de ancha, porque lleva su barra. */
 
 .cf-home__bento {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
   gap: var(--cf-space-4);
 }
 
 .cf-home__kpi {
-  padding: 20px 22px;
-  border-radius: var(--cf-radius-lg);
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
 
-.cf-home__kpi--wide {
-  grid-column: span 2;
-  background-color: var(--cf-primary-soft);
-  box-shadow: none;
+.cf-home__kpi--grad {
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
 }
 
 .cf-home__kpi-label {
-  margin: 0 0 10px;
   color: var(--cf-muted);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
 .cf-home__num {
-  color: var(--cf-primary);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--cf-space-2);
+  margin: 8px 0 4px;
   font-family: var(--cf-font-heading);
-  font-size: 2.25rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
+.cf-home__num--rating {
+  align-items: center;
+}
+
 .cf-home__unit {
-  margin-left: 9px;
   color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+  font-family: var(--cf-font-body);
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
+.cf-home__name {
+  margin: 8px 0 4px;
+  font-family: var(--cf-font-heading);
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
 .cf-home__note {
-  margin: 9px 0 0;
   color: var(--cf-muted);
   font-size: 0.8125rem;
 }
 
-/* ---------- LA BARRA DE ESTADOS ----------
-   Los tres trozos en una sola línea, cada uno con su ancho en
-   porcentaje. Sin hueco entre ellos: es un total repartido, no tres
-   barras sueltas. */
-
+/* La barra de reservas vivas: un trozo por estado. */
 .cf-home__bar {
   display: flex;
-  height: 6px;
-  margin-top: 14px;
+  gap: 3px;
+  height: 12px;
+  margin: 14px 0 10px;
   border-radius: 999px;
-  background-color: var(--cf-border);
   overflow: hidden;
 }
 
 .cf-home__bar span {
+  display: block;
   height: 100%;
 }
 
-/* En curso en menta porque está pasando ahora; confirmadas en el
-   verde de marca; pendientes en el beige, que es esperar. */
-.cf-home__bar-doing {
-  background-color: var(--cf-accent);
+.cf-home__bar-ok {
+  background-color: var(--cf-info);
 }
 
-.cf-home__bar-ok {
-  background-color: var(--cf-primary);
+.cf-home__bar-doing {
+  background-color: var(--cf-brand-500);
 }
 
 .cf-home__bar-wait {
-  background-color: var(--cf-border);
+  background-color: var(--cf-warning);
 }
 
 .cf-home__legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin: 11px 0 0;
+  gap: 6px 16px;
   color: var(--cf-muted);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 
-.cf-home__legend i {
+.cf-home__legend span::before {
+  content: "";
   display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 5px;
-  border-radius: 50%;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-radius: 3px;
+  background-color: var(--c);
 }
 
-/* Cuatro columnas piden unos 1.085 px de contenido, o sea ventana de
-   1.400. Por debajo, dos: la ancha ocupa la fila entera y las otras dos
-   se reparten la siguiente. */
-@media (max-width: 1400px) {
-  .cf-home__bento {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.cf-home__legend-ok {
+  --c: var(--cf-info);
 }
 
-@media (max-width: 620px) {
-  .cf-home__bento {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .cf-home__kpi--wide {
-    grid-column: span 1;
-  }
+.cf-home__legend-doing {
+  --c: var(--cf-brand-500);
 }
 
-/* ---------- CÓMO VA EL DÍA ----------
-   El seguimiento: qué hay hoy, quién ha empezado y qué se ha torcido.
-   Es lo único de esta pantalla que cambia solo, cada minuto. */
+.cf-home__legend-wait {
+  --c: var(--cf-warning);
+}
+
+/* ---------- CÓMO VA EL DÍA ---------- */
 
 .cf-home__day {
-  padding: 24px 26px;
-  border-radius: var(--cf-radius-lg);
+  padding: 24px;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
@@ -9792,29 +9292,45 @@ textarea.cf-dash-input {
   align-items: center;
   justify-content: space-between;
   gap: var(--cf-space-3);
-  margin-bottom: var(--cf-space-4);
+  margin-bottom: 6px;
 }
 
+/* color: el h2 global de index.css lo pinta de --cf-primary. */
 .cf-home__t {
   margin: 0;
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.cf-home__dayhead .cf-home__t::first-letter {
+  text-transform: uppercase;
 }
 
 .cf-home__picks {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--cf-space-2);
 }
 
-.cf-home__chip {
-  padding: 7px 15px;
+/* Ayer · Hoy · Mañana, en una píldora. */
+.cf-home__chips {
+  display: inline-flex;
+  padding: 3px;
   border: 1px solid var(--cf-border);
   border-radius: 999px;
-  background-color: var(--cf-surface);
-  color: var(--cf-text);
+  background-color: var(--cf-bg);
+}
+
+.cf-home__chip {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--cf-muted);
   font-family: var(--cf-font-body);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -9822,144 +9338,87 @@ textarea.cf-dash-input {
 }
 
 .cf-home__chip:hover {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary-soft);
+  color: var(--cf-text);
 }
 
-/* aria-pressed y no una clase: el estado ya se lo dice al lector de
-   pantalla, así que pintarlo desde ahí evita que se descuadren. */
+.cf-home__chip:focus-visible,
+.cf-home__pick-date:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
 .cf-home__chip[aria-pressed="true"] {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
+  background: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
+  color: var(--cf-white);
 }
 
-/* El calendario nativo: no se puede maquetar por dentro, así que se le
-   da la misma forma de pastilla por fuera. */
 .cf-home__pick-date {
-  padding: 6px 12px;
+  height: 40px;
+  padding: 0 12px;
   border: 1px solid var(--cf-border);
   border-radius: 999px;
   background-color: var(--cf-surface);
   color: var(--cf-text);
   font-family: var(--cf-font-body);
   font-size: 0.8125rem;
-  font-weight: 600;
 }
 
 .cf-home__sum {
-  margin: 0 0 var(--cf-space-4);
+  margin-bottom: 14px;
   color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+  font-size: 0.8125rem;
 }
 
-.cf-home__sum b {
-  color: var(--cf-text);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- CADA SERVICIO ---------- */
+/* ---------- CADA SERVICIO ----------
+   Toda la fila abre la ficha: el ::after del botón del nombre la cubre,
+   y el de cancelar queda por encima. */
 
 .cf-home__svc {
+  position: relative;
   display: grid;
-  grid-template-columns: 8px 104px minmax(0, 1.2fr) minmax(0, 1fr) auto;
+  grid-template-columns: 10px 110px minmax(0, 1.5fr) minmax(0, 1.3fr) 140px 96px;
   align-items: center;
-  gap: var(--cf-space-3);
-  padding: 14px 0;
-  border-bottom: 1px solid var(--cf-border);
+  gap: 14px;
+  padding: 14px 6px;
+  border-top: 1px solid var(--cf-border);
+  border-radius: 10px;
   font-size: var(--cf-text-sm);
 }
 
-.cf-home__svc:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
+.cf-home__svc:hover {
+  background-color: #f7fbfb;
 }
 
 .cf-home__dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: var(--cf-border);
+  background-color: var(--cf-warning);
 }
 
 .cf-home__dot--doing {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-brand-500);
 }
+
 .cf-home__dot--done {
-  background-color: var(--cf-primary);
+  background-color: var(--cf-success);
 }
+
 .cf-home__dot--not_done {
-  background-color: var(--cf-danger-dark);
+  background-color: var(--cf-danger);
 }
 
 .cf-home__hour {
-  font-weight: 600;
+  font-family: var(--cf-font-heading);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.cf-home__who {
-  color: var(--cf-muted);
-}
-
-.cf-home__who b {
-  color: var(--cf-text);
-  font-weight: 600;
-}
-
-/* El estado arriba y el botón debajo, alineados a la derecha. En
-   columna y no en fila: en la última columna no hay sitio para los dos
-   seguidos sin estrujar el resto. */
-.cf-home__end {
+.cf-home__svc-name {
   display: grid;
-  justify-items: end;
-  gap: 7px;
-  color: var(--cf-muted);
-  font-size: 0.8125rem;
-  text-align: right;
-  white-space: nowrap;
+  gap: 2px;
+  min-width: 0;
 }
-
-.cf-home__warn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 3px;
-  color: var(--cf-warning-dark);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.cf-home__empty {
-  margin: 0;
-  padding: var(--cf-space-8) 0;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-  text-align: center;
-}
-
-/* La fila se parte: el punto y la hora arriba, y el resto debajo
-   alineado con el servicio. Con cinco columnas en menos de ~700 px de
-   contenido, el nombre del servicio y el del cliente no caben. */
-@media (max-width: 1020px) {
-  .cf-home__svc {
-    grid-template-columns: 8px minmax(0, 1fr);
-  }
-
-  /* Todo lo que va debajo de la hora, en la segunda columna. El nombre
-     del servicio también: sin decírselo se colocaba solo en la columna
-     de 8px, se salía por la derecha y se pisaba con el trabajador. */
-  .cf-home__svc-name,
-  .cf-home__who,
-  .cf-home__end {
-    grid-column: 2;
-    justify-items: start;
-    text-align: left;
-  }
-}
-
-/* ---------- EL DETALLE DE UN SERVICIO ----------
-   Una hoja ancha y no un modal de confirmación: aquí se viene a mirar
-   fotos y una línea de tiempo, no a decir que sí. */
 
 .cf-home__open {
   padding: 0;
@@ -9968,42 +9427,114 @@ textarea.cf-dash-input {
   color: var(--cf-text);
   font-family: var(--cf-font-body);
   font-size: var(--cf-text-sm);
+  font-weight: 700;
   text-align: left;
   cursor: pointer;
 }
 
-.cf-home__open:hover {
-  color: var(--cf-accent-dark);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.cf-home__open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 }
 
 .cf-home__open:focus-visible {
-  outline: 3px solid var(--cf-ring);
-  outline-offset: 2px;
-  border-radius: var(--cf-radius-sm);
+  outline: none;
 }
 
-.cf-home__sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
+.cf-home__open:focus-visible::after {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: -2px;
+}
+
+.cf-home__warn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--cf-danger);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Trabajador y cliente, cada uno con su etiqueta delante. */
+.cf-home__who,
+.cf-home__sheet-who {
   display: grid;
-  place-items: center;
-  width: 100%;
+  gap: 4px;
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+
+.cf-home__who span,
+.cf-home__sheet-who span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cf-home__who em,
+.cf-home__sheet-who em {
+  width: 92px;
+  flex: none;
+  color: var(--cf-muted);
+  font-size: 0.6875rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cf-home__end {
+  display: grid;
+  gap: 2px;
+}
+
+.cf-home__end small {
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+.cf-home__act {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cf-home__empty {
+  padding: var(--cf-space-6) 0 var(--cf-space-2);
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  text-align: center;
+}
+
+/* ---------- LA FICHA DE UN SERVICIO ----------
+   Por la derecha, a toda la altura, con showModal(): su fondo tapa la
+   pantalla entera. */
+
+.cf-home__sheet {
+  width: min(560px, 100vw);
   max-width: none;
+  height: 100dvh;
   max-height: none;
-  padding: var(--cf-space-4);
+  margin: 0 0 0 auto;
+  padding: 0;
   border: 0;
-  background-color: rgba(var(--cf-text-rgb), 0.5);
+  border-radius: 24px 0 0 24px;
+  background-color: var(--cf-surface);
+  box-shadow: -20px 0 50px -20px rgba(var(--cf-brand-900-rgb), 0.45);
+}
+
+.cf-home__sheet::backdrop {
+  background-color: rgba(var(--cf-brand-900-rgb), 0.5);
+  backdrop-filter: blur(3px);
 }
 
 .cf-home__sheet-in {
-  width: min(760px, 100%);
-  max-height: 88vh;
+  height: 100%;
   padding: 24px 26px;
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-surface);
   overflow-y: auto;
 }
 
@@ -10016,11 +9547,13 @@ textarea.cf-dash-input {
 }
 
 .cf-home__close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
   flex: none;
-  width: 34px;
-  height: 34px;
   border: 1px solid var(--cf-border);
-  border-radius: 50%;
+  border-radius: 12px;
   background-color: var(--cf-surface);
   color: var(--cf-muted);
   cursor: pointer;
@@ -10031,42 +9564,115 @@ textarea.cf-dash-input {
   color: var(--cf-primary);
 }
 
-/* Los bloques que vienen de la pantalla del cliente traen su propio
-   marco, así que aquí solo se separan. */
+.cf-home__close:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
+/* Los bloques que vienen del detalle del cliente traen su propio marco,
+   así que aquí solo se separan. */
 .cf-home__sheet-body {
   display: grid;
   gap: var(--cf-space-4);
 }
 
 .cf-home__sheet-who {
-  margin: 0;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: var(--cf-bg);
 }
 
-.cf-home__sheet-who b {
-  color: var(--cf-text);
-  font-weight: 600;
-}
-
-/* ---------- MIENTRAS CARGA ----------
-   Tres alturas, una por tipo de bloque, para que el hueco tenga el
-   tamaño de lo que va a ocupar. La animación la pone cf-dash-skel;
-   aquí solo se le da la forma. */
+/* ---------- MIENTRAS CARGA ---------- */
 
 .cf-home__skel--hero {
-  height: 208px;
-  border-radius: var(--cf-radius-lg);
+  height: 190px;
+  border-radius: 24px;
 }
 
 .cf-home__skel--kpi {
   height: 116px;
-  border-radius: var(--cf-radius-lg);
+  border-radius: 20px;
 }
 
 .cf-home__skel--day {
   height: 280px;
-  border-radius: var(--cf-radius-lg);
+  border-radius: 20px;
+}
+
+/* ---------- ESTRECHO ---------- */
+
+@container (max-width: 900px) {
+  .cf-home__bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cf-home__svc {
+    grid-template-columns: 10px 96px minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .cf-home__end {
+    display: none;
+  }
+}
+
+@container (max-width: 720px) {
+  .cf-home__hero {
+    padding: 24px 20px;
+  }
+
+  .cf-home__in {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--cf-space-4);
+  }
+
+  .cf-home__day {
+    padding: 20px var(--cf-space-4);
+  }
+
+  /* La fila, en dos líneas: la hora y el servicio arriba; trabajador y
+     cliente con su etiqueta debajo. */
+  .cf-home__svc {
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    padding: 14px 4px;
+  }
+
+  .cf-home__hour {
+    grid-column: 2;
+  }
+
+  .cf-home__svc-name,
+  .cf-home__who {
+    grid-column: 2 / -1;
+  }
+
+  .cf-home__end {
+    display: grid;
+    grid-column: 2 / -1;
+  }
+
+  .cf-home__act {
+    grid-row: 1;
+    grid-column: 3;
+  }
+
+  .cf-home__who em,
+  .cf-home__sheet-who em {
+    width: 84px;
+  }
+}
+
+@container (max-width: 520px) {
+  .cf-home__bento {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .cf-home__sheet {
+    width: 100vw;
+    border-radius: 0;
+  }
 }
 
 /* ======================================================================
@@ -11171,9 +10777,7 @@ textarea.cf-dash-input {
   .cf-side__link i,
   .cf-side__link svg,
   .cf-side__collapse i,
-  .cf-side__collapse svg,
-  .cf-bookcard,
-  .cf-progress__fill {
+  .cf-side__collapse svg {
     transition: none;
   }
 }
@@ -11181,24 +10785,27 @@ textarea.cf-dash-input {
 /* ======================================================================
    CLIENTES (ENCARGADO)
    ======================================================================
-   La sección gemela de Trabajadores. El contenedor, la cabecera y la
-   barra de pestañas se reaprovechan de allí; aquí solo va lo que esta
-   pantalla tiene de distinto: la rejilla de seis columnas, la fila que
-   se despliega y el pie con el "Ver más".
+   Las vistas, el bloque y el pie son las piezas comunes (sección 20,
+   PANEL-04). Aquí va lo que esta pantalla tiene de distinto: el buscador
+   con sugerencias, la rejilla de seis columnas y la fila que se despliega.
    ====================================================================== */
 
-.cf-clients__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-4);
+/* El contenedor: sin ancho máximo, como el resto de listas. */
+.cf-clients {
+  container-type: inline-size;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+}
+
+/* El buscador de siempre (SearchBox), a todo lo ancho de la barra. */
+.cf-clients__bar .cf-dash-search {
+  flex: 1 1 320px;
+  width: auto;
+  max-width: 520px;
+  margin-bottom: 0;
 }
 
 .cf-clients__list {
-  display: grid;
-  gap: var(--cf-space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -11220,12 +10827,15 @@ textarea.cf-dash-input {
 
 /* Borde transparente: el mismo grosor que la fila, así las columnas de
    la cabecera caen justo encima de las de abajo. */
+/* La cabecera de la tabla, con el degradado suave de todas las listas. */
 .cf-clients__head {
-  border: 1px solid transparent;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -11235,26 +10845,20 @@ textarea.cf-dash-input {
 }
 
 .cf-clients__row {
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-top: 1px solid var(--cf-border);
   background-color: var(--cf-surface);
-  transition:
-    border-color var(--cf-transition),
-    box-shadow var(--cf-transition);
+  transition: background-color var(--cf-transition);
 }
 
 .cf-clients__row:hover {
-  border-color: var(--cf-primary);
-  box-shadow: var(--cf-shadow-sm);
+  background-color: #fafcfc;
 }
 
 /* De baja: un tono suave y el texto apagado, el mismo criterio que un
    trabajador desactivado. Así las dos pantallas se leen igual. */
 .cf-clients__row--inactive,
 .cf-clients__row--inactive:hover {
-  border-color: var(--cf-border);
   background-color: var(--cf-brand-50);
-  box-shadow: none;
 }
 
 .cf-clients__row--inactive .cf-clients__person,
@@ -11476,19 +11080,6 @@ textarea.cf-dash-input {
   text-align: left;
 }
 
-/* ---------- EL PIE ---------- */
-
-.cf-clients__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--cf-space-4);
-  margin-top: var(--cf-space-6);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
 /* ---------- ESTRECHO ----------
    Por el ancho del contenido y no por el de la ventana: lo que manda es
    el hueco que deja el sidebar. */
@@ -11553,416 +11144,194 @@ textarea.cf-dash-input {
 }
 
 /* ======================================================================
-   RESERVAS (ENCARGADO)
+   RESERVAS (ENCARGADO, ListadoReservas.jsx y ManagedBooking*, maqueta 06,
+   PANEL-04)
    ======================================================================
-   La tarjeta es la del cliente (cf-bookcard) con dos añadidos: de quién
-   es la reserva y qué le pasa. Aquí solo va lo propio de esta pantalla:
-   la barra con sus desplegables múltiples, las dos marcas y el ajuste
-   de la tarjeta, que aquí no se pulsa entera.
+   Las vistas, la barra y el bloque de la lista son las piezas comunes
+   (sección 20). Aquí va lo propio: la fila con Cliente y Trabajador en
+   columnas, las dos marcas y lo que se resuelve dentro del diálogo.
    ====================================================================== */
 
-/* ---------- LA BARRA ---------- */
-
-.cf-bookings__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  border-bottom: 1px solid var(--cf-border);
-  padding-bottom: var(--cf-space-3);
-}
-
-.cf-bookings__controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-2);
-}
-
-.cf-bookings__search {
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  flex: 1 1 220px;
-  min-width: 180px;
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
-  padding: var(--cf-space-2) var(--cf-space-4);
-}
-
-.cf-bookings__search i {
-  color: var(--cf-muted);
-}
-
-.cf-bookings__search input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  outline: none;
-}
-
-.cf-bookings__search:focus-within {
-  box-shadow: 0 0 0 3px var(--cf-ring);
-}
-
-/* ---------- LOS DESPLEGABLES ---------- */
-
-.cf-bookings__drop {
-  position: relative;
-}
-
-.cf-bookings__drop-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
+.cf-bookings {
+  container-type: inline-size;
   color: var(--cf-text);
-  padding: var(--cf-space-2) var(--cf-space-4);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    border-color var(--cf-transition),
-    background-color var(--cf-transition);
+  font-family: var(--cf-font-body);
 }
 
-.cf-bookings__drop-btn:hover,
-.cf-bookings__drop-btn[aria-expanded="true"] {
-  border-color: var(--cf-primary);
-}
+/* ---------- LA FILA ----------
+   Fecha, servicio, cliente, trabajador, estado y precio. La cabecera de
+   la tabla (cf-mrow--head) usa la misma rejilla. */
 
-/* Con algo elegido se nota sin abrirlo. */
-.cf-bookings__drop-btn[data-on="true"] {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  font-weight: 600;
-}
-
-.cf-bookings__pop {
-  position: absolute;
-  top: calc(100% + var(--cf-space-2));
-  right: 0;
-  z-index: 20;
-  min-width: 236px;
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: 0 10px 30px rgba(var(--cf-text-rgb), 0.16);
-  padding: var(--cf-space-2);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Hace falta decirlo: `display: flex` de arriba pesa lo mismo que el
-   [hidden] del navegador y, al ir antes, perdería. Con el atributo en el
-   selector esta regla manda y el panel nace cerrado. */
-.cf-bookings__pop[hidden] {
-  display: none;
-}
-
-.cf-bookings__pop-head {
-  display: flex;
+.cf-mrow {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) 150px 80px;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-3);
-  padding: var(--cf-space-1) var(--cf-space-3) var(--cf-space-2);
+  gap: 18px;
+  padding: var(--cf-space-4) 20px;
+}
+
+.cf-lrows > .cf-mrow + .cf-mrow {
+  border-top: 1px solid var(--cf-border);
+}
+
+.cf-mrow:hover:not(.cf-mrow--head) {
+  background-color: #fafcfc;
+}
+
+.cf-mrow p {
+  margin: 0;
+}
+
+.cf-mrow--head {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--cf-border);
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.cf-bookings__pop-head button {
-  border: 0;
-  background: none;
-  padding: 0;
-  color: var(--cf-accent-dark);
-  font: inherit;
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  text-decoration: underline;
-  cursor: pointer;
+.cf-mrow--head > :last-child {
+  text-align: right;
 }
 
-/* Cada opción es una casilla de verdad. Se marcan varias y el panel NO
-   se cierra al marcar: casi nunca se elige una sola. */
-.cf-bookings__opt {
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-3);
-  border-radius: var(--cf-radius-sm);
-  padding: var(--cf-space-2) var(--cf-space-3);
-  font-size: var(--cf-text-sm);
-  cursor: pointer;
+.cf-mrow__date {
+  display: grid;
+  justify-items: center;
+  padding: 6px 0;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--cf-brand-50), var(--cf-accent-soft));
 }
 
-.cf-bookings__opt:hover {
-  background-color: var(--cf-primary-soft);
-}
-
-.cf-bookings__opt input {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  accent-color: var(--cf-primary);
-  cursor: pointer;
-}
-
-/* Cuántas hay de cada opción. Se cuentan sin su propio filtro: si
-   contaran lo ya filtrado, al marcar una el resto se iría a cero. */
-.cf-bookings__opt-n {
-  margin-left: auto;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+.cf-mrow__date b {
+  color: var(--cf-brand-700);
+  font-family: var(--cf-font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-/* Los atajos de fechas, los mismos que ya tiene la pantalla del cliente. */
-.cf-bookings__quick {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--cf-space-2);
-  padding: var(--cf-space-1) var(--cf-space-2) var(--cf-space-2);
+.cf-mrow__date small {
+  color: var(--cf-brand-600);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-.cf-bookings__quick button {
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
-  color: var(--cf-text);
-  padding: 5px var(--cf-space-3);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  cursor: pointer;
-}
-
-.cf-bookings__quick button:hover {
-  border-color: var(--cf-primary);
-}
-
-.cf-bookings__quick button[aria-pressed="true"] {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
-  font-weight: 600;
-}
-
-.cf-bookings__range {
+.cf-mrow__main {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--cf-space-2);
-  border-top: 1px solid var(--cf-border);
-  padding: var(--cf-space-2) var(--cf-space-2) var(--cf-space-1);
-}
-
-.cf-bookings__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--cf-space-1);
-  color: var(--cf-muted);
-  font-size: 0.75rem;
-}
-
-/* ---------- LO QUE SE ESTÁ FILTRANDO ---------- */
-
-.cf-bookings__chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-2);
-  margin-top: var(--cf-space-3);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-bookings__chips-label {
-  color: var(--cf-muted);
-}
-
-/* Una pastilla por valor elegido, no una por filtro: así se quita
-   "Pendientes" sin perder "Canceladas". */
-.cf-bookings__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border: 0;
-  border-radius: 999px;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  padding: 4px 6px 4px var(--cf-space-3);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.cf-bookings__chip:hover {
-  filter: brightness(0.96);
-}
-
-.cf-bookings__chip > span[aria-hidden] {
-  display: grid;
-  place-items: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: rgba(var(--cf-primary-rgb), 0.14);
-  font-size: 11px;
-}
-
-.cf-bookings__chips-clear {
-  border: 0;
-  background: none;
-  padding: 4px 6px;
-  color: var(--cf-accent-dark);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* ---------- LA LISTA ---------- */
-
-.cf-bookings__count {
-  margin: var(--cf-space-4) 0 var(--cf-space-3);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-bookings__list {
-  display: grid;
-  gap: var(--cf-space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.cf-bookings__foot {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--cf-space-6);
-}
-
-/* ---------- LA TARJETA, AJUSTADA ---------- */
-
-/* En el listado del cliente la tarjeta entera es un botón que abre el
-   detalle. Aquí no se abre nada, así que no debe parecer pulsable: lo
-   que se pulsa son los dos sellos.
-
-   El align-items: center de la tarjeta se deja como está: con los sellos
-   en la línea del título, las dos columnas miden lo mismo y centrarlas
-   es lo correcto. */
-.cf-bookings__list .cf-bookcard {
-  cursor: default;
-}
-
-.cf-bookings__list .cf-bookcard:hover {
-  transform: none;
-  border-color: var(--cf-border);
-  box-shadow: var(--cf-shadow-sm);
-}
-
-/* Lo que tiene algo sin resolver se reconoce sin leer, igual que un
-   cliente de baja en su listado. */
-.cf-bookcard--todo {
-  border-left: 3px solid var(--cf-warning);
-}
-
-/* El cliente con el avatar de marca y el trabajador con el menta (Avatar
-   tone="accent"): dos personas en la misma línea tienen que distinguirse
-   de un vistazo. Aquí, el avatar del cliente algo separado de su nombre. */
-.cf-bookcard__who--client {
-  margin-right: var(--cf-space-1);
-}
-
-/* ---------- LAS DOS MARCAS ---------- */
-
-/* El título y sus marcas, en una sola línea.
-   nowrap y no wrap: si envolviera, la tarjeta volvería a crecer y
-   estaríamos donde estábamos. Si no cabe, lo que cede es el nombre del
-   servicio, que se corta con puntos suspensivos; las marcas no, que son
-   lo que hay que ver. */
-.cf-bookings__head {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: var(--cf-space-3);
+  gap: 3px;
   min-width: 0;
 }
 
-.cf-bookings__head .cf-bookcard__service {
+.cf-mrow__service {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--cf-space-2);
+  font-family: var(--cf-font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.cf-mrow__sub {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-mrow__more {
+  margin-left: var(--cf-space-2);
+  color: var(--cf-brand-600);
+}
+
+/* Cliente y trabajador: el avatar y el nombre. La etiqueta solo se ve en
+   el móvil, cuando ya no hay cabecera de tabla que lo diga. */
+.cf-mrow__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   min-width: 0;
+  font-size: var(--cf-text-sm);
+}
+
+.cf-mrow__label {
+  display: none;
+}
+
+.cf-mrow__name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.cf-bookings__marks {
-  display: flex;
-  flex: none;
-  gap: var(--cf-space-2);
+.cf-mrow__name--none {
+  color: var(--cf-muted);
+  font-style: italic;
 }
 
-/* Pequeñas a propósito: van al lado de un titular y no deben pelearse
-   con él. Lo que llama la atención de lejos es la banda del borde; esto
-   es el detalle que se lee al acercarse. */
-.cf-bookings__mark {
+.cf-mrow__state {
+  display: flex;
+}
+
+.cf-mrow__price {
+  font-family: var(--cf-font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-mrow__price--cancelled {
+  color: var(--cf-muted);
+  font-weight: 600;
+  text-decoration: line-through;
+}
+
+/* ---------- LAS DOS MARCAS ----------
+   Afectada (ámbar) se resuelve aquí, en un diálogo; la incidencia (rojo)
+   lleva a su pantalla. Se ven pequeñas pero se tocan en 44 px. */
+
+.cf-mrow__mark {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  white-space: nowrap;
+  gap: 5px;
+  padding: 3px 9px;
+  border: 0;
   border-radius: 999px;
-  /* Alto fijo y no por el contenido: el título mide 22,5px y, si el
-     sello midiera un píxel más, la fila crecería y la tarjeta con avisos
-     volvería a ser más alta que las demás. box-sizing para que el borde
-     del sello de contorno no sume por fuera. */
-  height: 22px;
-  box-sizing: border-box;
-  padding: 0 10px;
-  font: inherit;
-  font-size: 0.75rem;
+  font-family: var(--cf-font-body);
+  font-size: 0.6875rem;
   font-weight: 600;
-  line-height: 1;
   cursor: pointer;
-  transition:
-    filter var(--cf-transition),
-    background-color var(--cf-transition);
 }
 
-/* Rellena: se resuelve aquí mismo. */
-.cf-bookings__mark--affected {
-  border: 1px solid transparent;
+.cf-mrow__mark::after {
+  content: "";
+  position: absolute;
+  inset: -11px -2px;
+}
+
+.cf-mrow__mark--affected {
   background-color: var(--cf-warning-soft);
   color: var(--cf-warning-dark);
 }
 
-.cf-bookings__mark--affected:hover {
+.cf-mrow__mark--incident {
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
+}
+
+.cf-mrow__mark:hover {
   filter: brightness(0.96);
 }
 
-/* De contorno: lleva a otra pantalla. La forma dice lo que hace, para
-   no tener que aprenderse cuál es cuál. */
-.cf-bookings__mark--incident {
-  border: 1px solid var(--cf-danger-line);
-  background-color: var(--cf-surface);
-  color: var(--cf-danger-dark);
-}
-
-.cf-bookings__mark--incident:hover {
-  background-color: var(--cf-danger-soft);
-}
-
-.cf-bookings__mark:focus-visible {
+.cf-mrow__mark:focus-visible {
   outline: 2px solid var(--cf-primary);
   outline-offset: 2px;
 }
@@ -12004,111 +11373,74 @@ textarea.cf-dash-input {
 
 /* ---------- ESQUELETO ---------- */
 
+.cf-bookings__skel-views {
+  height: 84px;
+  margin-bottom: var(--cf-space-4);
+  border-radius: var(--cf-radius-lg);
+}
+
+.cf-bookings__skel-search {
+  width: min(420px, 100%);
+  height: 40px;
+  border-radius: 10px;
+}
+
 .cf-bookings__skel-date {
-  height: 48px;
-  border-radius: var(--cf-radius-sm);
+  height: 52px;
+  border-radius: 12px;
 }
 
 .cf-bookings__skel-name {
-  display: block;
-  width: 46%;
+  width: 40%;
   height: 16px;
-  margin-bottom: var(--cf-space-2);
 }
 
 .cf-bookings__skel-sub {
-  display: block;
-  width: 70%;
+  width: 60%;
   height: 12px;
 }
 
 /* ---------- ESTRECHO ----------
-   Por el ancho del contenido y no el de la ventana: manda el hueco que
-   deja el sidebar. */
+   En el móvil la fila se compacta: fecha a la izquierda, servicio y
+   precio arriba, y debajo Cliente y Trabajador con su etiqueta, para que
+   nunca se confundan. */
 
-@container (max-width: 860px) {
-  /* En una sola línea, el margen negativo de las pestañas apoya su
-     subrayado en la raya de la barra. Al partirse en dos filas tiraba
-     del buscador hacia arriba y lo dejaba pegado a las pestañas. Aquí
-     cada fila va por su cuenta. */
-  .cf-bookings__toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    border-bottom: 0;
-    padding-bottom: 0;
+@container (max-width: 900px) {
+  .cf-mrow--head {
+    display: none;
   }
 
-  /* Las pestañas se parten en dos líneas en vez de deslizarse de lado,
-     que es lo que hace la regla compartida con su overflow-x. Una
-     pestaña que hay que arrastrar para descubrir es una que nadie pulsa.
-     min-width: 0 porque, siendo hijo flexible, si no crece hasta caber
-     su contenido y desborda la página por un par de píxeles. */
-  .cf-bookings__toolbar .cf-services__tabs {
-    flex-wrap: wrap;
-    overflow-x: visible;
-    min-width: 0;
-    gap: var(--cf-space-4);
-    margin-bottom: var(--cf-space-5, 20px);
+  .cf-mrow {
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+    gap: 6px var(--cf-space-3);
+    padding: 14px var(--cf-space-4);
   }
 
-  /* El subrayado de la activa se apoya en la raya de las pestañas, que
-     ahora es la suya y no la de la barra entera. */
-  .cf-bookings__toolbar .cf-services__tab {
-    margin-bottom: -1px;
+  .cf-mrow__date {
+    grid-row: span 4;
+    align-self: start;
   }
 
-  /* El buscador se queda la línea entera y los desplegables van debajo:
-     partido en dos no cabe nada escrito. */
-  .cf-bookings__search {
-    flex: 1 0 100%;
+  .cf-mrow__price {
+    grid-row: 1;
+    grid-column: 3;
+    align-self: start;
   }
 
-  .cf-bookings__pop {
-    right: auto;
-    left: 0;
-    min-width: 0;
-    width: min(280px, 78cqw);
+  .cf-mrow__who,
+  .cf-mrow__state {
+    grid-column: 2 / -1;
   }
 
-  /* En una columna estrecha no caben el título y los sellos con su
-     texto. En vez de partir la fila —que volvería a descuadrar las
-     alturas—, el sello se queda en su icono: redondo, del tamaño del
-     dedo y sin texto. Lo que dice sigue ahí para quien usa lector de
-     pantalla, y al tocarlo se explica entero. */
-  .cf-bookings__mark {
-    position: relative;
-    width: 22px;
-    padding: 0;
-    justify-content: center;
-    gap: 0;
+  .cf-mrow__label {
+    display: inline;
+    width: 76px;
+    flex: none;
+    color: var(--cf-muted);
     font-size: 0.6875rem;
-  }
-
-  /* El sello mide 22px para no levantar la fila, pero se toca en 44:
-     este cuadrado invisible agranda la zona sensible sin ocupar sitio,
-     porque va en posición absoluta y no cuenta para el tamaño. */
-  .cf-bookings__mark::after {
-    content: "";
-    position: absolute;
-    inset: -11px;
-  }
-
-  .cf-bookings__mark-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  /* El título cede el ancho que necesiten los dos sellos. */
-  .cf-bookings__head {
-    gap: var(--cf-space-2);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 }
 
@@ -12180,5 +11512,523 @@ textarea.cf-dash-input {
   .cf-worker-form__actions {
     display: grid;
     grid-auto-flow: row;
+  }
+}
+
+/* ======================================================================
+   20. LISTAS DEL ENCARGADO: PIEZAS COMUNES
+       (list/ListViews.jsx y list/ListBar.jsx, maqueta 06, PANEL-04)
+   ======================================================================
+
+   Lo mismo en todas las listas del encargado, para no aprender cada
+   pantalla: arriba las vistas en tarjetas que se pulsan (cf-views) y
+   debajo un solo bloque blanco (cf-lpanel) con la barra (cf-lbar), la
+   cabecera de la tabla, las filas (cf-lrows) y el pie. */
+
+/* ---------- LAS VISTAS ---------- */
+
+.cf-views {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: var(--cf-space-4);
+}
+
+.cf-view {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: var(--cf-space-4) 18px;
+  border: 1.5px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow var(--cf-transition),
+    transform var(--cf-transition);
+}
+
+.cf-view:hover {
+  box-shadow: var(--cf-shadow-md);
+  transform: translateY(-2px);
+}
+
+.cf-view:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
+.cf-view__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 14px;
+  background-color: var(--cf-brand-50);
+  color: var(--cf-brand-600);
+  font-size: 1.0625rem;
+}
+
+.cf-view__text {
+  display: grid;
+  min-width: 0;
+}
+
+.cf-view__text small {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.cf-view__text b {
+  font-family: var(--cf-font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-view__text span {
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+.cf-view__go {
+  margin-left: auto;
+  color: #8a999c;
+  font-size: 0.8125rem;
+}
+
+/* Lo que pide algo: en ámbar o en rojo, con su borde. */
+.cf-view--warn {
+  border-color: #f1dcae;
+}
+
+.cf-view--warn .cf-view__icon {
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
+}
+
+.cf-view--warn .cf-view__text b {
+  color: var(--cf-warning-dark);
+}
+
+.cf-view--hot {
+  border-color: #f1c9c9;
+}
+
+.cf-view--hot .cf-view__icon {
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
+}
+
+.cf-view--hot .cf-view__text b {
+  color: var(--cf-danger);
+}
+
+/* La elegida, en oscuro. */
+.cf-view[aria-pressed="true"] {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--cf-brand-900), var(--cf-brand-700) 60%, var(--cf-brand-600));
+  box-shadow: 0 14px 30px -18px rgba(var(--cf-brand-900-rgb), 0.7);
+  color: var(--cf-white);
+}
+
+.cf-view[aria-pressed="true"] .cf-view__text small,
+.cf-view[aria-pressed="true"] .cf-view__text span {
+  color: rgba(var(--cf-white-rgb), 0.8);
+}
+
+.cf-view[aria-pressed="true"] .cf-view__text b {
+  color: var(--cf-white);
+}
+
+.cf-view[aria-pressed="true"] .cf-view__icon {
+  background-color: rgba(var(--cf-white-rgb), 0.14);
+  color: var(--cf-accent);
+}
+
+.cf-view--hot[aria-pressed="true"] .cf-view__icon,
+.cf-view--warn[aria-pressed="true"] .cf-view__icon {
+  color: #ffc9c9;
+}
+
+.cf-view[aria-pressed="true"] .cf-view__go {
+  color: rgba(var(--cf-white-rgb), 0.7);
+}
+
+/* ---------- EL BLOQUE DE LA LISTA ---------- */
+
+.cf-lpanel {
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+}
+
+/* Los extremos redondeados de lo de dentro: el bloque no lleva overflow
+   hidden porque los desplegables de la barra tienen que salirse. */
+.cf-lpanel > :last-child {
+  border-bottom-right-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+.cf-lrows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-lpanel .cf-dash-state {
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.cf-lpanel__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-3);
+  padding: 12px 20px;
+  border-top: 1px solid var(--cf-border);
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-lpanel__foot p {
+  margin: 0;
+}
+
+/* ---------- LA BARRA ---------- */
+
+.cf-lbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--cf-border);
+}
+
+.cf-lbar__search {
+  position: relative;
+  display: flex;
+  flex: 1 1 280px;
+  align-items: center;
+}
+
+.cf-lbar__search i {
+  position: absolute;
+  left: 14px;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  pointer-events: none;
+}
+
+.cf-lbar__search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 38px;
+  border: 1px solid var(--cf-border);
+  border-radius: 10px;
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-lbar__search input:focus {
+  border-color: var(--cf-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--cf-ring);
+}
+
+.cf-lbar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cf-space-2);
+  margin-left: auto;
+}
+
+/* «Filtrar por», delante de los desplegables cuando no hay buscador. */
+.cf-lbar__label {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-lbar__clear {
+  min-height: 40px;
+  padding: 0 var(--cf-space-2);
+  border: 0;
+  background: none;
+  color: var(--cf-primary);
+  font-family: var(--cf-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cf-lbar__clear:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cf-lbar__clear:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
+}
+
+/* ---------- LOS DESPLEGABLES ---------- */
+
+.cf-ldrop {
+  position: relative;
+}
+
+.cf-ldrop__set {
+  display: inline-flex;
+}
+
+.cf-ldrop__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--cf-border);
+  border-radius: 10px;
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cf-ldrop__btn:hover {
+  border-color: var(--cf-primary);
+}
+
+.cf-ldrop__btn:focus-visible,
+.cf-ldrop__x:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
+.cf-ldrop__chev {
+  color: var(--cf-muted);
+  font-size: 0.6875rem;
+}
+
+/* Con algo elegido: en color y con su ✕ pegada. */
+.cf-ldrop__btn--set {
+  border-color: transparent;
+  border-radius: 10px 0 0 10px;
+  background: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
+  color: var(--cf-white);
+}
+
+.cf-ldrop__x {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid rgba(var(--cf-white-rgb), 0.25);
+  border-radius: 0 10px 10px 0;
+  background-color: var(--cf-brand-600);
+  color: var(--cf-white);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.cf-ldrop__x:hover {
+  background-color: var(--cf-brand-700);
+}
+
+.cf-ldrop__pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  gap: 2px;
+  width: 260px;
+  padding: var(--cf-space-2);
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-md);
+}
+
+.cf-ldrop__pop[hidden] {
+  display: none;
+}
+
+.cf-ldrop__head {
+  margin: 0;
+  padding: 6px 10px;
+  color: var(--cf-muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cf-ldrop__opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: var(--cf-radius-sm);
+  font-size: var(--cf-text-sm);
+  cursor: pointer;
+}
+
+.cf-ldrop__opt:hover {
+  background-color: var(--cf-bg);
+}
+
+.cf-ldrop__opt input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cf-primary);
+}
+
+.cf-ldrop__n {
+  margin-left: auto;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-ldrop__quick {
+  display: grid;
+  gap: 2px;
+}
+
+.cf-ldrop__quick button {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--cf-radius-sm);
+  background: none;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-ldrop__quick button:hover {
+  background-color: var(--cf-bg);
+}
+
+.cf-ldrop__quick button[aria-pressed="true"] {
+  background-color: var(--cf-primary-soft);
+  color: var(--cf-primary);
+  font-weight: 600;
+}
+
+.cf-ldrop__range {
+  display: grid;
+  gap: var(--cf-space-2);
+  margin-top: var(--cf-space-1);
+  padding: var(--cf-space-3) 10px var(--cf-space-1);
+  border-top: 1px solid var(--cf-border);
+}
+
+.cf-ldrop__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cf-ldrop__field span {
+  width: 44px;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-ldrop__field .cf-dash-input {
+  height: 36px;
+  padding: 0 10px;
+  font-size: 0.8125rem;
+}
+
+/* Elegir una sola: un botón por opción, la elegida marcada. */
+.cf-ldrop__choice {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--cf-radius-sm);
+  background: none;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-ldrop__choice:hover {
+  background-color: var(--cf-bg);
+}
+
+.cf-ldrop__choice:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: -2px;
+}
+
+.cf-ldrop__choice[aria-pressed="true"] {
+  background-color: var(--cf-primary-soft);
+  color: var(--cf-primary);
+  font-weight: 600;
+}
+
+/* ---------- ESTRECHO ---------- */
+
+@media (max-width: 860px) {
+  .cf-views {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .cf-view {
+    padding: 12px var(--cf-space-4);
+  }
+
+  .cf-view__text b {
+    font-size: 1.375rem;
+  }
+
+  .cf-lbar {
+    padding: 12px var(--cf-space-4);
+  }
+
+  .cf-lbar__search {
+    flex-basis: 100%;
+  }
+
+  .cf-lbar__filters {
+    margin-left: 0;
+  }
+
+  /* El panel abierto, pegado a la izquierda de su botón: a la derecha se
+     saldría de la pantalla. */
+  .cf-ldrop__pop {
+    right: auto;
+    left: 0;
   }
 }
