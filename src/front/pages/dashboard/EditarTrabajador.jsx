@@ -31,6 +31,8 @@ export const EditarTrabajador = () => {
 
     // El trabajador tal y como sale en el listado: foto, valoración y el
     // nombre del título. null al crear, o si no se ha podido cargar.
+    // Si la ficha es la de quien mira: su interruptor va bloqueado.
+    const [isSelf, setIsSelf] = useState(false);
     const [profile, setProfile] = useState(null);
 
     const [shifts, setShifts] = useState([]);
@@ -85,6 +87,9 @@ export const EditarTrabajador = () => {
             }
 
             const worker = workerResult.data;
+
+            // Tu propia ficha: no puedes desactivarte, te quedarías fuera.
+            setIsSelf(Boolean(worker) && String(worker.user_id) === String(store.user?.user_id));
 
             setFormData({
                 name: worker?.name || "",
@@ -477,15 +482,20 @@ export const EditarTrabajador = () => {
                         <fieldset className="cf-worker-form__section" disabled={saving}>
                             <legend className="cf-worker-form__legend">Estado</legend>
                             <div className="cf-worker-form__status">
-                                <p>
+                                <p id="worker-status-why">
                                     <strong>{formData.is_active ? "Activo" : "Desactivado"}</strong>
-                                    {formData.is_active
-                                        ? "Si lo desactivas, no podrá entrar ni recibir reservas, y sus reservas pendientes aparecerán en Reservas, en la vista Afectadas."
-                                        : "No puede entrar ni recibir reservas. Actívalo para que vuelva a salir libre."}
+                                    {isSelf
+                                        ? "Es tu cuenta: no puedes desactivarte, porque te quedarías sin acceso. Pídeselo a otro encargado."
+                                        : formData.is_active
+                                            ? "Si lo desactivas, no podrá entrar ni recibir reservas, y sus reservas pendientes aparecerán en Reservas, en la vista Afectadas."
+                                            : "No puede entrar ni recibir reservas. Actívalo para que vuelva a salir libre."}
                                 </p>
                                 <label className="cf-dash-switch" htmlFor="worker-status">
+                                    {/* Bloqueado en tu propia ficha: el servidor tampoco
+                                        lo deja (PUT y PATCH), esto solo evita el viaje. */}
                                     <input id="worker-status" type="checkbox" role="switch" name="is_active"
-                                        checked={formData.is_active} onChange={handleChange} />
+                                        checked={formData.is_active} onChange={handleChange}
+                                        disabled={isSelf} aria-describedby={isSelf ? "worker-status-why" : undefined} />
                                     <span className="cf-dash-switch__text">
                                         {formData.is_active ? "Activo" : "Desactivado"}
                                     </span>
