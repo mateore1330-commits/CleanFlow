@@ -2498,41 +2498,7 @@ textarea.cf-dash-input {
    ====================================================================== */
 
 /* ---------- AVATAR (Avatar.jsx) ----------
-   Con foto, recortada en redondo; sin foto, las iniciales sobre verde
-   suave. Tres tallas, las mismas que el componente conoce. */
-
-.cf-dash-avatar {
-  display: inline-grid;
-  place-items: center;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  font-family: var(--cf-font-body);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  object-fit: cover;
-  overflow: hidden;
-}
-
-.cf-dash-avatar--sm {
-  width: 32px;
-  height: 32px;
-  font-size: 0.75rem;
-}
-
-.cf-dash-avatar--md {
-  width: 48px;
-  height: 48px;
-  font-size: 0.9375rem;
-}
-
-.cf-dash-avatar--lg {
-  width: 96px;
-  height: 96px;
-  font-size: 1.75rem;
-}
+   El común de index.css (PIEZAS COMUNES): lo usa también la web. */
 
 /* ---------- MARCO Y PESTAÑAS (AccountLayout.jsx) ---------- */
 
@@ -5440,18 +5406,6 @@ textarea.cf-dash-input {
 }
 
 /* Iniciales del trabajador: el mismo círculo de acento del avatar. */
-.cf-bookcard__worker {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
-  font-size: 0.625rem;
-  font-weight: 700;
-}
 
 .cf-bookcard__side {
   display: grid;
@@ -5943,27 +5897,7 @@ textarea.cf-dash-input {
   gap: var(--cf-space-3);
 }
 
-.cf-bookworker__photo {
-  width: 46px;
-  height: 46px;
-  flex: none;
-  border-radius: 50%;
-  object-fit: cover;
-}
 
-.cf-bookworker__initials {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  flex: none;
-  border-radius: 50%;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
-  font-family: var(--cf-font-heading);
-  font-size: 1.0625rem;
-  font-weight: 600;
-}
 
 .cf-bookworker__name {
   margin: 0;
@@ -10651,21 +10585,11 @@ textarea.cf-dash-input {
   border-left: 3px solid var(--cf-warning);
 }
 
-/* El cliente en el color de marca y el trabajador en menta (cf-bookcard__worker,
-   que ya existía): dos personas en la misma línea tienen que
-   distinguirse de un vistazo. */
+/* El cliente con el avatar de marca y el trabajador con el menta (Avatar
+   tone="accent"): dos personas en la misma línea tienen que distinguirse
+   de un vistazo. Aquí, el avatar del cliente algo separado de su nombre. */
 .cf-bookcard__who--client {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  margin-right: var(--cf-space-2);
-  border-radius: 50%;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  font-size: 0.625rem;
-  font-weight: 700;
+  margin-right: var(--cf-space-1);
 }
 
 /* ---------- LAS DOS MARCAS ---------- */

@@ -13,9 +13,9 @@
  * Estilos: web.css, bloque cf-reviews.
  */
 
-import { useState } from "react";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
 import { Stars } from "../../../components/dashboard/bookings/Stars";
+import { Avatar } from "../../../components/dashboard/Avatar";
 
 /**
  * "hace 2 semanas".
@@ -37,46 +37,23 @@ const ageText = (age) => {
     return RELATIVE.format(-age.value, age.unit);
 };
 
-/** "Pablo V." -> "PV", para cuando el cliente no tiene foto. */
-const initialsOf = (name) => (name || "")
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0].toUpperCase())
-    .join("");
-
 /**
- * Su foto de perfil, o sus iniciales.
+ * Su foto de perfil, o sus iniciales (Avatar, la pieza común de toda la app).
  *
  * La cara la eligió él y por eso puede salir; si no tiene, van sus
  * iniciales. Nunca una foto de archivo: poner al lado de su nombre una
- * cara que no es la suya sería mentir.
- *
- * El onError cubre una URL que ya no responde: antes de un icono roto,
- * las iniciales.
+ * cara que no es la suya sería mentir. Si la foto ya no carga, Avatar
+ * vuelve a las iniciales.
  */
-const Face = ({ review }) => {
-    const [failed, setFailed] = useState(false);
-
-    if (!review.client_avatar_url || failed) {
-        return (
-            <span className="cf-review-card__face" aria-hidden="true">
-                {initialsOf(review.client_name)}
-            </span>
-        );
-    }
-
-    return (
-        <span className="cf-review-card__face">
-            <img
-                src={review.client_avatar_url}
-                alt={`Foto de ${review.client_name}`}
-                loading="lazy"
-                onError={() => setFailed(true)}
-            />
-        </span>
-    );
-};
+const Face = ({ review }) => (
+    <Avatar
+        name={review.client_name}
+        src={review.client_avatar_url}
+        alt={`Foto de ${review.client_name}`}
+        size="sm"
+        className="cf-review-card__face"
+    />
+);
 
 export const ReviewsSection = () => {
     // Del store, que lo pide ReviewsLoader una sola vez al arrancar: el

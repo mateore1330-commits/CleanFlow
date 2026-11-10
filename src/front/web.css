@@ -855,24 +855,13 @@ main > section:nth-of-type(even) {
 }
 
 .cf-review-card__face {
-  display: grid;
-  place-items: center;
+  /* El avatar (Avatar.jsx) a 40px: entre la talla sm y la md. */
   width: 40px;
   height: 40px;
   flex: 0 0 40px;
-  overflow: hidden;
-  border-radius: 50%;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
   font-size: 0.8125rem;
-  font-weight: 700;
 }
 
-.cf-review-card__face img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 .cf-review-card__name {
   margin: 0;

@@ -101,6 +101,7 @@
   --cf-grad-brand-hover: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
   --cf-grad-soft: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
   --cf-grad-accent: linear-gradient(135deg, #7fe0bb, var(--cf-accent));
+  --cf-grad-avatar-accent: linear-gradient(135deg, #7fe0bb, var(--cf-accent));
   --cf-grad-side: linear-gradient(180deg, var(--cf-brand-900) 0%, #08414a 55%, var(--cf-brand-700) 100%);
   /* Velo oscuro sobre una foto, para que se lea el texto blanco encima. */
   --cf-grad-overlay: linear-gradient(
@@ -435,6 +436,56 @@ img {
   border-radius: var(--cf-radius-lg);
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
+}
+
+/* ---------- AVATAR (Avatar.jsx) ----------
+   Foto si la hay; si no, las iniciales sobre el degradado de marca.
+   --accent: el degradado menta (el propio usuario, el trabajador de una
+   reserva). Tallas: xs 22px, sm 32px, md 48px, lg 96px. */
+
+.cf-dash-avatar {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--cf-grad-button);
+  color: var(--cf-on-primary);
+  font-family: var(--cf-font-body);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.cf-dash-avatar--accent {
+  background: var(--cf-grad-avatar-accent);
+  color: var(--cf-on-accent);
+}
+
+.cf-dash-avatar--xs {
+  width: 22px;
+  height: 22px;
+  font-size: 0.625rem;
+}
+
+.cf-dash-avatar--sm {
+  width: 32px;
+  height: 32px;
+  font-size: 0.75rem;
+}
+
+.cf-dash-avatar--md {
+  width: 48px;
+  height: 48px;
+  font-size: 0.9375rem;
+}
+
+.cf-dash-avatar--lg {
+  width: 96px;
+  height: 96px;
+  font-size: 1.75rem;
 }
 
 /* ======================================================================

@@ -11,7 +11,8 @@
  */
 
 import { BookingStatusPill, awaitsConfirmation } from "./BookingStatusPill";
-import { EUROS, dayOf, monthOf, timeOf, initialsOf, daysLeft } from "./bookingFormat";
+import { EUROS, dayOf, monthOf, timeOf, daysLeft } from "./bookingFormat";
+import { Avatar } from "../Avatar";
 
 export const BookingCard = ({ booking, onOpen }) => {
     const [first] = booking.days;
@@ -59,9 +60,7 @@ export const BookingCard = ({ booking, onOpen }) => {
                         )}
 
                         <span>
-                            <span className="cf-bookcard__worker" aria-hidden="true">
-                                {initialsOf(booking.worker_name)}
-                            </span>
+                            <Avatar name={booking.worker_name} src={booking.worker_avatar_url} size="xs" tone="accent" />
                             {booking.worker_name || "Sin asignar"}
                         </span>
                     </p>
