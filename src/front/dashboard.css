@@ -2926,57 +2926,45 @@ textarea.cf-dash-input {
    sidebar, no el ancho de la ventana (ver @container al final). */
 .cf-shifts {
   container-type: inline-size;
-  max-width: 1080px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
 
-/* ---------- CABECERA ---------- */
-
-.cf-shifts__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-shifts__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-  line-height: 1.15;
-  color: var(--cf-primary);
-}
-
-.cf-shifts__lede {
-  margin: var(--cf-space-1) 0 0;
-  max-width: 60ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
 /* ---------- FORMULARIO ---------- */
 
+/* Dentro de la página, arriba de la lista (maqueta 06): se ven a la vez
+   los turnos que ya hay. La cabecera es PageHead (PANEL-04). */
 .cf-shifts__form {
   display: grid;
   gap: var(--cf-space-6);
-  margin-bottom: var(--cf-space-6);
+  margin-bottom: 20px;
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: 20px;
   background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-md);
+  box-shadow: var(--cf-shadow-sm);
+}
+
+.cf-shifts__form-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--cf-space-1) var(--cf-space-3);
+}
+
+.cf-shifts__form-note {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
 }
 
 .cf-shifts__form-title {
   margin: 0;
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-xl);
-  font-weight: 600;
-  color: var(--cf-primary);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 /* Tres columnas: el nombre ocupa la fila entera (__wide) y debajo van
@@ -3027,17 +3015,18 @@ textarea.cf-dash-input {
   justify-content: space-between;
   gap: var(--cf-space-2);
   padding: 0 14px;
-  border: 1px solid var(--cf-accent-soft);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
+  color: var(--cf-brand-700);
+  font-family: var(--cf-font-heading);
   font-size: 0.9375rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .cf-shifts__stat small {
-  color: var(--cf-accent-dark);
+  color: var(--cf-brand-700);
   font-size: 0.75rem;
   font-weight: 500;
   opacity: 0.85;
@@ -3132,15 +3121,12 @@ textarea.cf-dash-input {
 
 /* ---------- LISTA ---------- */
 
+/* El bloque es el común (cf-lpanel); aquí solo se recorta lo de dentro. */
 .cf-shifts__list {
   margin: 0;
   padding: 0;
-  list-style: none;
   overflow: hidden;
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
+  list-style: none;
 }
 
 /* Cinco columnas: turno, días, asignados, estado y acciones. La cabecera
@@ -3148,19 +3134,19 @@ textarea.cf-dash-input {
 .cf-shifts__head,
 .cf-shifts__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px 150px 150px 128px;
+  grid-template-columns: minmax(0, 1fr) 190px 150px 140px 128px;
   align-items: center;
   gap: var(--cf-space-4);
   padding: var(--cf-space-4) var(--cf-space-6);
 }
 
 .cf-shifts__head {
-  padding-block: var(--cf-space-3);
-  background-color: rgba(var(--cf-bg-rgb), 0.6);
+  padding-block: 12px;
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -3170,7 +3156,7 @@ textarea.cf-dash-input {
 }
 
 .cf-shifts__row:hover {
-  background-color: rgba(var(--cf-bg-rgb), 0.45);
+  background-color: #fafcfc;
 }
 
 .cf-shifts__name {
@@ -3195,23 +3181,31 @@ textarea.cf-dash-input {
   font-weight: 600;
 }
 
-/* La semana en siete marcas: menta los días que se trabaja, siempre,
+/* La tira L–D (maqueta 06): en color los días que se trabaja, siempre,
    también en un turno desactivado. */
 .cf-shifts__week {
   display: flex;
-  gap: 3px;
+  gap: 4px;
   margin-top: 6px;
 }
 
 .cf-shifts__week span {
-  width: 14px;
-  height: 4px;
-  border-radius: 2px;
-  background-color: var(--cf-border);
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--cf-border);
+  border-radius: 7px;
+  background-color: var(--cf-bg);
+  color: var(--cf-muted);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
 }
 
 .cf-shifts__week span.is-on {
-  background-color: var(--cf-accent);
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--cf-brand-600), var(--cf-brand-500));
+  color: var(--cf-white);
 }
 
 .cf-shifts__team {
@@ -3317,10 +3311,6 @@ textarea.cf-dash-input {
    medio, acciones abajo. Sin cabecera de columnas. */
 
 @container (max-width: 720px) {
-  .cf-shifts__title {
-    font-size: var(--cf-text-xl);
-  }
-
   .cf-shifts__head {
     display: none;
   }
