@@ -760,635 +760,621 @@ textarea.cf-dash-input {
   color: var(--cf-warning-dark);
 }
 
-/* ---------- SIDEBAR (Sidebar.jsx) ----------
-   El menú del panel: tarjeta verde con la marca arriba, las secciones del
-   rol en medio y el usuario abajo. Se pliega a una barra de iconos
-   (--rail) y en móvil pasa a cajón (ver el bloque siguiente).
+/* ---------- EL MARCO (DashboardLayout.jsx, PANEL-01) ----------
+   El menú a la izquierda, a toda la altura, y a la derecha la barra de
+   arriba y la página. Maquetas 04, 05 y 06. */
 
-   Sus medidas y sus blancos viven aquí y no en index.css: solo los usa el
-   menú, y los blancos son para su fondo verde. */
+.cf-dash-layout {
+  /* Lo que mide la barra de arriba: lo usan los paneles laterales que se
+     quedan fijos al bajar (top: calc(var(--cf-dash-topbar) + …)), para no
+     quedarse debajo de ella. */
+  --cf-dash-topbar: 77px;
 
-.cf-side {
-  --side-w: 268px;
-  --side-rail: 80px;
-  --side-text: rgba(var(--cf-white-rgb), 0.82);
-  --side-muted: rgba(var(--cf-white-rgb), 0.5);
-  --side-hover: rgba(var(--cf-white-rgb), 0.09);
-  --side-line: rgba(var(--cf-white-rgb), 0.12);
-  --side-card: rgba(var(--cf-white-rgb), 0.07);
-  --side-active-bg: rgba(var(--cf-white-rgb), 0.12);
-  --side-active-text: var(--cf-white);
-
-  position: relative;
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--cf-space-4);
-  width: var(--side-w);
-  margin: var(--cf-space-3);
-  padding: var(--cf-space-4) 14px;
-  border-radius: var(--cf-radius-lg);
-  /* El degradado del menú lateral, de los tokens (--cf-grad-side). */
-  background: var(--cf-grad-side);
-  color: var(--side-text);
-  box-shadow: 0 10px 30px rgba(var(--cf-brand-900-rgb), 0.18);
-  transition: width 0.24s ease;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
-/* Plegado: solo los iconos, y el nombre sale al pasar por encima. */
-.cf-side--rail {
-  width: var(--side-rail);
-  padding: var(--cf-space-4) 10px;
+.cf-dash-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* El margen de la página: el mismo a la izquierda que la miga de pan, así
+   el título queda alineado con ella. */
+.cf-dash-main {
+  flex: 1;
+  min-width: 0;
+  padding: var(--cf-space-8) 40px var(--cf-space-16);
+}
+
+/* ---------- LA BARRA DE ARRIBA (DashboardTopbar.jsx) ---------- */
+
+.cf-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-4);
+  min-height: var(--cf-dash-topbar);
+  padding: 18px 40px;
+  border-bottom: 1px solid var(--cf-border);
+  /* Translúcida: al bajar, la página se adivina detrás. */
+  background-color: rgba(var(--cf-white-rgb), 0.82);
+  backdrop-filter: blur(12px);
+}
+
+/* En escritorio, la marca ya está en el menú y la hamburguesa sobra.
+   Con «.cf-topbar >» para ganar a .cf-topbar__btn, que va después. */
+.cf-topbar > .cf-topbar__burger,
+.cf-topbar > .cf-topbar__brand {
+  display: none;
+}
+
+.cf-topbar__crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0;
+  padding: 0;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  list-style: none;
+}
+
+.cf-topbar__crumbs a {
+  color: var(--cf-muted);
+  text-decoration: none;
+}
+
+.cf-topbar__crumbs a:hover {
+  color: var(--cf-text);
+  text-decoration: underline;
+}
+
+.cf-topbar__crumbs b {
+  color: var(--cf-text);
+  font-weight: 600;
+}
+
+.cf-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.cf-topbar__btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--cf-border);
+  border-radius: 12px;
+  background-color: var(--cf-surface);
+  color: var(--cf-muted);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--cf-transition), color var(--cf-transition);
+}
+
+.cf-topbar__btn:hover {
+  background-color: var(--cf-bg);
+  color: var(--cf-text);
+}
+
+.cf-topbar__btn:focus-visible {
+  outline: 3px solid var(--cf-ring);
+  outline-offset: 2px;
+}
+
+/* ---------- MENÚ LATERAL (Sidebar.jsx) ----------
+   Pegado al borde: la marca arriba, las secciones en medio y el pie
+   abajo. Se pliega a una barra de iconos (--rail) y en móvil pasa a
+   cajón (bloque "MENÚ EN MÓVIL").
+
+   Sus medidas y sus blancos viven aquí y no en index.css: solo los usa el
+   menú, y los blancos son para su fondo oscuro. */
+
+.cf-side {
+  --side-w: 280px;
+  --side-rail: 76px;
+  --side-text: rgba(var(--cf-white-rgb), 0.82);
+  /* 0.7 y no menos: con letra pequeña, sobre la parte clara del degradado
+     (abajo), por debajo no llega a 4,5:1. */
+  --side-muted: rgba(var(--cf-white-rgb), 0.7);
+  --side-hover: rgba(var(--cf-white-rgb), 0.07);
+  --side-line: rgba(var(--cf-white-rgb), 0.12);
+
+  /* sticky: se queda quieto al bajar por la página. Las secciones hacen
+     scroll dentro, así que el pie siempre se ve. */
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: var(--side-w);
+  height: 100vh;
+  height: 100dvh;
+  padding: 22px 16px;
+  /* El degradado del menú (--cf-grad-side) con un brillo menta abajo. */
+  background:
+    radial-gradient(420px 380px at 0% 105%, rgba(var(--cf-accent-rgb), 0.28), rgba(var(--cf-accent-rgb), 0) 70%),
+    var(--cf-grad-side);
+  color: var(--side-text);
+  white-space: nowrap;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ---------- MARCA ---------- */
 
 .cf-side__brand {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 2px 6px 0;
+  gap: 8px;
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0 4px;
+  border-radius: 10px;
   text-decoration: none;
 }
 
-/* El isotipo del kit de marca (Logo.jsx), en menta sobre el fondo oscuro. */
+.cf-side__brand:focus-visible {
+  outline: 2px solid var(--cf-accent);
+  outline-offset: 2px;
+}
+
 .cf-side__logo {
   flex: none;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
   color: var(--cf-accent);
-}
-
-.cf-side__logo svg {
-  width: 34px;
-  height: 34px;
 }
 
 /* El logotipo (Wordmark.jsx, versión oscura; estilos en index.css). */
 .cf-side__name {
-  font-size: 1.05rem;
-  white-space: nowrap;
-}
-
-/* ---------- BOTÓN DE PLEGAR ----------
-   A caballo sobre el borde del panel: se ve sin ocupar sitio dentro. */
-
-.cf-side__collapse {
-  position: absolute;
-  top: 34px;
-  right: -13px;
-  z-index: 5;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
-  color: var(--cf-primary);
-  font-size: 0.7rem;
-  cursor: pointer;
-  box-shadow: var(--cf-shadow-sm);
-}
-
-.cf-side__collapse:hover {
-  background-color: var(--cf-primary-soft);
-}
-
-.cf-side__collapse:focus-visible {
-  outline: 3px solid var(--cf-ring);
-  outline-offset: 2px;
-}
-
-/* La flecha gira: abierta señala a la izquierda ("ciérrame") y plegada a
-   la derecha ("ábreme"). ⚠️ i y svg: Font Awesome cambia el <i> por un
-   <svg> al cargar, y una regla solo para <i> se quedaría sin efecto. */
-.cf-side__collapse i,
-.cf-side__collapse svg {
-  transition: transform 0.22s ease;
-}
-
-.cf-side--rail .cf-side__collapse i,
-.cf-side--rail .cf-side__collapse svg {
-  transform: rotate(180deg);
+  font-size: 1.3rem;
 }
 
 /* ---------- SECCIONES ---------- */
 
 .cf-side__nav {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  min-height: 0;
+  margin: 24px -8px 0 0;
+  padding: 0 8px 8px 0;
   overflow-y: auto;
+  /* En pantallas bajas hace scroll: barra fina y clara, a juego. */
+  scrollbar-color: rgba(var(--cf-white-rgb), 0.2) transparent;
+  scrollbar-width: thin;
 }
 
-/* Título de cada grupo de secciones (Operativa, Equipo...). */
+/* Título de cada grupo (Operativa, Equipo...). Plegado, una raya fina. */
 .cf-side__eyebrow {
-  margin: var(--cf-space-3) 0 4px;
-  padding: 0 10px;
+  margin: 0;
+  padding: 16px 12px 6px;
   color: var(--side-muted);
-  font-size: 0.65rem;
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
+/* Una sección (y también Ajustes y Salir, en el pie). 44px de alto: se
+   pulsa con el dedo sin apuntar. El icono, siempre en el mismo sitio,
+   abierto y plegado. */
 .cf-side__link {
   position: relative;
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
+  min-height: 44px;
   padding: 10px 12px;
   border: 0;
-  border-radius: var(--cf-radius-md);
+  border-radius: 10px;
   background: none;
   color: var(--side-text);
   font-family: var(--cf-font-body);
-  font-size: var(--cf-text-sm);
+  font-size: 0.9375rem;
   font-weight: 500;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
-  transition:
-    background-color var(--cf-transition),
-    color var(--cf-transition),
-    transform var(--cf-transition);
+  transition: background-color var(--cf-transition), color var(--cf-transition);
 }
 
 .cf-side__link i,
 .cf-side__link svg {
-  justify-self: center;
-  font-size: 1rem;
-  opacity: 0.9;
-  transition: transform var(--cf-transition);
+  flex: none;
+  width: 20px;
+  color: rgba(var(--cf-white-rgb), 0.55);
+  font-size: 0.9375rem;
+  text-align: center;
 }
 
-.cf-side__link span {
+.cf-side__label {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .cf-side__link:hover {
   background-color: var(--side-hover);
   color: var(--cf-white);
-  transform: translateX(2px);
-}
-
-.cf-side__link:hover i,
-.cf-side__link:hover svg {
-  transform: scale(1.08);
 }
 
 .cf-side__link:focus-visible {
-  outline: 2px solid var(--cf-white);
+  outline: 2px solid var(--cf-accent);
   outline-offset: 2px;
 }
 
-/* La página actual: pastilla translúcida con una marca menta al canto. */
+/* La página actual: degradado menta suave y una marca al canto. */
 .cf-side__link[aria-current="page"] {
-  background-color: var(--side-active-bg);
-  color: var(--side-active-text);
+  background: linear-gradient(90deg, rgba(var(--cf-accent-rgb), 0.2), rgba(var(--cf-white-rgb), 0.04));
+  color: var(--cf-white);
   font-weight: 600;
-  transform: none;
-  box-shadow: 0 4px 14px rgba(var(--cf-text-rgb), 0.14);
 }
 
 .cf-side__link[aria-current="page"]::before {
   content: "";
   position: absolute;
-  left: 4px;
-  top: 50%;
+  top: 8px;
+  bottom: 8px;
+  left: -16px;
   width: 3px;
-  height: 18px;
-  border-radius: 999px;
+  border-radius: 0 3px 3px 0;
   background-color: var(--cf-accent);
-  transform: translateY(-50%);
 }
 
 .cf-side__link[aria-current="page"] i,
 .cf-side__link[aria-current="page"] svg {
-  opacity: 1;
   color: var(--cf-accent);
 }
 
-/* Contador de reservas afectadas. */
+/* El contador de lo que hay que mirar (AffectedCount, IncidentCount). Rojo:
+   es trabajo pendiente. --cf-danger y no el rojo claro de la maqueta, que
+   con letra blanca no llegaba al contraste mínimo. */
 .cf-side__count {
   display: inline-grid;
   place-items: center;
   min-width: 22px;
   height: 22px;
+  margin-left: auto;
   padding: 0 7px;
   border-radius: 999px;
-  background-color: var(--cf-accent);
-  color: var(--cf-on-accent);
+  background-color: var(--cf-danger);
+  color: var(--cf-white);
   font-size: 0.72rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- GRUPO DESPLEGABLE ---------- */
+/* ---------- PIE: USUARIO, AJUSTES, SALIR Y PLEGAR ---------- */
 
-.cf-side__sub {
-  display: grid;
-  gap: 2px;
-  margin: 2px 0 2px 26px;
-  padding-left: 10px;
-  border-left: 1px solid var(--side-line);
-  list-style: none;
-}
-
-.cf-side__sub .cf-side__link {
-  grid-template-columns: minmax(0, 1fr);
-  padding: 7px 10px;
-  font-size: 0.85rem;
-}
-
-.cf-side__chevron {
-  font-size: 0.7rem;
-  opacity: 0.7;
-  transition: transform 0.2s ease;
-}
-
-/* Abierto, la flecha mira hacia arriba. El :hover general agranda los
-   iconos, pero a esta flecha la dejaría torcida: se le quita. */
-.cf-side__link[aria-expanded="true"] .cf-side__chevron {
-  transform: rotate(180deg);
-}
-
-.cf-side__link:hover .cf-side__chevron {
-  transform: none;
-}
-
-.cf-side__link[aria-expanded="true"]:hover .cf-side__chevron {
-  transform: rotate(180deg);
-}
-
-/* ---------- PIE: PANEL, USUARIO Y ACCIONES ---------- */
-
-/* Los cuatro bloques del pie se separan por igual (10px), como en la
-   maqueta aprobada. ⚠️ 14px a mano: entre dos tokens (12 y 16). */
 .cf-side__foot {
   display: grid;
-  gap: 10px;
-  padding-top: 14px;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: var(--cf-space-4);
   border-top: 1px solid var(--side-line);
 }
 
-/* En qué panel estás. Mismo ancho y mismo fondo que la tarjeta de abajo:
-   las dos se leen como un bloque. */
-.cf-side__paneltag {
-  display: block;
-  /* margin: 0 porque es un <p> y el reset de Bootstrap le pone 1rem
-     abajo, que se sumaba al hueco del pie y lo descuadraba. */
-  margin: 0;
-  padding: 7px 10px;
-  border-radius: var(--cf-radius-md);
-  background-color: var(--side-card);
-  /* En menta: sobre el fondo oscuro del menú se lee bien (7,3:1). */
-  color: var(--cf-accent);
-  font-size: 0.56rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-align: center;
-  text-transform: uppercase;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Quién eres. Tres líneas que se recortan: el bloque mide lo mismo con
-   cualquier nombre y con cualquier rol. */
+/* Quién eres y en qué panel. Las dos líneas se recortan: el bloque mide
+   lo mismo con cualquier nombre. */
 .cf-side__user {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  position: relative;
+  display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 14px;
-  background-color: var(--side-card);
+  gap: 10px;
+  padding: 8px 4px 10px;
 }
 
-/* El avatar mediano mide 48px y estiraba la tarjeta: aquí se queda en los
-   44px de la maqueta. */
 .cf-side__user .cf-dash-avatar {
-  width: 44px;
-  height: 44px;
-  font-size: 0.9rem;
+  flex: none;
+  width: 36px;
+  height: 36px;
 }
 
 .cf-side__who {
   display: grid;
-  gap: 3px;
+  gap: 1px;
   min-width: 0;
 }
 
 .cf-side__username {
-  display: block;
-  color: var(--cf-white);
-  font-size: 0.88rem;
-  font-weight: 600;
-  line-height: 1.25;
   overflow: hidden;
+  color: var(--cf-white);
+  font-size: 0.875rem;
+  font-weight: 600;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.cf-side__mail {
-  display: block;
+.cf-side__panel {
+  overflow: hidden;
   color: var(--side-muted);
-  font-size: 0.73rem;
-  line-height: 1.3;
-  overflow: hidden;
+  font-size: 0.75rem;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.cf-side__actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.cf-side__action {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 9px 10px;
-  border: 1px solid var(--side-line);
-  border-radius: 10px;
-  background: none;
-  color: var(--side-text);
-  font-family: var(--cf-font-body);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color var(--cf-transition),
-    border-color var(--cf-transition),
-    color var(--cf-transition);
-}
-
-.cf-side__action:hover {
-  background-color: var(--side-hover);
-  color: var(--cf-white);
-}
-
-/* Cerrar sesión se tiñe de rojo: no se pulsa por error. */
-.cf-side__action--exit:hover {
-  border-color: rgba(var(--cf-danger-rgb), 0.6);
+/* Salir se tiñe de rojo al pasar por encima: no se pulsa por error. */
+.cf-side__link--exit:hover {
   background-color: rgba(var(--cf-danger-rgb), 0.3);
   color: var(--cf-danger-soft);
 }
 
-.cf-side__action:focus-visible {
-  outline: 2px solid var(--cf-white);
+.cf-side__link--exit:hover i,
+.cf-side__link--exit:hover svg {
+  color: var(--cf-danger-soft);
+}
+
+/* Plegar el menú: siempre a la vista, con su atajo. */
+.cf-side__collapse {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--side-line);
+  border-radius: 10px;
+  background-color: rgba(var(--cf-white-rgb), 0.04);
+  color: rgba(var(--cf-white-rgb), 0.72);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--cf-transition), color var(--cf-transition);
+}
+
+.cf-side__collapse:hover {
+  background-color: rgba(var(--cf-white-rgb), 0.1);
+  color: var(--cf-white);
+}
+
+.cf-side__collapse:focus-visible {
+  outline: 2px solid var(--cf-accent);
   outline-offset: 2px;
 }
 
-/* ---------- PLEGADO: SOLO ICONOS ---------- */
+.cf-side__collapse i,
+.cf-side__collapse svg {
+  flex: none;
+  width: 20px;
+  text-align: center;
+  transition: transform 0.28s ease;
+}
 
+.cf-side__kbd {
+  margin-left: auto;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background-color: rgba(var(--cf-white-rgb), 0.12);
+  color: rgba(var(--cf-white-rgb), 0.9);
+  font-family: var(--cf-font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+/* ---------- PLEGADO: SOLO ICONOS ----------
+   Cada icono se queda en su sitio: el menú encoge por la derecha. */
+
+.cf-side--rail {
+  width: var(--side-rail);
+}
+
+/* Los nombres se esconden a la vista, pero no al lector de pantalla:
+   así cada icono sigue diciendo qué es. */
+.cf-side--rail .cf-side__label,
 .cf-side--rail .cf-side__name,
-.cf-side--rail .cf-side__eyebrow,
-.cf-side--rail .cf-side__link span,
-.cf-side--rail .cf-side__chevron,
-.cf-side--rail .cf-side__sub,
-.cf-side--rail .cf-side__paneltag,
-.cf-side--rail .cf-side__who,
-.cf-side--rail .cf-side__action span {
+.cf-side--rail .cf-side__who {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.cf-side--rail .cf-side__kbd {
   display: none;
 }
 
-.cf-side--rail .cf-side__link {
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-  padding: 11px 0;
+.cf-side--rail .cf-side__link,
+.cf-side--rail .cf-side__collapse {
+  width: 44px;
 }
 
-/* Sin scroll en la barra de iconos: cortaría las etiquetas emergentes,
-   que salen por fuera del panel. Con solo iconos, siempre caben. */
-.cf-side--rail .cf-side__nav {
-  overflow: visible;
+/* La flecha mira a la derecha: «ábreme». */
+.cf-side--rail .cf-side__collapse i,
+.cf-side--rail .cf-side__collapse svg {
+  transform: scaleX(-1);
 }
 
-.cf-side--rail .cf-side__user {
-  position: relative;
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-  padding: 8px;
+/* Plegada, la página actual es un botón menta entero. */
+.cf-side--rail .cf-side__link[aria-current="page"] {
+  background: var(--cf-grad-accent);
 }
 
-.cf-side--rail .cf-side__actions {
-  grid-template-columns: 1fr;
+.cf-side--rail .cf-side__link[aria-current="page"] i,
+.cf-side--rail .cf-side__link[aria-current="page"] svg {
+  color: var(--cf-brand-900);
 }
 
-/* El contador no cabe al lado: se pone sobre el icono. */
+.cf-side--rail .cf-side__link[aria-current="page"]::before {
+  display: none;
+}
+
+/* El título del grupo, una raya fina. */
+.cf-side--rail .cf-side__eyebrow {
+  width: 28px;
+  height: 1px;
+  margin: 10px 8px;
+  padding: 0;
+  background-color: rgba(var(--cf-white-rgb), 0.14);
+}
+
+.cf-side--rail .cf-side__eyebrow span {
+  display: none;
+}
+
+/* El contador, un punto sobre el icono. */
 .cf-side--rail .cf-side__count {
   position: absolute;
-  top: 4px;
-  right: 8px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  font-size: 0.62rem;
-}
-
-/* ---------- MENÚ FIJO (TABLET Y ESCRITORIO) ----------
-   sticky y no fixed: sigue dentro del marco, así que no hay que reservarle
-   sitio. align-self: sin él, el flex lo estira a lo alto de la página y el
-   sticky no tendría margen donde pegarse. Las secciones hacen scroll dentro
-   (.cf-side__nav), así que el bloque de usuario siempre se ve. */
-
-@media (min-width: 768px) {
-  .cf-side {
-    position: sticky;
-    top: var(--cf-space-3);
-    align-self: flex-start;
-    height: calc(100vh - var(--cf-space-3) * 2);
-  }
-}
-
-/* En móvil el menú es un cajón entero, así que el botón de plegar sobra.
-   Quien impide de verdad que se pliegue es Sidebar.jsx, que no le pone
-   la clase cf-side--rail; esto solo quita el botón de en medio. */
-@media (max-width: 767.98px) {
-  .cf-side__collapse {
-    display: none;
-  }
+  top: 7px;
+  left: 27px;
+  width: 10px;
+  min-width: 0;
+  height: 10px;
+  padding: 0;
+  border: 2px solid #08414a;
+  box-sizing: content-box;
+  font-size: 0;
 }
 
 /* El nombre de la sección, al pasar por encima o al llegar con el
-   tabulador. Solo plegado: desplegado ya se lee. */
+   tabulador. Solo plegado: desplegado ya se lee.
+   fixed y no absolute: la lista de secciones hace scroll en pantallas
+   bajas, y un aviso absolute se cortaría en su borde. La altura (--tip-y)
+   la pone Sidebar.jsx al pasar por encima de cada icono. */
 .cf-side__tip {
-  position: absolute;
-  left: calc(100% + 10px);
-  top: 50%;
-  z-index: 10;
+  position: fixed;
+  top: var(--tip-y, 50%);
+  left: calc(var(--side-rail) + 14px);
+  z-index: 50;
   display: none;
   padding: 6px 10px;
-  border-radius: var(--cf-radius-sm);
+  border-radius: 8px;
   background-color: var(--cf-text);
   color: var(--cf-white);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
+  font-weight: 500;
   white-space: nowrap;
   box-shadow: var(--cf-shadow-md);
+  pointer-events: none;
   transform: translateY(-50%);
 }
 
-.cf-side--rail .cf-side__link:hover .cf-side__tip,
-.cf-side--rail .cf-side__link:focus-visible .cf-side__tip,
-.cf-side--rail .cf-side__action:hover .cf-side__tip,
-.cf-side--rail .cf-side__action:focus-visible .cf-side__tip,
+.cf-side__tip kbd {
+  margin-left: 4px;
+  padding: 0 5px;
+  border-radius: 4px;
+  background-color: rgba(var(--cf-white-rgb), 0.16);
+  font-family: var(--cf-font-body);
+  font-size: 0.6875rem;
+}
+
+.cf-side--rail :is(.cf-side__link, .cf-side__collapse, .cf-side__brand):is(:hover, :focus-visible) .cf-side__tip,
 .cf-side--rail .cf-side__user:hover .cf-side__tip {
   display: block;
 }
 
-/* ---------- SIDEBAR EN MÓVIL (Sidebar.jsx y DashboardLayout.jsx) ----------
-   Por debajo de 768px: barra superior con la marca y la hamburguesa, y el
-   menú como cajón que entra por la IZQUIERDA, el mismo lado en el que está
-   en escritorio. Todo lo visible va dentro del @media: tablet y escritorio
-   no cambian; fuera solo se ocultan las piezas nuevas.
-   767.98px: una tablet en vertical conserva el menú fijo. Mismo valor que
-   MOBILE_QUERY en Sidebar.jsx. */
+/* ---------- MENÚ EN MÓVIL (Sidebar.jsx y DashboardTopbar.jsx) ----------
+   Por debajo de 768px: la barra de arriba lleva la hamburguesa a la
+   izquierda y la marca, y el menú es un cajón que entra por la izquierda,
+   el mismo lado en el que está en escritorio. Mismo corte que MOBILE_QUERY
+   en Sidebar.jsx: una tablet en vertical conserva el menú fijo. */
 
-.cf-side-topbar,
 .cf-side-close,
 .cf-side-backdrop {
   display: none;
 }
 
 @media (max-width: 767.98px) {
-  /* El marco pasa de fila a columna: la barra arriba, la página debajo. */
   .cf-dash-layout {
-    flex-direction: column;
+    --cf-dash-topbar: 69px;
+
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  /* !important: el p-4 de Bootstrap también lo lleva. */
   .cf-dash-main {
-    padding: var(--cf-space-4) !important;
+    padding: 22px 18px 64px;
   }
 
-  /* sticky: la hamburguesa sigue a mano al bajar por la página. */
-  .cf-side-topbar {
-    position: sticky;
-    top: 0;
-    z-index: 1030;
-    display: flex;
-    align-items: center;
+  .cf-topbar {
     gap: var(--cf-space-3);
-    height: 60px;
-    padding: 0 var(--cf-space-4);
-    /* El mismo degradado del menú lateral. */
-    background: var(--cf-grad-side);
-    color: var(--cf-white);
+    padding: 14px 18px;
   }
 
-  /* La marca de la barra es la misma del panel, en pequeño. */
-  .cf-side-topbar__brand {
-    display: flex;
+  .cf-topbar > .cf-topbar__burger {
+    display: grid;
+  }
+
+  .cf-topbar > .cf-topbar__brand {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    color: var(--cf-white);
+    gap: 6px;
+    color: var(--cf-primary);
+    font-size: 1.05rem;
     text-decoration: none;
   }
 
-  .cf-side-topbar__brand .cf-side__logo {
-    width: 32px;
-    height: 32px;
+  .cf-topbar__crumbs {
+    display: none;
   }
 
-  .cf-side-topbar__brand .cf-side__logo svg {
-    width: 28px;
-    height: 28px;
+  /* El cajón. Cerrado lleva visibility hidden para que el tabulador no
+     llegue a sus enlaces; cambia al terminar de salir, no de golpe. */
+  .cf-side {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1045;
+    width: min(288px, 86vw);
+    height: 100%;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0.28s;
   }
 
-  .cf-side-topbar__brand .cf-side__name {
-    font-size: 0.95rem;
+  .cf-side--open {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s;
   }
 
-  /* La hamburguesa, a la derecha del todo. */
-  .cf-side-toggle {
-    margin-left: auto;
+  .cf-side__collapse {
+    display: none;
   }
 
-  .cf-side-toggle,
   .cf-side-close {
+    position: absolute;
+    top: 18px;
+    right: 14px;
     display: grid;
     place-items: center;
     width: 40px;
     height: 40px;
     padding: 0;
-    border: 1px solid rgba(var(--cf-white-rgb), 0.25);
-    border-radius: var(--cf-radius-sm);
-    background: none;
+    border: 1px solid rgba(var(--cf-white-rgb), 0.16);
+    border-radius: 10px;
+    background-color: rgba(var(--cf-white-rgb), 0.06);
     color: var(--cf-white);
-    font-size: 1.125rem;
     cursor: pointer;
   }
 
-  .cf-side-toggle:focus-visible,
+  .cf-side-close:hover {
+    background-color: rgba(var(--cf-white-rgb), 0.14);
+  }
+
   .cf-side-close:focus-visible {
-    outline: 2px solid var(--cf-white);
+    outline: 2px solid var(--cf-accent);
     outline-offset: 2px;
-  }
-
-  /* Cajón pegado al borde izquierdo: se redondea solo por dentro y pierde
-     el margen del panel de escritorio. Cerrado lleva visibility hidden
-     para que el tabulador no llegue a sus enlaces; cambia al terminar de
-     salir (0.25s), no de golpe. */
-  .cf-side {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 1045;
-    width: min(290px, 86vw);
-    margin: 0;
-    border-radius: 0 var(--cf-radius-lg) var(--cf-radius-lg) 0;
-    overflow-y: auto;
-    box-shadow: 0 0 40px rgba(var(--cf-text-rgb), 0.35);
-    transform: translateX(-102%);
-    visibility: hidden;
-    transition:
-      transform 0.25s ease,
-      visibility 0s linear 0.25s;
-  }
-
-  .cf-side--open {
-    transform: translateX(0);
-    visibility: visible;
-    transition:
-      transform 0.25s ease,
-      visibility 0s;
-  }
-
-  /* La marca ya está en la barra de arriba: repetirla dentro del cajón
-     sobra y roba sitio. */
-  .cf-side__brand {
-    display: none;
-  }
-
-  /* Sin marca, las secciones empiezan arriba y la ✕ se pone a su altura. */
-  .cf-side__nav {
-    margin-top: var(--cf-space-6);
-  }
-
-  .cf-side-close {
-    position: absolute;
-    top: var(--cf-space-3);
-    right: var(--cf-space-3);
   }
 
   .cf-side-backdrop {
@@ -1396,8 +1382,9 @@ textarea.cf-dash-input {
     inset: 0;
     z-index: 1040;
     display: block;
-    /* Velo oscuro de marca, con transparencia. */
-    background-color: rgba(var(--cf-brand-900-rgb), 0.55);
+    /* Velo oscuro de marca. */
+    background-color: rgba(var(--cf-brand-900-rgb), 0.5);
+    backdrop-filter: blur(2px);
   }
 
   .cf-side-backdrop[hidden] {
@@ -2099,7 +2086,8 @@ textarea.cf-dash-input {
 /* "Así lo verá el cliente". sticky: acompaña al formulario al bajar. */
 .cf-services__preview {
   position: sticky;
-  top: var(--cf-space-6);
+  /* Bajo la barra de arriba del panel, que también es fija (PANEL-01). */
+  top: calc(var(--cf-dash-topbar, 0px) + var(--cf-space-6));
   display: grid;
   gap: var(--cf-space-4);
   padding: var(--cf-space-6);
@@ -3871,7 +3859,8 @@ textarea.cf-dash-input {
 /* Pegado arriba al hacer scroll: el total siempre a la vista. */
 .cf-booking__summary {
   position: sticky;
-  top: var(--cf-space-4);
+  /* Bajo la barra de arriba del panel, que también es fija (PANEL-01). */
+  top: calc(var(--cf-dash-topbar, 0px) + var(--cf-space-4));
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
   border-radius: var(--cf-radius-lg);
@@ -4761,7 +4750,8 @@ textarea.cf-dash-input {
 /* Resumen "Así aparece en el equipo". sticky: acompaña al bajar. */
 .cf-worker-form__aside {
   position: sticky;
-  top: var(--cf-space-6);
+  /* Bajo la barra de arriba del panel, que también es fija (PANEL-01). */
+  top: calc(var(--cf-dash-topbar, 0px) + var(--cf-space-6));
   display: grid;
   gap: var(--cf-space-4);
   padding: var(--cf-space-6);
@@ -9862,7 +9852,6 @@ textarea.cf-dash-input {
   .cf-side__link,
   .cf-side__link i,
   .cf-side__link svg,
-  .cf-side__chevron,
   .cf-side__collapse i,
   .cf-side__collapse svg,
   .cf-bookcard,
