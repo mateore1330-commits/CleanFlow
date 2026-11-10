@@ -451,6 +451,46 @@ textarea.cf-input {
   resize: vertical;
 }
 
+/* ---------- AVISO DE PROYECTO DE PORTFOLIO (DemoNotice.jsx) ----------
+   Barra fina encima del menú en las páginas públicas y el acceso. */
+
+/* En línea y no flex: si el texto salta de línea, el icono sigue pegado
+   a la primera palabra en vez de quedarse solo en el borde. */
+.cf-demo-notice {
+  margin: 0;
+  padding: var(--cf-space-2) var(--cf-gutter);
+  background-color: var(--cf-accent-soft);
+  color: var(--cf-brand-900);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  text-align: center;
+  /* Si aun así salta de línea (móviles muy estrechos), dos líneas parejas. */
+  text-wrap: balance;
+}
+
+.cf-demo-notice i {
+  margin-right: var(--cf-space-2);
+  color: var(--cf-accent-dark);
+}
+
+.cf-demo-notice__short {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .cf-demo-notice {
+    padding-inline: var(--cf-space-3);
+  }
+
+  .cf-demo-notice__long {
+    display: none;
+  }
+
+  .cf-demo-notice__short {
+    display: inline;
+  }
+}
+
 /* ---------- AVISOS ----------
    Rojo por defecto (es para lo que se usan hoy: errores). Variantes:
    --warning, --success e --info. */

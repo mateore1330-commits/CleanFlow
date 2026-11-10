@@ -119,7 +119,10 @@ export const Footer = () => {
                 {/* ---------- LÍNEA LEGAL ---------- */}
                 <div className="cf-footer__bottom">
                     {/* getFullYear: el año se actualiza solo. */}
-                    <p>© {new Date().getFullYear()} {COMPANY.name}</p>
+                    <p>
+                        © {new Date().getFullYear()} {COMPANY.name} · Proyecto de portfolio de Mateo.
+                        Empresa y servicios ficticios.
+                    </p>
                     <ul className="cf-footer__legal">
                         {LEGAL_LINKS.map((link) => (
                             <li key={link.to}>
