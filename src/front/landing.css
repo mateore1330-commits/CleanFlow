@@ -395,11 +395,213 @@
 }
 
 /* ======================================================================
+   6. SOBRE CLEANFLOW (AboutSection.jsx)
+   ====================================================================== */
+
+.cf-home-about__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 64px;
+}
+
+.cf-home-about__photo {
+  position: relative;
+}
+
+.cf-home-about__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 4.6;
+  object-fit: cover;
+  border-radius: var(--cf-radius-xl);
+  box-shadow: var(--cf-shadow-md);
+}
+
+.cf-home-about__badge {
+  position: absolute;
+  right: -20px;
+  bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--cf-space-3);
+  max-width: 250px;
+  margin: 0;
+  padding: 16px 18px;
+  border-radius: var(--cf-radius-md);
+  background-color: var(--cf-band);
+  box-shadow: var(--cf-shadow-md);
+  color: var(--cf-white);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-home-about__badge i {
+  color: var(--cf-accent);
+  font-size: 1.375rem;
+}
+
+.cf-home-about__text > p:not(.cf-eyebrow) {
+  margin: var(--cf-space-4) 0 0;
+  color: var(--cf-muted);
+  font-size: 1.0625rem;
+}
+
+.cf-home-about__values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 28px;
+  margin: 32px 0;
+  padding: 32px 0 0;
+  border-top: 1px solid var(--cf-border);
+  list-style: none;
+}
+
+.cf-home-about__values li {
+  display: flex;
+  gap: 14px;
+}
+
+.cf-home-about__values i {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background-color: var(--cf-brand-50);
+  color: var(--cf-primary);
+}
+
+.cf-home-about__values b {
+  display: block;
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+}
+
+.cf-home-about__values span span {
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-home-about__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-3);
+}
+
+/* ======================================================================
+   7. POR QUÉ CLEANFLOW (WhyCleanFlowSection.jsx) · «bento»
+   ====================================================================== */
+
+.cf-home .cf-home-why {
+  background-color: var(--cf-bg);
+}
+
+.cf-home-why__bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(200px, auto);
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-home-why__tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+}
+
+.cf-home-why__tile > i {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: auto;
+  border-radius: 14px;
+  background-color: var(--cf-brand-50);
+  color: var(--cf-primary);
+  font-size: 1.375rem;
+}
+
+.cf-home-why__tile h3 {
+  margin: 28px 0 6px;
+  color: var(--cf-text);
+  font-size: 1.1875rem;
+}
+
+.cf-home-why__tile p {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: 0.9375rem;
+}
+
+/* La pieza grande, con la foto y el texto encima sobre un degradado. */
+.cf-home-why__tile--photo {
+  position: relative;
+  grid-column: span 2;
+  grid-row: span 2;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+}
+
+.cf-home-why__tile--photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cf-home-why__cap {
+  position: relative;
+  margin-top: auto;
+  padding: 90px 28px 28px;
+  background: linear-gradient(0deg, rgba(var(--cf-brand-900-rgb), 0.94), rgba(var(--cf-brand-900-rgb), 0));
+}
+
+.cf-home-why__cap h3 {
+  margin: 0 0 6px;
+  color: var(--cf-white);
+  font-size: 1.625rem;
+}
+
+.cf-home-why__cap p {
+  color: rgba(var(--cf-white-rgb), 0.85);
+}
+
+.cf-home-why__tile--dark {
+  border: 0;
+  background-color: var(--cf-band);
+}
+
+.cf-home-why__tile--dark > i {
+  background-color: rgba(var(--cf-white-rgb), 0.08);
+  color: var(--cf-accent);
+}
+
+.cf-home-why__tile--dark h3 {
+  color: var(--cf-white);
+}
+
+.cf-home-why__tile--dark p {
+  color: rgba(var(--cf-white-rgb), 0.75);
+}
+
+/* ======================================================================
    RESPONSIVE
    ====================================================================== */
 
 @media (max-width: 1024px) {
-  .cf-home-services__grid {
+  .cf-home-services__grid,
+  .cf-home-why__bento {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -424,14 +626,30 @@
     margin-top: 32px;
   }
 
+  .cf-home-about__grid,
   .cf-home-how__steps {
     grid-template-columns: 1fr;
+  }
+
+  .cf-home-about__grid {
+    gap: 40px;
+  }
+
+  .cf-home-about__badge {
+    right: 12px;
   }
 }
 
 @media (max-width: 560px) {
-  .cf-home-services__grid {
+  .cf-home-services__grid,
+  .cf-home-why__bento,
+  .cf-home-about__values {
     grid-template-columns: 1fr;
+  }
+
+  .cf-home-why__tile--photo {
+    grid-column: auto;
+    min-height: 320px;
   }
 
   /* El texto arriba y los logos debajo, en fila: al lado del texto se
@@ -463,7 +681,8 @@
   }
 
   /* Dos botones apilados, a lo ancho y del mismo tamaño. */
-  .cf-hero__actions .cf-btn {
+  .cf-hero__actions .cf-btn,
+  .cf-home-about__actions .cf-btn {
     width: 100%;
   }
 }
