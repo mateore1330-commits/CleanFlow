@@ -1,9 +1,18 @@
 /**
  * Bandeja compartida de candidaturas y contacto (WEB-12 y WEB-13).
  * Los textos y campos cambian; carga, filtros y estados siguen el mismo patrón.
+ *
+ * Con la maqueta 06 (PANEL-04): la cabecera común con «Actualizar», las
+ * vistas en tarjetas (nuevos, respondidos, descartados) y una tarjeta por
+ * mensaje o candidatura. Las nuevas piden algo: su vista va en ámbar.
+ *
+ * Estilos: dashboard.css, sección 12 (cf-applications) y las vistas de
+ * la sección 20.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
+import { PageHead } from "../PageHead";
+import { ListViews } from "../list/ListViews";
 import "../../../dashboard.css";
 
 // Las fechas llegan en Madrid sin zona: no las desplazamos al huso del navegador.
@@ -15,23 +24,22 @@ const newestFirst = (rows) => [...rows].sort((a, b) =>
     (b.created_at || "").localeCompare(a.created_at || "")
 );
 
+/** Las vistas, con su número. Las nuevas, en ámbar si hay alguna. */
 const InboxFilters = ({ filters, rows, value, onChange, label }) => (
-    <div className="cf-services__tabs" role="group" aria-label={label}>
-        {filters.map((filter) => (
-            <button
-                key={filter.value}
-                type="button"
-                className="cf-services__tab"
-                aria-pressed={value === filter.value}
-                onClick={() => onChange(filter.value)}
-            >
-                {filter.label}
-                <span className="cf-services__count">
-                    {rows.filter((row) => row.status === filter.value).length}
-                </span>
-            </button>
-        ))}
-    </div>
+    <ListViews
+        label={label}
+        active={value}
+        onChange={onChange}
+        views={filters.map((filter) => {
+            const count = rows.filter((row) => row.status === filter.value).length;
+
+            return {
+                ...filter,
+                count,
+                tone: filter.value === "new" && count > 0 ? "warn" : undefined,
+            };
+        })}
+    />
 );
 
 const InboxStatus = ({ value, labels }) => (
@@ -189,17 +197,16 @@ export const Inbox = ({ config }) => {
 
     return (
         <section className="cf-applications">
-            <header className="cf-applications__header">
-                <div>
-                    <p className="cf-dash-eyebrow">{config.eyebrow}</p>
-                    <h1 className="cf-applications__title">{config.title}</h1>
-                    <p className="cf-applications__lede">{config.description}</p>
-                </div>
-                <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={load} disabled={busy}>
-                    <i className="fa-solid fa-rotate-right" aria-hidden="true" />
-                    Actualizar
-                </button>
-            </header>
+            <PageHead
+                title={config.title}
+                subtitle={config.description}
+                actions={
+                    <button type="button" className="cf-dash-btn cf-dash-btn--accent" onClick={load} disabled={busy}>
+                        <i className="fa-solid fa-rotate-right" aria-hidden="true" />
+                        Actualizar
+                    </button>
+                }
+            />
             <InboxFilters filters={config.filters} rows={rows} value={filter} onChange={setFilter} label={config.filterLabel} />
             {error && (
                 <div className="cf-dash-alert cf-applications__alert" role="alert">

@@ -8156,33 +8156,6 @@ textarea.cf-dash-input {
   overflow-wrap: anywhere;
 }
 
-/* ---------- CABECERA ---------- */
-
-.cf-applications__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-applications__title {
-  margin: 0;
-  color: var(--cf-primary);
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-  line-height: 1.15;
-}
-
-.cf-applications__lede {
-  max-width: 60ch;
-  margin: var(--cf-space-1) 0 0;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
 /* ---------- ERROR ---------- */
 
 .cf-applications__alert {
@@ -8206,9 +8179,9 @@ textarea.cf-dash-input {
 }
 
 .cf-applications__card {
-  padding: var(--cf-space-5, 20px);
+  padding: 20px 22px;
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: var(--cf-radius-lg);
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
@@ -8224,8 +8197,9 @@ textarea.cf-dash-input {
 .cf-applications__name {
   margin: 0;
   color: var(--cf-text);
+  font-family: var(--cf-font-heading);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
 }
 
@@ -8258,13 +8232,17 @@ textarea.cf-dash-input {
   font-size: var(--cf-text-sm);
 }
 
-/* ---------- ESTADOS ---------- */
+/* ---------- ESTADOS ----------
+   En píldora, como los estados de las reservas: lo nuevo en ámbar, porque
+   pide algo; lo respondido en verde; lo descartado en gris. */
 
 .cf-applications__state {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: var(--cf-text-sm);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -8274,30 +8252,22 @@ textarea.cf-dash-input {
   height: 6px;
   flex-shrink: 0;
   border-radius: 50%;
+  background-color: currentColor;
 }
 
 .cf-applications__state--new {
-  color: var(--cf-accent-dark);
-}
-
-.cf-applications__state--new .cf-applications__dot {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 .cf-applications__state--contacted {
-  color: var(--cf-primary);
-}
-
-.cf-applications__state--contacted .cf-applications__dot {
-  background-color: var(--cf-primary);
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
 }
 
 .cf-applications__state--discarded {
-  color: var(--cf-muted);
-}
-
-.cf-applications__state--discarded .cf-applications__dot {
-  background-color: var(--cf-muted);
+  background-color: var(--cf-neutral-soft);
+  color: var(--cf-neutral);
 }
 
 /* ---------- DETALLE ---------- */
@@ -8362,14 +8332,6 @@ textarea.cf-dash-input {
 /* ---------- RESPONSIVE ---------- */
 
 @media (max-width: 640px) {
-  .cf-applications__header {
-    align-items: stretch;
-  }
-
-  .cf-applications__header .cf-dash-btn {
-    width: 100%;
-  }
-
   .cf-applications__card {
     padding: var(--cf-space-4);
   }
