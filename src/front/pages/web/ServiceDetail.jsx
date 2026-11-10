@@ -23,20 +23,10 @@ import { getServiceBySlug, getServices } from "../../services/serviceService";
 import { getTasks } from "../../services/taskService";
 import { ServiceCard } from "../../components/web/ServiceCard";
 import { getServiceImage } from "../../data/serviceImages";
+import { formatPrice } from "../../utils/price";
 
 /** "1 hora" / "8 horas". El singular se cuela si no se mira. */
 const horasTexto = (horas) => `${horas} ${horas === 1 ? "hora" : "horas"}`;
-
-const formatPrice = (price) => {
-    const value = Number(price);
-
-    if (!Number.isFinite(value)) return "—";
-
-    return new Intl.NumberFormat("es-ES", {
-        style: "currency",
-        currency: "EUR",
-    }).format(value);
-};
 
 
 export const ServiceDetail = () => {

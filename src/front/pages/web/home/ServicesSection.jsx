@@ -1,106 +1,57 @@
 /**
- * Sección "Nuestros servicios" de la landing.
+ * SERVICIOS DE LA LANDING (maqueta 02, WEB-01).
  *
- * Lee el catálogo desde el store global. La petición se realiza
- * previamente desde ServicesLoader, por lo que aquí no hacemos fetch.
+ * Cuadrícula de tarjetas en vez de carrusel: se ven todos de un vistazo.
+ * Lee el catálogo del store; la petición la hace ServicesLoader al
+ * arrancar, así que aquí no hay fetch.
  */
 
-import { useRef } from "react";
 import useGlobalReducer from "../../../hooks/useGlobalReducer.jsx";
 import { ServiceCard } from "../../../components/web/ServiceCard.jsx";
 
+
 export const ServicesSection = () => {
     const { store } = useGlobalReducer();
-    const carouselRef = useRef(null);
-
-    const {
-        services = [],
-        servicesLoading,
-        servicesError,
-    } = store;
-
-    const moveCarousel = (direction) => {
-        if (!carouselRef.current) return;
-
-        const distance = carouselRef.current.clientWidth * 0.75;
-
-        carouselRef.current.scrollBy({
-            left: direction * distance,
-            behavior: "smooth",
-        });
-    };
+    const { services = [], servicesLoading, servicesError } = store;
 
     return (
-        <section id="services" className="cf-section cf-services-section">
+        <section id="services" className="cf-home-section cf-home-services">
             <div className="cf-container">
-                <h2 className="cf-section__title">
-                    Nuestros servicios
-                </h2>
+                <header className="cf-home-head">
+                    <div>
+                        <p className="cf-eyebrow">Servicios</p>
+                        <h2 className="cf-home-title">Elige cuánto quieres que brille</h2>
+                        <p className="cf-home-lede">
+                            Pagas por horas y eliges cuántas. Productos y material incluidos
+                            en todos los servicios.
+                        </p>
+                    </div>
+                </header>
 
                 {servicesLoading && services.length === 0 && (
-                    <p className="cf-services-section__message">
-                        Cargando servicios...
-                    </p>
+                    <p className="cf-home-message" role="status">Cargando servicios…</p>
                 )}
 
                 {servicesError && services.length === 0 && (
-                    <p className="cf-services-section__message cf-services-section__message--error">
-                        No hemos podido cargar los servicios en este momento.
-                    </p>
+                    <p className="cf-alert">No hemos podido cargar los servicios en este momento.</p>
                 )}
 
-                {!servicesLoading &&
-                    !servicesError &&
-                    services.length === 0 && (
-                        <p className="cf-services-section__message">
-                            Próximamente tendremos nuevos servicios disponibles.
-                        </p>
-                    )}
+                {!servicesLoading && !servicesError && services.length === 0 && (
+                    <p className="cf-home-message">Próximamente tendremos nuevos servicios disponibles.</p>
+                )}
 
                 {services.length > 0 && (
                     <>
                         {servicesError && (
-                            <p className="cf-services-section__message cf-services-section__message--error">
-                                No hemos podido actualizar los servicios. Te mostramos la información disponible.
+                            <p className="cf-alert cf-alert--warning cf-home-services__stale">
+                                No hemos podido actualizar los servicios. Te enseñamos los últimos que teníamos.
                             </p>
                         )}
 
-                        <div className="cf-services-carousel">
-                            <button
-                                className="cf-services-carousel__button"
-                                type="button"
-                                onClick={() => moveCarousel(-1)}
-                                aria-label="Ver servicios anteriores"
-                            >
-                                <i
-                                    className="fa-solid fa-chevron-left"
-                                    aria-hidden="true"
-                                />
-                            </button>
-
-                            <div
-                                className="cf-services-carousel__track"
-                                ref={carouselRef}
-                            >
-                                {services.map((service) => (
-                                    <ServiceCard
-                                        key={service.slug}
-                                        service={service}
-                                    />
-                                ))}
-                            </div>
-
-                            <button
-                                className="cf-services-carousel__button"
-                                type="button"
-                                onClick={() => moveCarousel(1)}
-                                aria-label="Ver siguientes servicios"
-                            >
-                                <i
-                                    className="fa-solid fa-chevron-right"
-                                    aria-hidden="true"
-                                />
-                            </button>
+                        <div className="cf-home-services__grid">
+                            {services.map((service) => (
+                                <ServiceCard key={service.slug} service={service} />
+                            ))}
                         </div>
                     </>
                 )}

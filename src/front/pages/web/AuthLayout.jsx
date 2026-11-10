@@ -13,6 +13,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom"
 import { Logo } from "../../components/Logo"
 import { Wordmark } from "../../components/Wordmark"
 import useGlobalReducer from "../../hooks/useGlobalReducer"
+import { DemoNotice } from "../../components/web/DemoNotice"
 import "../../auth.css"
 
 export const AuthLayout = () => {
@@ -36,6 +37,8 @@ export const AuthLayout = () => {
     }
 
     return (
+        <>
+        <DemoNotice />
         <div className="auth-screen">
             <Link
                 to="/"
@@ -53,5 +56,6 @@ export const AuthLayout = () => {
                 {inProgress ? "← Salir y volver al inicio" : "← Volver al inicio"}
             </Link>
         </div>
+        </>
     )
 }

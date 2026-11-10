@@ -8028,13 +8028,10 @@ textarea.cf-dash-input {
 
 /* ---------- LAS ESTRELLAS ---------- */
 
-.cf-stars {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
 
 /* Para elegir: 44px de lado, que es lo mínimo que se acierta con el dedo. */
+/* Las estrellas de solo lectura (cf-stars, --read, __mark) están en index.css:
+   también las usa la web (opiniones de la landing). Aquí, las de elegir. */
 .cf-stars__btn {
   display: grid;
   place-items: center;
@@ -8065,19 +8062,8 @@ textarea.cf-dash-input {
 }
 
 /* Solo lectura: más juntas y sin zona de pulsación, que no se toca. */
-.cf-stars--read {
-  gap: 2px;
-}
 
-.cf-stars__mark {
-  display: grid;
-  place-items: center;
-  color: var(--cf-border);
-}
 
-.cf-stars__mark--on {
-  color: var(--cf-sun);
-}
 
 .cf-stars__count {
   margin-left: var(--cf-space-2);
