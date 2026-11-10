@@ -322,8 +322,87 @@
 }
 
 /* ======================================================================
+   4. SERVICIOS (ServicesSection.jsx). La tarjeta está en web.css.
+   ====================================================================== */
+
+.cf-home-services__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.cf-home-services__stale {
+  margin-bottom: var(--cf-space-6);
+}
+
+/* ======================================================================
+   5. CÓMO FUNCIONA (HowItWorksSection.jsx)
+   ====================================================================== */
+
+.cf-home .cf-home-how {
+  background-color: var(--cf-bg);
+}
+
+.cf-home-how__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-home-how__step {
+  position: relative;
+  padding: 32px;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+}
+
+.cf-home-how__n {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 40px;
+  border-radius: 50%;
+  background-color: var(--cf-brand-50);
+  color: var(--cf-primary);
+  font-family: var(--cf-font-heading);
+  font-size: var(--cf-text-sm);
+  font-weight: 800;
+}
+
+.cf-home-how__icon {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  color: var(--cf-brand-100);
+  font-size: 1.625rem;
+}
+
+.cf-home-how__step h3 {
+  margin: 0 0 var(--cf-space-2);
+  color: var(--cf-text);
+  font-size: 1.3125rem;
+}
+
+.cf-home-how__step p {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: 0.9375rem;
+}
+
+/* ======================================================================
    RESPONSIVE
    ====================================================================== */
+
+@media (max-width: 1024px) {
+  .cf-home-services__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 @media (max-width: 860px) {
   .cf-home-section {
@@ -344,9 +423,17 @@
     display: inline-flex;
     margin-top: 32px;
   }
+
+  .cf-home-how__steps {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
+  .cf-home-services__grid {
+    grid-template-columns: 1fr;
+  }
+
   /* El texto arriba y los logos debajo, en fila: al lado del texto se
      apilaban en una columna estrecha. */
   .cf-partners__inner {
@@ -388,7 +475,14 @@
    ====================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+  .cf-service-card,
+  .cf-service-card__image,
   .cf-partners__row img {
     transition: none;
+  }
+
+  .cf-service-card:hover,
+  .cf-service-card:hover .cf-service-card__image {
+    transform: none;
   }
 }

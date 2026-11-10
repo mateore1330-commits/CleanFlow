@@ -1327,179 +1327,146 @@ main > section:nth-of-type(even) {
   }
 }
 /* ======================================================================
-   NUESTROS SERVICIOS — WEB-05
+   TARJETA DE SERVICIO (ServiceCard.jsx, maqueta 02)
+
+   La usan la landing y «Otros servicios» de la ficha. Imagen arriba,
+   nombre (enlace a la ficha), descripción, horas mínimas y, al pie, el
+   precio y «Reservar». Toda la tarjeta sube un poco al pasar el ratón.
    ====================================================================== */
 
-.cf-services-section__message {
-  margin: var(--cf-space-6) 0 0;
-  color: var(--cf-muted);
-}
-
-.cf-services-section__message--error {
-  color: var(--cf-danger-dark);
-}
-
-/* Carrusel */
-.cf-services-carousel {
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-3);
-  margin-top: var(--cf-space-8);
-}
-
-.cf-services-carousel__track {
-  flex: 1;
-  display: flex;
-  gap: var(--cf-space-4);
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  padding: 4px;
-}
-
-.cf-services-carousel__track::-webkit-scrollbar {
-  display: none;
-}
-
-.cf-services-carousel__button {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--cf-border);
-  border-radius: 50%;
-  background: var(--cf-surface);
-  color: var(--cf-primary);
-  cursor: pointer;
-}
-
-.cf-services-carousel__button:hover {
-  background: var(--cf-primary);
-  color: white;
-}
-
-/* Tarjeta */
 .cf-service-card {
-  flex: 0 0 260px;
-  min-width: 260px;
-  scroll-snap-align: start;
-
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background: var(--cf-surface);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.cf-service-card:hover {
+  border-color: transparent;
+  box-shadow: var(--cf-shadow-md);
+  transform: translateY(-3px);
+}
+
+.cf-service-card__media {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background-color: var(--cf-brand-50);
 }
 
 .cf-service-card__image {
-  width: 100%;
-  height: 125px;
-  object-fit: cover;
   display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.cf-service-card:hover .cf-service-card__image {
+  transform: scale(1.04);
 }
 
 .cf-service-card__body {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  padding: var(--cf-space-4);
+  padding: 20px;
 }
 
 .cf-service-card__title {
-  margin: 0 0 var(--cf-space-2);
-  font-family: var(--cf-font-heading);
-  color: var(--cf-primary);
-  font-size: var(--cf-text-lg);
+  margin: 0;
+  font-size: 1.1875rem;
+}
+
+.cf-service-card__title a {
+  color: var(--cf-text);
+  text-decoration: none;
+}
+
+/* Toda la tarjeta responde al clic en el título (el enlace se estira con
+   ::after), sin anidar un enlace dentro de otro. */
+.cf-service-card {
+  position: relative;
+}
+
+.cf-service-card__title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.cf-service-card__title a:focus-visible {
+  outline: none;
+}
+
+.cf-service-card:has(.cf-service-card__title a:focus-visible) {
+  outline: 3px solid var(--cf-ring);
+  outline-offset: 2px;
 }
 
 .cf-service-card__description {
-  margin: 0 0 var(--cf-space-4);
+  flex: 1;
+  margin: var(--cf-space-2) 0 0;
   color: var(--cf-muted);
-  line-height: 1.5;
   font-size: var(--cf-text-sm);
 }
 
-.cf-service-card__footer {
-  margin-top: auto;
+.cf-service-card__meta {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-service-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--cf-space-3);
+  margin-top: var(--cf-space-4);
+  padding-top: var(--cf-space-4);
+  border-top: 1px solid var(--cf-border);
 }
 
 .cf-service-card__price {
   margin: 0;
-  color: var(--cf-text);
-  font-size: var(--cf-text-sm);
-}
-
-/* Los dos botones, uno al lado del otro cuando caben y apilados cuando
-   no: las tarjetas de la portada van a cuatro columnas y ahí no hay
-   sitio. Lo reparte el flex-basis de abajo. */
-.cf-service-card__actions {
-  /* El pie alinea a la izquierda; sin el stretch esta fila se encogería
-     a su contenido y nunca habría sitio para los dos. */
-  align-self: stretch;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--cf-space-2);
-}
-
-/* Más pequeños que el botón de siempre: a tamaño completo los dos juntos
-   no caben en ninguna tarjeta. Aquí compiten con la foto y el texto, no
-   mandan ellos. */
-.cf-service-card__actions .cf-btn {
-  flex: 1 1 130px;
-  padding: 10px 18px;
+  color: var(--cf-muted);
   font-size: 0.8125rem;
 }
 
-.cf-service-card__link {
+.cf-service-card__price strong {
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1.375rem;
+}
+
+/* «Reservar» va por encima del enlace estirado del título. */
+.cf-service-card__book {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: var(--cf-space-2);
+  min-height: 44px;
   color: var(--cf-primary);
-  font-weight: 700;
-  text-decoration: none;
   font-size: var(--cf-text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: gap var(--cf-transition);
 }
 
-.cf-service-card__link:hover {
-  color: var(--cf-primary-dark);
+.cf-service-card__book:hover {
+  gap: 12px;
 }
 
-/* Tablet */
-@media (max-width: 900px) {
-  .cf-service-card {
-    flex-basis: 230px;
-    min-width: 230px;
-  }
-}
-
-/* Móvil */
-@media (max-width: 600px) {
-  .cf-services-carousel {
-    gap: var(--cf-space-2);
-  }
-
-  .cf-services-carousel__button {
-    width: 34px;
-    height: 34px;
-    flex-basis: 34px;
-  }
-
-  .cf-service-card {
-    flex-basis: 210px;
-    min-width: 210px;
-  }
-
-  .cf-service-card__image {
-    height: 110px;
-  }
+.cf-service-card__book:focus-visible {
+  outline: 3px solid var(--cf-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* ================================================================

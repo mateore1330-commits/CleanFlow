@@ -14,6 +14,7 @@ import "../../landing.css"
 import { Hero } from "./home/Hero"
 import { PartnersSection } from "./home/PartnersSection"
 import { ServicesSection } from "./home/ServicesSection"
+import { HowItWorksSection } from "./home/HowItWorksSection"
 import { ReviewsSection } from "./home/ReviewsSection"
 import { AboutSection } from "./home/AboutSection"
 import { WhyCleanFlowSection } from "./home/WhyCleanFlowSection"
@@ -26,6 +27,7 @@ export const Home = () => {
             <Hero />
             <PartnersSection />
             <ServicesSection />
+            <HowItWorksSection />
             <ReviewsSection />
             <AboutSection />
             <WhyCleanFlowSection />
