@@ -26,7 +26,7 @@
         (cf-stars__*, cf-rate__*, cf-mine__*)
     14. Cambiar la fecha de una reserva (cf-resched__*)
     15. Inicio del encargado (cf-home__*)
-    16. Inicio del trabajador (cf-worker-home__*)
+    16. Inicio del trabajador (cf-worker-home__*, cf-wnow__*)
     17. Inicio del cliente (cf-client-home__*, cf-client-next__*,
         cf-client-pending__*, cf-client-rebook__*)
     18. Movimiento reducido
@@ -10070,140 +10070,615 @@ textarea.cf-dash-input {
 }
 
 /* ======================================================================
-   16. INICIO DEL TRABAJADOR (cf-worker-home__*)
-   ====================================================================== */
+   16. INICIO DEL TRABAJADOR (WorkerHome.jsx y home/Worker*, maqueta 05,
+       PANEL-03)
+   ======================================================================
+
+   Dos columnas: a la izquierda el servicio de ahora (cf-wnow), lo que se
+   quedó a medias y lo que viene; a la derecha la jornada, la nota y las
+   ausencias. En pantallas estrechas, una debajo de otra. */
 
 .cf-worker-home {
-  display: grid;
-  gap: var(--cf-space-6);
+  container-type: inline-size;
   min-width: 0;
   color: var(--cf-text);
+  font-family: var(--cf-font-body);
 }
 
-.cf-worker-home h1,
 .cf-worker-home h2,
-.cf-worker-home h3,
-.cf-worker-home p { margin: 0; }
+.cf-worker-home p {
+  margin: 0;
+}
 
-.cf-worker-home h2 { font: 500 var(--cf-text-xl) var(--cf-font-heading); }
-.cf-worker-home h3 { font: 600 var(--cf-text-base) var(--cf-font-body); }
+.cf-worker-home__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+}
 
-.cf-worker-home__hero,
+.cf-worker-home__stack {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.cf-worker-home__skeleton {
+  height: 28rem;
+  border-radius: 20px;
+}
+
+.cf-worker-home__muted {
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+}
+
+/* Una tarjeta blanca, con el mismo radio que los bloques del detalle. */
 .cf-worker-home__card {
+  display: grid;
+  align-content: start;
+  gap: var(--cf-space-4);
   padding: var(--cf-space-6);
-  border-radius: var(--cf-radius-lg);
-  box-shadow: var(--cf-shadow-md);
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+  min-width: 0;
+}
+
+.cf-worker-home__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--cf-space-3);
+}
+
+.cf-worker-home__head h2 {
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.cf-worker-home__aside-n {
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- EL SERVICIO DE AHORA ----------
+   En grande y en oscuro: lo único que hay que mirar al llegar. */
+
+.cf-wnow {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  padding: 26px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--cf-brand-900) 0%, var(--cf-brand-700) 60%, #0f7f88 100%);
+  box-shadow: 0 18px 40px -22px rgba(var(--cf-brand-900-rgb), 0.65);
+  color: var(--cf-white);
+}
+
+/* El brillo menta de la esquina, como en la cabecera. */
+.cf-wnow::after {
+  content: "";
+  position: absolute;
+  top: -130px;
+  right: -110px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--cf-accent-rgb), 0.35), transparent 65%);
+  pointer-events: none;
+}
+
+.cf-wnow > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cf-wnow__live {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  color: var(--cf-accent);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* En curso: el punto que late. */
+.cf-wnow__live--on::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--cf-accent);
+  animation: cf-wnow-pulse 1.8s infinite;
+}
+
+@keyframes cf-wnow-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--cf-accent-rgb), 0.7);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 10px rgba(var(--cf-accent-rgb), 0);
+  }
+}
+
+.cf-wnow h2 {
+  margin: 10px 0 2px;
+  color: var(--cf-white);
+  font-family: var(--cf-font-heading);
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.cf-wnow__time {
+  color: rgba(var(--cf-white-rgb), 0.78);
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-wnow__rows {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.cf-wnow__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.12);
+  border-radius: 14px;
+  background-color: rgba(var(--cf-white-rgb), 0.07);
+  font-size: var(--cf-text-sm);
+  min-width: 0;
+}
+
+.cf-wnow__row > i {
+  width: 18px;
+  flex: none;
+  color: var(--cf-accent);
+  text-align: center;
+}
+
+.cf-wnow__row > div {
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.cf-worker-home__hero {
+.cf-wnow__row small {
+  display: block;
+  color: rgba(var(--cf-white-rgb), 0.7);
+  font-size: 0.75rem;
+}
+
+.cf-wnow__act {
   display: grid;
-  gap: var(--cf-space-3);
-  background: var(--cf-band);
-  color: var(--cf-on-primary);
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  margin-left: auto;
+  border-radius: 12px;
+  background-color: rgba(var(--cf-white-rgb), 0.12);
+  color: var(--cf-white);
+  text-decoration: none;
 }
 
-.cf-worker-home__hero h1 {
-  color: inherit;
-  font: 500 clamp(var(--cf-text-2xl), 6vw, var(--cf-text-3xl)) var(--cf-font-heading);
+.cf-wnow__act:hover {
+  background-color: rgba(var(--cf-white-rgb), 0.2);
+  color: var(--cf-white);
 }
 
-.cf-worker-home__hero h2 { color: inherit; }
-.cf-worker-home__hero a { color: inherit; text-underline-offset: var(--cf-space-1); }
-.cf-worker-home__date,
-.cf-worker-home__summary { color: var(--cf-on-primary-muted); font-size: var(--cf-text-sm); }
-
-.cf-worker-home__now {
-  display: grid;
-  justify-items: start;
-  gap: var(--cf-space-3);
-  margin-block: var(--cf-space-4);
+.cf-wnow :focus-visible {
+  outline: 3px solid var(--cf-accent);
+  outline-offset: 3px;
 }
 
-.cf-worker-home__time { font: 500 var(--cf-text-2xl) var(--cf-font-heading); }
-.cf-worker-home .cf-worker-home__action {
-  background: var(--cf-on-primary);
-  color: var(--cf-primary);
-  margin-top: var(--cf-space-3);
-  min-height: var(--cf-space-12);
-  width: 100%;
-  white-space: normal;
+.cf-wnow__prog-l {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--cf-space-2);
+  color: rgba(var(--cf-white-rgb), 0.78);
+  font-size: 0.8125rem;
 }
-.cf-worker-home .cf-worker-home__action:hover { background: var(--cf-primary-soft); }
-.cf-worker-home__hero :focus-visible { outline: 3px solid var(--cf-on-primary); outline-offset: 4px; }
-.cf-worker-home__now > a { padding-block: var(--cf-space-2); }
-.cf-worker-home__now p a { display: inline-block; padding-block: var(--cf-space-2); }
 
-.cf-worker-home__journey { min-width: 0; }
-.cf-worker-home__journey h2 { font-size: var(--cf-text-lg); }
-.cf-worker-home__journey ol {
-  list-style: none;
-  margin: var(--cf-space-4) 0 0;
-  padding: 0;
-  display: grid;
+.cf-wnow__prog-l b {
+  color: var(--cf-white);
 }
-.cf-worker-home__journey li {
-  display: grid;
-  position: relative;
-  gap: var(--cf-space-1);
-  padding: 0 0 var(--cf-space-6) var(--cf-space-6);
-  border-left: 2px solid var(--cf-on-primary-muted);
-  color: var(--cf-on-primary-muted);
+
+.cf-wnow__prog {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background-color: rgba(var(--cf-white-rgb), 0.14);
+  overflow: hidden;
+}
+
+.cf-wnow__prog > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7fe0bb, var(--cf-accent));
+}
+
+.cf-wnow__note {
+  margin-top: var(--cf-space-4);
+  color: rgba(var(--cf-white-rgb), 0.85);
   font-size: var(--cf-text-sm);
 }
-.cf-worker-home__journey li:last-child { border-color: transparent; padding-bottom: 0; }
-.cf-worker-home__journey li[aria-current] { color: var(--cf-on-primary); }
-.cf-worker-home__stop {
-  position: absolute;
-  left: -7px;
-  top: var(--cf-space-1);
-  width: var(--cf-space-3);
-  height: var(--cf-space-3);
-  border-radius: 50%;
-  background: var(--cf-on-primary-muted);
-}
-.cf-worker-home__journey li[aria-current] .cf-worker-home__stop {
-  background: var(--cf-on-primary);
-  box-shadow: 0 0 0 4px var(--cf-accent-dark);
-}
-.cf-worker-home__card { background: var(--cf-surface); display: grid; align-content: start; gap: var(--cf-space-4); }
-.cf-worker-home__grid,
-.cf-worker-home__aside { display: grid; gap: var(--cf-space-6); min-width: 0; align-content: start; }
-.cf-worker-home__unfinished { background: var(--cf-warning-soft); }
-.cf-worker-home__unfinished .cf-dash-eyebrow,
-.cf-worker-home__unfinished h2 { color: var(--cf-warning-dark); }
-.cf-worker-home__list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--cf-space-4); }
-.cf-worker-home__list li { display: grid; gap: var(--cf-space-2); }
-.cf-worker-home__list a { display: grid; gap: var(--cf-space-1); color: var(--cf-text); padding-block: var(--cf-space-2); }
-.cf-worker-home__list a span { font-size: var(--cf-text-sm); }
-.cf-worker-home__planned { display: grid; gap: var(--cf-space-1); font-size: var(--cf-text-sm); }
-.cf-worker-home__muted,
-.cf-worker-home__planned span { color: var(--cf-muted); }
-.cf-worker-home__upcoming li + li { padding-top: var(--cf-space-3); }
-.cf-worker-home__card .cf-mine { align-items: flex-start; text-align: left; }
-.cf-worker-home__skeleton { height: 28rem; border-radius: var(--cf-radius-lg); }
-.cf-worker-home__absence-form,
-.cf-worker-home__absence-form label { display: grid; gap: var(--cf-space-2); min-width: 0; }
-.cf-worker-home__absence-form { gap: var(--cf-space-4); }
-.cf-worker-home__absence-form .cf-dash-input { width: 100%; min-width: 0; box-sizing: border-box; }
-.cf-worker-home__absence-form button { white-space: normal; min-height: var(--cf-space-12); }
-.cf-wtask[id], .cf-wday[id] { scroll-margin-block: var(--cf-space-8); }
-.cf-wtask[id]:focus, .cf-wday[id]:focus { outline: 3px solid var(--cf-accent-dark); outline-offset: 4px; }
 
-@media (min-width: 769px) {
-  .cf-worker-home__hero { padding: var(--cf-space-8); }
-  .cf-worker-home__grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
-  .cf-worker-home .cf-worker-home__action { width: auto; }
-  .cf-worker-home__journey ol { display: flex; overflow-x: auto; padding-block: var(--cf-space-2); }
-  .cf-worker-home__journey li {
-    flex: 1 0 10rem;
-    border-left: none;
-    border-top: 2px solid var(--cf-on-primary-muted);
-    padding: var(--cf-space-4) var(--cf-space-4) 0 0;
+/* El botón, en menta y a lo ancho: el de la cabecera del panel. */
+.cf-worker-home .cf-wnow__btn {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 18px;
+  justify-content: center;
+  border: 0;
+  background: linear-gradient(135deg, #7fe0bb 0%, var(--cf-accent) 100%);
+  color: var(--cf-brand-900);
+}
+
+.cf-worker-home .cf-wnow__btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #95e8c8 0%, #74dcb4 100%);
+  color: var(--cf-brand-900);
+}
+
+.cf-worker-home .cf-wnow__btn:disabled {
+  background: rgba(var(--cf-white-rgb), 0.14);
+  color: rgba(var(--cf-white-rgb), 0.7);
+}
+
+/* Sin nada ahora: la misma tarjeta, más corta. */
+.cf-wnow--empty h2 {
+  font-size: 1.375rem;
+}
+
+.cf-wnow--empty .cf-wnow__time {
+  margin-top: var(--cf-space-2);
+}
+
+/* ---------- SE TE QUEDÓ A MEDIAS ----------
+   En ámbar, como lo que le toca al cliente: hay que arreglarlo. */
+
+.cf-wpending {
+  padding: 20px 22px;
+  border: 1px solid var(--cf-warning-line);
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fffaf0, #fff1d6);
+}
+
+.cf-wpending .cf-dash-eyebrow {
+  color: var(--cf-warning-dark);
+}
+
+.cf-wpending h2 {
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.cf-wpending ul {
+  display: grid;
+  gap: var(--cf-space-2);
+  margin: var(--cf-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-wpending a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background-color: rgba(var(--cf-white-rgb), 0.7);
+  color: var(--cf-text);
+  font-size: var(--cf-text-sm);
+  text-decoration: none;
+}
+
+.cf-wpending a:hover {
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+}
+
+.cf-wpending a:focus-visible {
+  outline: 2px solid var(--cf-warning-dark);
+  outline-offset: 2px;
+}
+
+.cf-wpending a > i:first-child {
+  width: 16px;
+  color: var(--cf-warning-dark);
+  text-align: center;
+}
+
+.cf-wpending a > span {
+  min-width: 0;
+}
+
+.cf-wpending small {
+  display: block;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+.cf-wpending a > i:last-child {
+  margin-left: auto;
+  color: #8a6a2c;
+  font-size: 0.75rem;
+}
+
+/* ---------- LO QUE VIENE ---------- */
+
+.cf-wweek {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-wweek li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--cf-border);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-wweek li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.cf-wweek b {
+  color: var(--cf-brand-700);
+  font-family: var(--cf-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.cf-wweek small {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cf-wweek__free {
+  color: var(--cf-muted);
+  font-style: italic;
+}
+
+/* ---------- TU JORNADA ----------
+   La hora, un punto y el servicio: hecho en verde, el de ahora con su
+   halo menta. */
+
+.cf-wjourney {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-wjourney li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 22px minmax(0, 1fr);
+  gap: 10px;
+  padding-bottom: 18px;
+}
+
+.cf-wjourney li:last-child {
+  padding-bottom: 0;
+}
+
+/* La línea entre un punto y el siguiente. */
+.cf-wjourney li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  bottom: -2px;
+  left: 68px;
+  width: 2px;
+  background-color: var(--cf-border);
+}
+
+.cf-wjourney time {
+  padding-top: 1px;
+  color: var(--cf-muted);
+  font-family: var(--cf-font-heading);
+  font-size: var(--cf-text-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-wjourney__dot {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  margin-top: 4px;
+  border: 3px solid var(--cf-border);
+  border-radius: 50%;
+  background-color: var(--cf-surface);
+}
+
+.cf-wjourney--done .cf-wjourney__dot {
+  border-color: var(--cf-success);
+  background-color: var(--cf-success);
+}
+
+.cf-wjourney--now .cf-wjourney__dot {
+  border-color: var(--cf-accent);
+  background-color: var(--cf-brand-600);
+  box-shadow: 0 0 0 4px rgba(var(--cf-accent-rgb), 0.25);
+}
+
+.cf-wjourney--now time {
+  color: var(--cf-brand-600);
+}
+
+.cf-wjourney b {
+  display: block;
+  font-size: var(--cf-text-sm);
+}
+
+.cf-wjourney span {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- TU NOTA ----------
+   La pieza de siempre (WorkerRating, cf-mine), aquí en grande y con el
+   degradado suave de la marca. */
+
+.cf-worker-home__rating {
+  padding: 22px;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
+}
+
+.cf-worker-home__rating .cf-mine {
+  justify-items: start;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.cf-worker-home__rating .cf-mine__num {
+  color: var(--cf-brand-700);
+  font-size: 2.75rem;
+  font-weight: 800;
+}
+
+.cf-worker-home__rating .cf-mine__row {
+  gap: var(--cf-space-3);
+}
+
+/* ---------- TUS AUSENCIAS ---------- */
+
+.cf-wabs {
+  display: grid;
+  gap: var(--cf-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-wabs li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--cf-border);
+  border-radius: 12px;
+  font-size: var(--cf-text-sm);
+}
+
+.cf-wabs li > i {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
+}
+
+.cf-wabs small {
+  display: block;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+.cf-wabs__notice {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
+  font-size: var(--cf-text-sm);
+  font-weight: 600;
+}
+
+.cf-worker-home .cf-wabs__toggle {
+  width: 100%;
+  justify-content: center;
+}
+
+.cf-wabs__form {
+  display: grid;
+  gap: 12px;
+  padding-top: var(--cf-space-4);
+  border-top: 1px solid var(--cf-border);
+}
+
+.cf-wabs__two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cf-wabs__form .cf-dash-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.cf-wabs__form textarea.cf-dash-input {
+  min-height: 70px;
+}
+
+.cf-wabs__opt {
+  color: var(--cf-muted);
+  font-weight: 400;
+}
+
+.cf-wabs__form .cf-dash-btn {
+  justify-content: center;
+}
+
+/* ---------- ESTRECHO ---------- */
+
+@container (max-width: 860px) {
+  .cf-worker-home__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .cf-worker-home__journey li:last-child { border-top-color: var(--cf-on-primary-muted); }
-  .cf-worker-home__stop { left: 0; top: -7px; }
+}
+
+@container (max-width: 420px) {
+  .cf-wnow {
+    padding: 22px 18px;
+  }
+
+  .cf-worker-home__card {
+    padding: 20px var(--cf-space-4);
+  }
+
+  .cf-wweek li {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .cf-wweek small {
+    grid-column: 2;
+  }
+
+  .cf-wabs__two {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* ======================================================================
