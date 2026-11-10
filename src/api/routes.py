@@ -415,16 +415,8 @@ def get_workers():
         .order_by(User.name, User.last_name)
     ).scalars().all()
 
-    # La valoración de cada trabajador es la media de las reseñas de sus
-    # reservas. UNA consulta agrupada para todos, no una por trabajador.
-    ratings = {
-        worker_id: (average, total)
-        for worker_id, average, total in db.session.execute(
-            db.select(Booking.worker_id, func.avg(Review.rating), func.count(Review.review_id))
-            .join(Review, Review.booking_id == Booking.booking_id)
-            .group_by(Booking.worker_id)
-        ).all()
-    }
+    # La valoración de cada trabajador: una sola consulta para todos.
+    ratings = worker_ratings()
 
     today = madrid_now().date()
 
@@ -437,7 +429,7 @@ def get_workers():
             "avatar_url": worker.user.avatar_url if worker.user else None,
             "shift_start": shift.start_time.strftime("%H:%M") if shift else None,
             "shift_end": shift.end_time.strftime("%H:%M") if shift else None,
-            "rating": round(float(average), 1) if average is not None else None,
+            "rating": rating_value(average),
             "reviews_count": total,
             # Una ausencia que incluye hoy. Sin fecha de fin, sigue abierta.
             "on_leave_today": any(
@@ -2853,22 +2845,46 @@ def update_service_status(service_id):
 # El cálculo está en api/availability.py; aquí solo se lee la petición
 # y se devuelve la respuesta.
 
-def public_worker(worker):
+def worker_ratings():
+    """La valoración de cada trabajador: {worker_id: (media, total)}.
+
+    La media de las reseñas de sus reservas. UNA consulta agrupada para
+    todos, no una por trabajador. La usan la lista del encargado, los
+    trabajadores que el cliente puede reservar y sus reservas (PANEL-02)."""
+    return {
+        worker_id: (average, total)
+        for worker_id, average, total in db.session.execute(
+            db.select(Booking.worker_id, func.avg(Review.rating), func.count(Review.review_id))
+            .join(Review, Review.booking_id == Booking.booking_id)
+            .group_by(Booking.worker_id)
+        ).all()
+    }
+
+
+def rating_value(average):
+    """La media con un decimal (4.9), o None si no tiene ninguna reseña."""
+    return round(float(average), 1) if average is not None else None
+
+
+def public_worker(worker, ratings=None):
     """Lo que ve un cliente de un trabajador: nombre con inicial, foto y
-    valoración. Sin correo ni teléfono (Worker.serialize() es del encargado)."""
+    valoración. Sin correo ni teléfono (Worker.serialize() es del encargado).
+
+    ratings: lo que devuelve worker_ratings(), pedido una vez para todos.
+    Sin él (al crear o mover una reserva, que no la enseñan), la valoración
+    va vacía y no se hace la consulta."""
+    ratings = ratings or {}
     user = worker.user
     last_name = (user.last_name or "").strip()
     initial = f" {last_name[0]}." if last_name else ""
+    average, total = ratings.get(worker.worker_id, (None, 0))
 
     return {
         "worker_id": worker.worker_id,
         "name": f"{user.name}{initial}",
         "avatar_url": user.avatar_url,
-        # La #20 ya calcula la media de cada trabajador, pero solo la
-        # trae GET /api/workers, con una consulta agrupada. Aquí sigue
-        # vacía: traerla pediría repetir esa consulta y el panel de
-        # contratación todavía no la enseña.
-        "rating": None,
+        "rating": rating_value(average),
+        "reviews_count": total,
     }
 
 
@@ -2891,7 +2907,8 @@ def bookable_workers():
 def get_availability_workers():
     """Los trabajadores que el cliente puede elegir al reservar. La opción
     "Cualquiera" no es un trabajador: la añade el panel."""
-    return jsonify({"workers": [public_worker(worker) for worker in bookable_workers()]}), 200
+    ratings = worker_ratings()
+    return jsonify({"workers": [public_worker(worker, ratings) for worker in bookable_workers()]}), 200
 
 
 # Tope de horas al pedir huecos. Ningún servicio llega, y evita que
@@ -3739,12 +3756,17 @@ def my_bookings():
         )
     ).scalars().all()
 
-    return jsonify({
-        "bookings": [
-            booking.serialize_detail(with_review=is_client)
-            for booking in bookings
-        ]
-    })
+    # El cliente ve la nota de quien va a su casa (Inicio, PANEL-02): una
+    # sola consulta para todas sus reservas. Al trabajador no le hace falta.
+    ratings = worker_ratings() if is_client else {}
+
+    def list_item(booking):
+        item = booking.serialize_detail(with_review=is_client)
+        if is_client:
+            item["worker_rating"] = rating_value(ratings.get(booking.worker_id, (None, 0))[0])
+        return item
+
+    return jsonify({"bookings": [list_item(booking) for booking in bookings]})
 
 
 @api.route("/bookings/<int:booking_id>/complete", methods=["PATCH"])
