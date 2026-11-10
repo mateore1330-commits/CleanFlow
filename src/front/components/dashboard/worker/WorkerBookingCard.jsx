@@ -1,24 +1,26 @@
 /**
- * TARJETA DE UN SERVICIO ASIGNADO.
+ * TARJETA DE UN SERVICIO ASIGNADO (maqueta 05, PANEL-03).
  *
- * Una fila del listado del trabajador: cuándo, qué, dónde, en qué punto
- * está y cuántas tareas lleva. La tarjeta entera abre el detalle, con el
- * ratón y con el teclado.
+ * Una fila del listado del trabajador: cuándo, qué, a qué hora y dónde, en
+ * qué punto está y, si hoy toca o ya está en marcha, cuántas tareas lleva.
+ * Grande y fácil de tocar con el pulgar: la tarjeta entera es un enlace al
+ * detalle, con el ratón, el teclado y el lector de pantalla.
  *
- * Solo pinta: recibe el servicio ya cargado y avisa con onOpen.
+ * Las de hoy se distinguen con el borde y la fecha en color: son las
+ * únicas que se pueden empezar.
  *
  * Estilos: dashboard.css, sección 10 (cf-wcard).
  */
 
+import { Link } from "react-router-dom";
 import { dayOf, monthOf, timeOf } from "../bookings/bookingFormat";
 import { WorkerStatus } from "./WorkerStatus";
-import { WorkerProgress } from "./WorkerProgress";
 
-/** "Alcalá, 118": lo justo para reconocer la casa de un vistazo. */
+/** "Calle de Prueba, 1, Madrid": lo justo para reconocer la casa. */
 const shortAddress = (address) =>
-    address ? `${address.street}, ${address.number}` : "Sin dirección";
+    address ? `${address.street}, ${address.number}, ${address.city}` : "Sin dirección";
 
-export const WorkerBookingCard = ({ booking, today, onOpen }) => {
+export const WorkerBookingCard = ({ booking, today, to }) => {
     const [first] = booking.days;
 
     // Toda reserva nace con al menos un tramo, pero si alguna llegara sin
@@ -27,64 +29,49 @@ export const WorkerBookingCard = ({ booking, today, onOpen }) => {
     if (!first) return null;
 
     const moreDays = booking.days.length - 1;
-
-    // El de hoy se distingue con el borde y con "HOY" en lugar del mes:
-    // es el único que se puede empezar.
     const isToday = first.starts_at.slice(0, 10) === today;
 
-    // Enter y Espacio abren el detalle: la tarjeta es un enlace, y un
-    // enlace tiene que responder al teclado como tal.
-    const handleKeyDown = (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-
-        event.preventDefault();
-        onOpen?.(booking);
-    };
+    // La barra, solo cuando importa: hoy, o con el servicio en marcha.
+    const total = booking.tasks.length;
+    const done = booking.tasks.filter((task) => task.status === "completed").length;
+    const showProgress = total > 0 && (isToday || booking.status === "in_progress");
 
     return (
         <li>
-            <article
-                className={`cf-wcard${isToday ? " cf-wcard--today" : ""}`}
-                role="link"
-                tabIndex={0}
-                onClick={() => onOpen?.(booking)}
-                onKeyDown={handleKeyDown}
-            >
-                <div className="cf-wcard__date">
-                    <span className="cf-wcard__day">{dayOf(first.starts_at)}</span>
-                    <span className="cf-wcard__month">
-                        {isToday ? "hoy" : monthOf(first.starts_at)}
-                    </span>
-                </div>
+            <Link className={`cf-wcard${isToday ? " cf-wcard--today" : ""}`} to={to}>
+                <span className="cf-wcard__date" aria-hidden="true">
+                    <b>{dayOf(first.starts_at)}</b>
+                    <small>{isToday ? "Hoy" : monthOf(first.starts_at)}</small>
+                </span>
 
-                <div>
-                    <h2 className="cf-wcard__service">
+                <span className="cf-wcard__main">
+                    <span className="cf-wcard__service">
                         {booking.service?.name || "Servicio no disponible"}
-                    </h2>
-
-                    <p className="cf-wcard__meta">
-                        <span>
-                            <i className="fa-regular fa-clock" aria-hidden="true"></i>
-                            {timeOf(first.starts_at)} – {timeOf(first.ends_at)}
-                        </span>
-
-                        <span>
-                            <i className="fa-solid fa-location-dot" aria-hidden="true"></i>
-                            {shortAddress(booking.address)}
-                        </span>
-
                         {/* Solo si dura varios días: lo normal es uno. */}
                         {moreDays > 0 && (
-                            <span>+{moreDays} {moreDays === 1 ? "día" : "días"}</span>
+                            <b className="cf-wcard__more">+{moreDays} {moreDays === 1 ? "día" : "días"}</b>
                         )}
-                    </p>
-                </div>
+                    </span>
 
-                <div className="cf-wcard__foot">
+                    <span className="cf-wcard__meta">
+                        {isToday && <span className="sr-only">Hoy, </span>}
+                        {timeOf(first.starts_at)} – {timeOf(first.ends_at)} · {shortAddress(booking.address)}
+                    </span>
+
+                    {showProgress && (
+                        <span className="cf-wcard__bar">
+                            <span className="cf-wcard__track" aria-hidden="true">
+                                <span className="cf-wcard__fill" style={{ width: `${(done / total) * 100}%` }}></span>
+                            </span>
+                            {done} de {total} tareas
+                        </span>
+                    )}
+                </span>
+
+                <span className="cf-wcard__state">
                     <WorkerStatus status={booking.status} />
-                    <WorkerProgress tasks={booking.tasks} />
-                </div>
-            </article>
+                </span>
+            </Link>
         </li>
     );
 };

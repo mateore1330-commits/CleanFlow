@@ -1,3 +1,17 @@
+/**
+ * INICIO DEL TRABAJADOR (maqueta 05, PANEL-03).
+ *
+ * El día de un vistazo: arriba, el saludo con los servicios y las horas de
+ * hoy. A la izquierda, el servicio de ahora en grande (dirección, cliente,
+ * tareas y el botón), lo que se quedó a medias y lo que viene. A la
+ * derecha, la jornada de hoy, la nota y las ausencias.
+ *
+ * Se refresca solo cada minuto y al volver a la pestaña: el móvil se deja
+ * abierto en el bolsillo y vuelve del mapa.
+ *
+ * Estilos: dashboard.css, sección 16 (cf-worker-home__*, cf-wnow).
+ */
+
 import "../../../dashboard.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +25,11 @@ import { WorkerJourney } from "../../../components/dashboard/home/WorkerJourney"
 import { WorkerUpcoming } from "../../../components/dashboard/home/WorkerUpcoming";
 import { WorkerUnfinished } from "../../../components/dashboard/home/WorkerUnfinished";
 import { workerHomeData, serviceName, addressText, hoursText, taskPath } from "../../../components/dashboard/home/workerHomeData";
+import { PageHead } from "../../../components/dashboard/PageHead";
+
+/** El enlace de Google Maps con la dirección, para ir sin escribirla. */
+const mapsOf = (address) =>
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 
 export const WorkerHome = () => {
     const { store, dispatch } = useGlobalReducer();
@@ -113,50 +132,111 @@ export const WorkerHome = () => {
     );
 
     const name = store.user?.name?.trim().split(/\s+/)[0];
-    const address = current && addressText(current.booking.address);
+    const address = current && current.booking.address && addressText(current.booking.address);
     const next = data.future[0];
+
+    // "Martes 10 de noviembre · 3 servicios · 9 h previstas hoy"
+    const summary = data.services > 0
+        ? `${longDate(today)} · ${data.services} ${data.services === 1 ? "servicio" : "servicios"} · ${hoursText(data.hours)} previstas hoy`
+        : `${longDate(today)} · Sin servicios hoy`;
 
     return (
         <div className="cf-worker-home">
             {error && <div className="cf-dash-alert" role="alert">
                 <p>{error}</p><button className="cf-dash-btn cf-dash-btn--ghost" onClick={load}>Reintentar</button>
             </div>}
-            <section className="cf-worker-home__hero" aria-labelledby="worker-home-title">
-                <p className="cf-worker-home__date">{longDate(today)}</p>
-                <h1 id="worker-home-title">Hola{name ? `, ${name}` : ""}.</h1>
-                <p className="cf-worker-home__summary">
-                    {data.services} {data.services === 1 ? "servicio" : "servicios"} · {hoursText(data.hours)} previstas hoy
-                </p>
-                {current ? <div className="cf-worker-home__now">
-                    <p className="cf-worker-home__date">{current.day.started_at ? "En curso" : "Tu siguiente servicio"}</p>
-                    <p className="cf-worker-home__time">{timeOf(current.day.starts_at)} – {timeOf(current.day.ends_at)}</p>
-                    <h2>{serviceName(current.booking)}</h2>
-                    <p>{current.booking.tasks?.length || 0} {current.booking.tasks?.length === 1 ? "tarea" : "tareas"} del servicio</p>
-                    {current.booking.address ? <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`} target="_blank" rel="noreferrer">{address} ↗</a> : <p>{address}</p>}
-                    <p>{current.booking.client_name || "Cliente"}
-                        {current.booking.client_phone && <> · <a href={`tel:${current.booking.client_phone}`}>{current.booking.client_phone}</a></>}
-                    </p>
-                    {current.booking.status === "pending" && <p>El servicio está pendiente de confirmación.</p>}
-                    <button className="cf-dash-btn cf-worker-home__action" disabled={acting || current.booking.status === "pending"} onClick={openCurrent}>
-                        {acting ? "Empezando…" : current.day.started_at ? "Seguir" : "Empezar el servicio"}
-                    </button>
-                </div> : <div className="cf-worker-home__now">
-                    <h2>{data.journey.length ? "Has terminado tu jornada" : "Sin servicios hoy"}</h2>
-                    {next ? <p>El siguiente: {longDate(next.day.starts_at).toLowerCase()}, {timeOf(next.day.starts_at)} – {timeOf(next.day.ends_at)} · {serviceName(next.booking)}.</p>
-                        : <p>No tienes próximos servicios asignados.</p>}
-                </div>}
-                <WorkerJourney journey={data.journey} current={current} />
-            </section>
-            <WorkerUnfinished items={data.unfinished} />
+
+            <PageHead title={`Hola${name ? `, ${name}` : ""}`} subtitle={summary} />
+
             <div className="cf-worker-home__grid">
-                <WorkerUpcoming today={today} future={data.future} />
-                <aside className="cf-worker-home__aside" aria-label="Tu información">
-                    <section className="cf-worker-home__card">
+                <div className="cf-worker-home__stack">
+                    {current ? <CurrentService current={current} address={address} acting={acting} onOpen={openCurrent} />
+                        : <section className="cf-wnow cf-wnow--empty" aria-labelledby="now-title">
+                            <p className="cf-wnow__live">Hoy</p>
+                            <h2 id="now-title">{data.journey.length ? "Has terminado tu jornada" : "Sin servicios hoy"}</h2>
+                            <p className="cf-wnow__time">
+                                {next ? `El siguiente: ${longDate(next.day.starts_at).toLowerCase()}, ${timeOf(next.day.starts_at)} – ${timeOf(next.day.ends_at)} · ${serviceName(next.booking)}.`
+                                    : "No tienes próximos servicios asignados."}
+                            </p>
+                        </section>}
+                    <WorkerUnfinished items={data.unfinished} />
+                    <WorkerUpcoming today={today} future={data.future} />
+                </div>
+
+                <aside className="cf-worker-home__stack" aria-label="Tu información">
+                    <WorkerJourney journey={data.journey} current={current} hours={data.hours} />
+                    <section className="cf-worker-home__rating" aria-label="Tu nota">
                         <WorkerRating token={store.token} />
                     </section>
                     <WorkerAbsences today={today} />
                 </aside>
             </div>
         </div>
+    );
+};
+
+/**
+ * EL SERVICIO DE AHORA, EN GRANDE.
+ *
+ * Todo lo que hace falta sin entrar al detalle: dónde (con el botón a
+ * Google Maps), con quién (con el botón de llamar, si ya hay teléfono),
+ * cuántas tareas lleva y el botón para empezar o seguir.
+ */
+const CurrentService = ({ current, address, acting, onOpen }) => {
+    const { booking, day } = current;
+    const started = Boolean(day.started_at);
+    const pending = booking.status === "pending";
+    const tasks = booking.tasks || [];
+    const done = tasks.filter((task) => task.status === "completed").length;
+
+    return (
+        <section className="cf-wnow" aria-labelledby="now-title">
+            <p className={`cf-wnow__live${started ? " cf-wnow__live--on" : ""}`}>
+                {started ? "En curso" : "Tu siguiente servicio"}
+            </p>
+            <h2 id="now-title">{serviceName(booking)}</h2>
+            <p className="cf-wnow__time">
+                {timeOf(day.starts_at)} – {timeOf(day.ends_at)}
+                {started && ` · empezaste a las ${timeOf(day.started_at)}`}
+            </p>
+
+            <div className="cf-wnow__rows">
+                <div className="cf-wnow__row">
+                    <i className="fa-solid fa-location-dot" aria-hidden="true"></i>
+                    <div><small>Dirección</small>{address || "Dirección no disponible"}</div>
+                    {address && (
+                        <a className="cf-wnow__act" href={mapsOf(address)} target="_blank" rel="noreferrer"
+                            aria-label="Abrir la dirección en Google Maps">
+                            <i className="fa-solid fa-diamond-turn-right" aria-hidden="true"></i>
+                        </a>
+                    )}
+                </div>
+
+                <div className="cf-wnow__row">
+                    <i className="fa-solid fa-user" aria-hidden="true"></i>
+                    <div><small>Cliente</small>{booking.client_name || "Cliente"}</div>
+                    {booking.client_phone && (
+                        <a className="cf-wnow__act" href={`tel:${booking.client_phone}`}
+                            aria-label={`Llamar al cliente, ${booking.client_phone}`}>
+                            <i className="fa-solid fa-phone" aria-hidden="true"></i>
+                        </a>
+                    )}
+                </div>
+            </div>
+
+            {tasks.length > 0 && <>
+                <p className="cf-wnow__prog-l"><span>Tareas</span><b>{done} de {tasks.length}</b></p>
+                <span className="cf-wnow__prog" aria-hidden="true">
+                    <span style={{ width: `${(done / tasks.length) * 100}%` }}></span>
+                </span>
+            </>}
+
+            {pending && <p className="cf-wnow__note">Está pendiente de confirmar: podrás empezar cuando se confirme.</p>}
+
+            <button className="cf-dash-btn cf-wnow__btn" disabled={acting || pending} onClick={onOpen}>
+                {acting ? "Empezando…" : started ? "Seguir con el servicio" : "Empezar el servicio"}
+                <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </button>
+        </section>
     );
 };

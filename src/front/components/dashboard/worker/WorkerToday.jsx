@@ -37,16 +37,22 @@ export const WorkerToday = ({ booking, today }) => {
             ? `Cuando termines hoy, te quedan ${ahead.length} ${ahead.length === 1 ? "día" : "días"} más.`
             : "Es el último día del servicio.";
 
+    // Una franja con su icono, como en la maqueta 05: lo primero que se lee.
     return (
         <div className="cf-wtoday">
-            <p className="cf-wtoday__when">
-                <i className="fa-regular fa-clock" aria-hidden="true"></i>
-                {day.started_at
-                    ? `Empezaste a las ${timeOf(day.started_at)}`
-                    : `Hoy, de ${timeOf(day.starts_at)} a ${timeOf(day.ends_at)}`}
-            </p>
+            <span className="cf-wtoday__icon" aria-hidden="true">
+                <i className={`fa-solid ${day.started_at ? "fa-stopwatch" : "fa-clock"}`}></i>
+            </span>
 
-            <p className="cf-wtoday__note">{note}</p>
+            <div>
+                <p className="cf-wtoday__when">
+                    {day.started_at
+                        ? `Empezaste a las ${timeOf(day.started_at)}`
+                        : `Hoy, de ${timeOf(day.starts_at)} a ${timeOf(day.ends_at)}`}
+                </p>
+
+                <p className="cf-wtoday__note">{note}</p>
+            </div>
         </div>
     );
 };

@@ -8,60 +8,75 @@
  * Si el cliente le cambió la fecha (#17), se dice aquí: es el sitio donde
  * el trabajador mira cuándo le toca.
  *
+ * Con un solo día, sin cambios de fecha y sin nada que cerrar, el bloque
+ * no aparece: la fecha ya está en la cabecera (PANEL-03).
+ *
  * Estilos: dashboard.css, sección 10 (cf-wday).
  */
 
 import { longDate, timeOf } from "../bookings/bookingFormat";
 
-export const WorkerDays = ({ booking, today, busy = false, onClosePast }) => (
-    <section className="cf-wblock">
-        <h2 className="cf-wblock__title">
-            Fecha{booking.days.length > 1 && `s · ${booking.days.length} días`}
-        </h2>
+/** Un día empezado de antes, sin cerrar: hay que cerrarlo desde aquí. */
+const leftOpen = (booking, day, today) =>
+    day.started_at && !day.finished_at
+    && day.ends_at.slice(0, 10) < today
+    && !["cancelled", "not_done"].includes(booking.status);
 
-        {booking.days.map((day) => {
-            const isToday = day.starts_at.slice(0, 10) === today;
+export const WorkerDays = ({ booking, today, busy = false, onClosePast }) => {
+    const useful = booking.days.length > 1
+        || booking.rescheduled_count > 0
+        || booking.days.some((day) => leftOpen(booking, day, today));
 
-            return (
-                <div
-                    key={day.booking_day_id}
-                    id={`day-${day.booking_day_id}`}
-                    tabIndex={-1}
-                    className={`cf-wday${isToday ? " cf-wday--today" : ""}`}
-                >
-                    <span className="cf-wday__when">
-                        {isToday ? "Hoy" : longDate(day.starts_at)}
-                        {" · "}{timeOf(day.starts_at)} – {timeOf(day.ends_at)}
-                    </span>
+    if (!useful) return null;
 
-                    {onClosePast && day.started_at && !day.finished_at
-                        && day.ends_at.slice(0, 10) < today
-                        && !["cancelled", "not_done"].includes(booking.status) && (
-                            <button type="button" className="cf-dash-btn cf-dash-btn--sm"
-                                disabled={busy} onClick={() => onClosePast(day)}>
-                                {busy ? "Guardando…" : "Cerrar este día"}
-                            </button>
-                        )}
+    return (
+        <section className="cf-wblock">
+            <h2 className="cf-wblock__title">
+                Fecha{booking.days.length > 1 && `s · ${booking.days.length} días`}
+            </h2>
 
-                    {/* La hora real solo cuando el día ya se cerró: a
-                        medias no dice nada todavía. */}
-                    {day.started_at && day.finished_at && (
-                        <span className="cf-wday__real">
-                            Trabajado de {timeOf(day.started_at)} a {timeOf(day.finished_at)}
+            {booking.days.map((day) => {
+                const isToday = day.starts_at.slice(0, 10) === today;
+
+                return (
+                    <div
+                        key={day.booking_day_id}
+                        id={`day-${day.booking_day_id}`}
+                        tabIndex={-1}
+                        className={`cf-wday${isToday ? " cf-wday--today" : ""}`}
+                    >
+                        <span className="cf-wday__when">
+                            {isToday ? "Hoy" : longDate(day.starts_at)}
+                            {" · "}{timeOf(day.starts_at)} – {timeOf(day.ends_at)}
                         </span>
-                    )}
-                </div>
-            );
-        })}
 
-        {/* Que la reserva se movió: si no, el trabajador ve aparecer un
-            servicio en su día sin saber de dónde sale (#17). */}
-        {booking.rescheduled_count > 0 && (
-            <p className="cf-wday__moved">
-                <i className="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
-                El cliente cambió la fecha
-                {booking.rescheduled_count > 1 && ` ${booking.rescheduled_count} veces`}.
-            </p>
-        )}
-    </section>
-);
+                        {onClosePast && leftOpen(booking, day, today) && (
+                                <button type="button" className="cf-dash-btn cf-dash-btn--sm"
+                                    disabled={busy} onClick={() => onClosePast(day)}>
+                                    {busy ? "Guardando…" : "Cerrar este día"}
+                                </button>
+                            )}
+
+                        {/* La hora real solo cuando el día ya se cerró: a
+                            medias no dice nada todavía. */}
+                        {day.started_at && day.finished_at && (
+                            <span className="cf-wday__real">
+                                Trabajado de {timeOf(day.started_at)} a {timeOf(day.finished_at)}
+                            </span>
+                        )}
+                    </div>
+                );
+            })}
+
+            {/* Que la reserva se movió: si no, el trabajador ve aparecer un
+                servicio en su día sin saber de dónde sale (#17). */}
+            {booking.rescheduled_count > 0 && (
+                <p className="cf-wday__moved">
+                    <i className="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
+                    El cliente cambió la fecha
+                    {booking.rescheduled_count > 1 && ` ${booking.rescheduled_count} veces`}.
+                </p>
+            )}
+        </section>
+    );
+};

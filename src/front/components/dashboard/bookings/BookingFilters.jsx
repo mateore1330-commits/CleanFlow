@@ -119,7 +119,7 @@ export const BookingFilters = ({ filters, counts, total, shown, onChange }) => {
             <div className="cf-myservices__toolbar">
 
                 {/* aria-pressed y no role="tab": son filtros de una lista. */}
-                <div className="cf-services__tabs">
+                <div className="cf-services__tabs cf-services__tabs--pill">
                     {TABS.map((option) => (
                         <button
                             key={option.value}

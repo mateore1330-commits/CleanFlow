@@ -1,9 +1,11 @@
 /**
  * ESTADO DE UN SERVICIO, VISTO POR EL TRABAJADOR.
  *
- * Las mismas situaciones que ve el cliente, dichas desde su lado: para
- * él una reserva confirmada es un servicio "asignado", algo que tiene
- * pendiente, no una compra cerrada.
+ * Las mismas situaciones que ve el cliente, dichas desde su lado. Como
+ * en la maqueta 05: «Confirmado» cuando ya se puede hacer y «Pendiente de
+ * confirmar» cuando todavía no (antes las dos decían «Asignado», y una
+ * pendiente no se puede empezar). «Asignado» queda como el primer paso
+ * del progreso (WorkerTimeline).
  *
  * Comparte los estilos de la pastilla del cliente (cf-bookstate): el
  * aspecto es el mismo en todo el panel, solo cambian las palabras.
@@ -12,8 +14,8 @@
  */
 
 const STATES = {
-    confirmed: { label: "Asignado", tone: "info", icon: "fa-calendar-check" },
-    pending: { label: "Asignado", tone: "warning", icon: "fa-calendar-check" },
+    confirmed: { label: "Confirmado", tone: "info", icon: "fa-calendar-check" },
+    pending: { label: "Pendiente de confirmar", tone: "warning", icon: "fa-clock" },
     in_progress: { label: "En curso", tone: "live", dot: true },
     completed: { label: "Finalizado", tone: "done", icon: "fa-check" },
     not_done: { label: "No realizado", tone: "wait", dot: true },
