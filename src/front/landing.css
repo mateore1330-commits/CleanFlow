@@ -28,7 +28,10 @@
    1. ARMAZÓN
    ====================================================================== */
 
-.cf-home {
+/* cf-landing y no cf-home: cf-home es el inicio del panel del encargado
+   (dashboard.css), y con el mismo nombre la landing recibía su rejilla
+   (WEB-03). Las secciones siguen con el prefijo cf-home-. */
+.cf-landing {
   background-color: var(--cf-surface);
 }
 
@@ -339,7 +342,7 @@
    5. CÓMO FUNCIONA (HowItWorksSection.jsx)
    ====================================================================== */
 
-.cf-home .cf-home-how {
+.cf-landing .cf-home-how {
   background-color: var(--cf-bg);
 }
 
@@ -494,7 +497,7 @@
    7. POR QUÉ CLEANFLOW (WhyCleanFlowSection.jsx) · «bento»
    ====================================================================== */
 
-.cf-home .cf-home-why {
+.cf-landing .cf-home-why {
   background-color: var(--cf-bg);
 }
 
@@ -599,7 +602,7 @@
    8. OPINIONES (ReviewsSection.jsx) · banda oscura
    ====================================================================== */
 
-.cf-home .cf-home-reviews {
+.cf-landing .cf-home-reviews {
   background-color: var(--cf-band);
   color: var(--cf-white);
 }
@@ -796,7 +799,7 @@
    10. CONTACTO Y MAPA (ContactSection.jsx, OfficeMap.jsx)
    ====================================================================== */
 
-.cf-home .cf-home-contact {
+.cf-landing .cf-home-contact {
   background-color: var(--cf-bg);
 }
 

@@ -24,7 +24,7 @@ import { FinalCta } from "./home/FinalCta"
 
 export const Home = () => {
     return (
-        <main className="cf-home">
+        <main className="cf-landing">
             <Hero />
             <PartnersSection />
             <ServicesSection />
