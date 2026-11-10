@@ -20,7 +20,7 @@ import { WhyCleanFlowSection } from "./home/WhyCleanFlowSection"
 import { ReviewsSection } from "./home/ReviewsSection"
 import { FaqSection } from "./home/FaqSection"
 import { ContactSection } from "./home/ContactSection"
-import { LocationSection } from "./home/LocationSection"
+import { FinalCta } from "./home/FinalCta"
 
 export const Home = () => {
     return (
@@ -34,7 +34,7 @@ export const Home = () => {
             <ReviewsSection />
             <FaqSection />
             <ContactSection />
-            <LocationSection />
+            <FinalCta />
         </main>
     )
 }

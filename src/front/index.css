@@ -392,6 +392,65 @@ img {
   cursor: not-allowed;
 }
 
+/* ---------- CAMPOS DE FORMULARIO (WEB-01) ----------
+   <div class="cf-field"><label>…</label><input class="cf-input"></div>.
+   La etiqueta siempre visible encima (no solo el texto de ejemplo, que
+   desaparece al escribir). Un <span> dentro de la etiqueta, en gris,
+   para «(opcional)». */
+
+.cf-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cf-field > label {
+  color: var(--cf-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.cf-field > label span {
+  color: var(--cf-muted);
+  font-weight: 400;
+}
+
+.cf-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 14px;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-sm);
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: 0.9375rem;
+  transition: border-color var(--cf-transition), box-shadow var(--cf-transition);
+}
+
+.cf-input::placeholder {
+  color: var(--cf-placeholder);
+}
+
+.cf-input:hover {
+  border-color: var(--cf-border-strong);
+}
+
+.cf-input:focus {
+  outline: none;
+  border-color: var(--cf-brand-500);
+  box-shadow: 0 0 0 4px var(--cf-ring);
+}
+
+.cf-input[aria-invalid="true"] {
+  border-color: var(--cf-danger);
+}
+
+textarea.cf-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
 /* ---------- AVISOS ----------
    Rojo por defecto (es para lo que se usan hoy: errores). Variantes:
    --warning, --success e --info. */
