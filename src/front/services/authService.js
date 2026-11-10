@@ -75,8 +75,11 @@ export const register = async (formData) => {
         // ejemplo el 409 de "El correo electrónico ya está registrado".
         const data = await response.json();
 
+        // status: Register.jsx coloca el 409 (correo repetido) debajo del
+        // campo del correo, y no arriba como los demás errores (WEB-02).
         return {
             ok: response.ok,
+            status: response.status,
             data,
         };
     } catch (error) {

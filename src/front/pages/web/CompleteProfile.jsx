@@ -21,14 +21,33 @@
  * pantalla se pierde el destino y se acaba en el panel; es un caso raro y
  * se prefiere a guardar el destino en el store y tener que limpiarlo.
  *
- * Estilos: auth.css (auth-who y los campos de siempre).
+ * El teléfono se comprueba antes de enviar: español de 9 cifras, con o
+ * sin +34 (decidido el 10/11/2026, WEB-02 C1).
+ *
+ * Estilos: auth.css (auth-steps, auth-who) y las piezas comunes.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer.jsx";
 import { setAccountPhone } from "../../services/authService.js";
 import { loginPathForRole, returnPath } from "../../authPaths.js";
+import { isSpanishPhone } from "../../utils/validate.js";
+import { AuthField } from "../../components/web/AuthField.jsx";
+import { AuthMessage } from "../../components/web/AuthMessage.jsx";
+import { Avatar } from "../../components/dashboard/Avatar.jsx";
+
+
+// La «G» de Google, para que se vea con qué cuenta ha entrado. Es la
+// marca tal cual, sin cambiarle los colores.
+const GoogleMark = () => (
+    <svg className="auth-who__google" viewBox="0 0 48 48" width="22" height="22" aria-hidden="true">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+    </svg>
+);
 
 export const CompleteProfile = () => {
     const { store, dispatch } = useGlobalReducer();
@@ -41,7 +60,10 @@ export const CompleteProfile = () => {
     const from = returnPath(location.state?.from);
 
     const [phone, setPhone] = useState("");
+    // El del campo (antes de enviar) y el del servidor, que va arriba.
+    const [phoneError, setPhoneError] = useState("");
     const [error, setError] = useState("");
+    const phoneRef = useRef(null);
     const [saving, setSaving] = useState(false);
 
     const user = store.user;
@@ -77,6 +99,18 @@ export const CompleteProfile = () => {
         if (saving) return;
 
         setError("");
+
+        const problem = !phone.trim()
+            ? "Escribe tu teléfono."
+            : !isSpanishPhone(phone)
+                ? "Escribe un teléfono español de 9 cifras, como 600 123 456."
+                : "";
+        setPhoneError(problem);
+        if (problem) {
+            phoneRef.current?.focus();
+            return;
+        }
+
         setSaving(true);
 
         const { ok, data } = await setAccountPhone(phone, store.token);
@@ -96,57 +130,61 @@ export const CompleteProfile = () => {
     };
 
     return (
-        <div className="auth-card">
+        <>
+            {/* El paso 1 fue elegir la cuenta de Google: la barra dice que
+                ya casi está. El lector de pantalla lee el texto. */}
+            <p className="auth-steps__label">Paso 2 de 2</p>
+            <div className="auth-steps" aria-hidden="true">
+                <i></i>
+                <i></i>
+            </div>
+
             <h1 className="auth-title">Ya casi está</h1>
-            <p className="auth-subtitle">
-                Solo nos falta un dato para poder ir a tu casa.
-            </p>
+            <p className="auth-subtitle">Necesitamos tu teléfono para poder ir a tu casa.</p>
 
             {/* Su cuenta, ya creada. Sin esto parecería que está
                 empezando un registro de cero. */}
             <div className="auth-who">
-                <span className="auth-face">
-                    {user?.avatar_url
-                        ? <img src={user.avatar_url} alt="" />
-                        : <i className="fa-solid fa-user" aria-hidden="true"></i>}
+                <Avatar user={user} size="md" />
+                <span className="auth-who__text">
+                    <b>{user?.name} {user?.last_name}</b>
+                    <span>{user?.email}</span>
                 </span>
-                <span>
-                    <p className="auth-who-name">{user?.name} {user?.last_name}</p>
-                    <p className="auth-who-mail">{user?.email}</p>
-                </span>
+                <GoogleMark />
             </div>
 
-            {error && <div className="auth-alert" role="alert">{error}</div>}
+            {error && (
+                <AuthMessage tone="danger" icon="fa-circle-exclamation" alert>
+                    {error}
+                </AuthMessage>
+            )}
 
-            <form onSubmit={handleSubmit}>
-                <div className="auth-field">
-                    <label htmlFor="phone" className="auth-label">Teléfono</label>
-                    <input
-                        id="phone"
-                        type="tel"
-                        className="auth-input"
-                        placeholder="611 22 33 44"
-                        autoComplete="tel"
-                        autoFocus
-                        value={phone}
-                        onChange={(event) => {
-                            setPhone(event.target.value);
-                            setError("");
-                        }}
-                    />
-                    {/* El porqué, aquí mismo: pedir un teléfono sin decir
-                        para qué es lo que hace que la gente escriba
-                        números falsos. */}
-                    <p className="auth-hint">
-                        Lo usa quien vaya a limpiar si no encuentra el portal o
-                        llega antes de tiempo. No lo usamos para nada más.
-                    </p>
-                </div>
+            <form className="auth-form" onSubmit={handleSubmit} noValidate>
+                {/* El porqué, aquí mismo: pedir un teléfono sin decir para
+                    qué es lo que hace que la gente escriba números falsos. */}
+                <AuthField
+                    id="phone"
+                    label="Teléfono"
+                    icon="phone"
+                    type="tel"
+                    ref={phoneRef}
+                    placeholder="600 123 456"
+                    autoComplete="tel"
+                    autoFocus
+                    value={phone}
+                    onChange={(event) => {
+                        setPhone(event.target.value);
+                        setPhoneError("");
+                        setError("");
+                    }}
+                    error={phoneError}
+                    hint="Lo usa quien vaya a limpiar si no encuentra el portal o llega antes de tiempo."
+                />
 
-                <button type="submit" className="auth-btn" disabled={saving}>
-                    {saving ? "Guardando…" : "Empezar"}
+                <button type="submit" className="cf-btn cf-btn--block" disabled={saving}>
+                    {saving ? "Guardando…" : "Guardar y continuar"}
                 </button>
             </form>
-        </div>
+        </>
     );
 };
