@@ -88,12 +88,14 @@ export const router = createBrowserRouter(
           </Route>
 
           {/* ---- SECCIONES DE CLIENT ----
-              service-catalog es un contrato: "Reservar ahora" (WEB-15) apunta
-              aquí. No confundir con services-catalog, la del encargado. */}
+              book es «Reservar limpieza»: el catálogo y la reserva en una
+              sola página (PANEL-02). Es un contrato: la web y «Repetir»
+              llegan aquí, a veces con ?servicio=<slug>.
+              service-catalog era el catálogo de antes: ahora solo lleva a
+              book, para que no se rompan los enlaces de siempre. No
+              confundir con services-catalog, la del encargado. */}
           <Route element={<RoleRoute allowed={["client"]} />}>
-            <Route path="service-catalog" lazy={page(() => import("./pages/dashboard/ServiceCatalog"), "ServiceCatalog")} handle={{ crumb: "Reservar limpieza" }} />
-            {/* book es otro contrato: "Contratar" del catálogo llega aquí
-                con ?servicio=<slug>. */}
+            <Route path="service-catalog" lazy={page(() => import("./pages/dashboard/booking/CatalogRedirect"), "CatalogRedirect")} />
             <Route path="book" lazy={page(() => import("./pages/dashboard/booking/BookingPanel"), "BookingPanel")} handle={{ crumb: "Reservar limpieza" }} />
             <Route path="contracted-services" lazy={page(() => import("./pages/dashboard/MyBookings"), "MyBookings")} handle={{ crumb: "Servicios contratados" }} />
             {/* El detalle de una reserva, dentro del mismo RoleRoute: si

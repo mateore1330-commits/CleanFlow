@@ -17,7 +17,7 @@ export const FinalCta = () => (
                     <h2>¿Lista tu casa para brillar este fin de semana?</h2>
                     <p>Reserva en dos minutos y cancela gratis hasta 24 h antes.</p>
                 </div>
-                <Link to="/dashboard/service-catalog" className="cf-btn cf-btn--accent">
+                <Link to="/dashboard/book" className="cf-btn cf-btn--accent">
                     Reservar limpieza
                     <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </Link>

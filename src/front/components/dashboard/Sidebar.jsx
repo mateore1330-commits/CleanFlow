@@ -53,9 +53,8 @@ const LINKS = [
     { to: "/dashboard", label: "Inicio", icon: "fa-house", roles: ["client", "worker", "manager"], end: true },
 
     // --- Solo CLIENT ---
-    // «Reservar limpieza» lleva de momento al catálogo: PANEL-02 lo une
-    // con la reserva en una sola pantalla.
-    { to: "/dashboard/service-catalog", label: "Reservar limpieza", icon: "fa-calendar-plus", roles: ["client"] },
+    // «Reservar limpieza»: el catálogo y la reserva en una sola pantalla.
+    { to: "/dashboard/book", label: "Reservar limpieza", icon: "fa-calendar-plus", roles: ["client"] },
     { to: "/dashboard/contracted-services", label: "Servicios contratados", icon: "fa-calendar-check", roles: ["client"] },
 
     // --- Solo WORKER ---

@@ -40,10 +40,10 @@ const NAV_LINKS = [
 ]
 
 
-// El botón de acción va aparte: no es un item de navegación. Apunta a la
-// ruta protegida del catálogo; sin sesión, ProtectedRoutes manda al login
-// y después vuelve aquí (WEB-15).
-const CTA = { label: "Reservar", to: "/dashboard/service-catalog" }
+// El botón de acción va aparte: no es un item de navegación. Apunta a
+// Reservar, que es ruta protegida; sin sesión, ProtectedRoutes manda al
+// login y después vuelve aquí (WEB-15).
+const CTA = { label: "Reservar", to: "/dashboard/book" }
 
 
 // Los ids a vigilar salen de los propios enlaces.

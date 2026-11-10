@@ -8,8 +8,8 @@
  *   workers   los de GET /api/availability/workers
  *   value     "any" o el id elegido, siempre como texto
  *
- * `rating` llega siempre vacío: la media de cada trabajador existe
- * desde la #20, pero solo la devuelve GET /api/workers.
+ * `rating` y `reviews_count`: su nota media y cuántas opiniones tiene
+ * (desde PANEL-02 los manda también GET /api/availability/workers).
  *
  * Estilos: dashboard.css (cf-booking__*).
  */
@@ -19,6 +19,9 @@ import { Avatar } from "../Avatar"
 // Sin trabajador elegido: lo asigna la disponibilidad. Es lo que espera la
 // API, y también el valor por defecto.
 export const ANY_WORKER = "any"
+
+/** "4,9": la nota con coma, como se escribe en español. */
+const ratingText = (rating) => Number(rating).toLocaleString("es-ES", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
 /** La API manda el nombre ya recortado ("Ana G."); Avatar lo quiere en dos. */
 const workerUser = (worker) => {
@@ -62,7 +65,14 @@ export const WorkerPicker = ({ workers, value, onChange }) => (
                     <span>
                         <span className="cf-booking__worker-name">{worker.name}</span>
                         <span className="cf-booking__worker-note">
-                            {worker.rating ? `${worker.rating} de 5` : "Sin valoraciones todavía"}
+                            {worker.rating != null ? (
+                                <>
+                                    <i className="fa-solid fa-star cf-booking__star" aria-hidden="true" />
+                                    {ratingText(worker.rating)}
+                                    <span className="sr-only"> de 5</span>
+                                    {` · ${worker.reviews_count} ${worker.reviews_count === 1 ? "opinión" : "opiniones"}`}
+                                </>
+                            ) : "Sin valoraciones todavía"}
                         </span>
                     </span>
                 </span>
