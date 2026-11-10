@@ -1,13 +1,8 @@
 /**
  * CONTADOR DE RESERVAS AFECTADAS (#15, #75).
  *
- * YA NO SE PINTA. Estaba junto a "Reservas afectadas" en el menú, y esa
- * entrada desapareció: ahora el aviso lo da BookingsCount sobre
- * "Reservas", sumando las afectadas y las incidencias.
- *
- * Se conserva por lo mismo que la pantalla de Reservas afectadas: sigue
- * respondiendo por su URL y, si algún día vuelve al menú, su contador
- * está aquí. Si se decide limpiarla, este archivo se va con ella.
+ * El número junto a «Reservas» en el menú del encargado: las reservas que
+ * se han quedado sin trabajador por una ausencia (PANEL-01).
  *
  * Pide solo el número (count_only) y lo mantiene al día sin recargar:
  *
