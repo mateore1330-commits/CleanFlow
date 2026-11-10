@@ -111,7 +111,7 @@ export const BookingConfirm = ({ booking, saving, onConfirm, onClaim }) => {
                 ¿Quedó todo bien?
             </h2>
 
-            <p className="cf-ask__text">Mira las fotos de arriba y dinos qué te parece.</p>
+            <p className="cf-ask__text">Mira las fotos de abajo y dinos qué te parece.</p>
 
             {/* Con fecha concreta y no "quedan 3 días": es lo que empuja a
                 responder, y lo que evita el "no lo sabía" de después. */}
