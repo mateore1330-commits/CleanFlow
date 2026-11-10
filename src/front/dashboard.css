@@ -1532,36 +1532,8 @@ textarea.cf-dash-input {
    sidebar, no el ancho de la ventana (ver @container al final del bloque). */
 .cf-tasks {
   container-type: inline-size;
-  max-width: 1080px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
-}
-
-/* ---------- CABECERA ---------- */
-
-.cf-tasks__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-tasks__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-  line-height: 1.15;
-  color: var(--cf-primary);
-}
-
-.cf-tasks__lede {
-  margin: var(--cf-space-1) 0 0;
-  max-width: 60ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
 }
 
 /* ---------- FORMULARIO ---------- */
@@ -1572,17 +1544,17 @@ textarea.cf-dash-input {
   margin-bottom: var(--cf-space-6);
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: 20px;
   background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-md);
+  box-shadow: var(--cf-shadow-sm);
 }
 
 .cf-tasks__form-title {
   margin: 0;
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-xl);
-  font-weight: 600;
-  color: var(--cf-primary);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .cf-tasks__form-actions {
@@ -1596,74 +1568,14 @@ textarea.cf-dash-input {
   margin-bottom: var(--cf-space-4);
 }
 
-/* ---------- PESTAÑAS ---------- */
-
-.cf-tasks__tabs {
-  display: flex;
-  gap: var(--cf-space-6);
-  margin-bottom: var(--cf-space-4);
-  border-bottom: 1px solid var(--cf-border);
-  overflow-x: auto;
-}
-
-/* margin-bottom -1px: la raya de la pestaña activa se monta sobre la
-   línea gris, en vez de quedar debajo. */
-.cf-tasks__tab {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  margin-bottom: -1px;
-  padding: 0 0 var(--cf-space-3);
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: none;
-  color: var(--cf-muted);
-  font-family: var(--cf-font-body);
-  font-size: var(--cf-text-sm);
-  font-weight: 500;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.cf-tasks__tab:hover {
-  color: var(--cf-primary);
-}
-
-.cf-tasks__tab[aria-pressed="true"] {
-  border-bottom-color: var(--cf-primary);
-  color: var(--cf-primary);
-  font-weight: 600;
-}
-
-.cf-tasks__count {
-  min-width: 22px;
-  padding: 1px 7px;
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-bg);
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.4;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-
-.cf-tasks__tab[aria-pressed="true"] .cf-tasks__count {
-  border-color: var(--cf-primary-soft);
-  background-color: var(--cf-primary-soft);
-}
-
 /* ---------- LISTA ---------- */
 
+/* El bloque es el común (cf-lpanel, PANEL-04); aquí solo se recorta. */
 .cf-tasks__list {
   margin: 0;
   padding: 0;
-  list-style: none;
   overflow: hidden;
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
+  list-style: none;
 }
 
 /* Tres columnas: tarea (nombre + descripción), estado y acciones. La
@@ -1678,12 +1590,12 @@ textarea.cf-dash-input {
 }
 
 .cf-tasks__head {
-  padding-block: var(--cf-space-3);
-  background-color: rgba(var(--cf-bg-rgb), 0.6);
+  padding-block: 12px;
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -1693,7 +1605,7 @@ textarea.cf-dash-input {
 }
 
 .cf-tasks__row:hover {
-  background-color: rgba(var(--cf-bg-rgb), 0.45);
+  background-color: #fafcfc;
 }
 
 .cf-tasks__name {
@@ -1774,15 +1686,6 @@ textarea.cf-dash-input {
    Sin cabecera de columnas. */
 
 @container (max-width: 620px) {
-  .cf-tasks__title {
-    font-size: var(--cf-text-xl);
-  }
-
-  /* Menos hueco: con el de escritorio, «Desactivadas» se corta en móvil. */
-  .cf-tasks__tabs {
-    gap: var(--cf-space-4);
-  }
-
   .cf-tasks__head {
     display: none;
   }
@@ -1820,48 +1723,22 @@ textarea.cf-dash-input {
 /* container-type: como en tareas (ver @container al final del bloque). */
 .cf-services {
   container-type: inline-size;
-  max-width: 1180px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
 
-/* ---------- CABECERA ---------- */
-
-.cf-services__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-services__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-  line-height: 1.15;
-  color: var(--cf-primary);
-}
-
-.cf-services__lede {
-  margin: var(--cf-space-1) 0 0;
-  max-width: 60ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-/* "Volver a servicios", encima del formulario. */
+/* "Volver a servicios", encima del formulario: como los demás enlaces de
+   vuelta del panel, 44 px de alto (PANEL-04). */
 .cf-services__back {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin: 0 0 var(--cf-space-4);
+  gap: var(--cf-space-2);
+  min-height: 44px;
+  margin: 0 0 var(--cf-space-2);
   padding: 0;
   border: 0;
   background: none;
-  color: var(--cf-primary);
+  color: var(--cf-muted);
   font-family: var(--cf-font-body);
   font-size: var(--cf-text-sm);
   font-weight: 600;
@@ -1869,17 +1746,18 @@ textarea.cf-dash-input {
 }
 
 .cf-services__back:hover {
-  text-decoration: underline;
+  color: var(--cf-primary);
+}
+
+.cf-services__back:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
 }
 
 .cf-services__back:disabled {
   opacity: 0.55;
   cursor: not-allowed;
-  text-decoration: none;
-}
-
-.cf-services__back i {
-  font-size: 0.75rem;
 }
 
 /* El aviso del interruptor, entre la cabecera y la lista. */
@@ -1944,15 +1822,12 @@ textarea.cf-dash-input {
 
 /* ---------- LISTA ---------- */
 
+/* El bloque es el común (cf-lpanel, PANEL-04); aquí solo se recorta. */
 .cf-services__list {
   margin: 0;
   padding: 0;
-  list-style: none;
   overflow: hidden;
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
+  list-style: none;
 }
 
 /* Seis columnas con nombre (grid-template-areas): en estrecho solo cambia
@@ -1968,12 +1843,12 @@ textarea.cf-dash-input {
 }
 
 .cf-services__head {
-  padding-block: var(--cf-space-3);
-  background-color: rgba(var(--cf-bg-rgb), 0.6);
+  padding-block: 12px;
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -1983,7 +1858,7 @@ textarea.cf-dash-input {
 }
 
 .cf-services__row:hover {
-  background-color: rgba(var(--cf-bg-rgb), 0.45);
+  background-color: #fafcfc;
 }
 
 /* Misma animación que las tareas (cf-tasks-flash, en el bloque 2). */
@@ -2117,17 +1992,17 @@ textarea.cf-dash-input {
   gap: var(--cf-space-6);
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: 20px;
   background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-md);
+  box-shadow: var(--cf-shadow-sm);
 }
 
 .cf-services__form-title {
   margin: 0;
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-xl);
-  font-weight: 600;
-  color: var(--cf-primary);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 /* Cada bloque es un <fieldset>, separado del anterior por una línea. */
@@ -2154,13 +2029,11 @@ textarea.cf-dash-input {
   width: auto;
   margin: 0 0 var(--cf-space-4);
   padding: 0;
-  color: var(--cf-muted);
-  font-family: var(--cf-font-body);
-  font-size: 0.75rem;
-  font-weight: 600;
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
   line-height: 1.2;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 /* align-items: start. Sin él, si un campo de la fila tiene error, los
@@ -2212,8 +2085,9 @@ textarea.cf-dash-input {
   display: grid;
   gap: var(--cf-space-4);
   padding: var(--cf-space-6);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-primary-soft);
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
 }
 
 .cf-services__preview-label {
@@ -2292,10 +2166,6 @@ textarea.cf-dash-input {
    interruptor y botón. El resumen baja debajo del formulario. */
 
 @container (max-width: 860px) {
-  .cf-services__title {
-    font-size: var(--cf-text-xl);
-  }
-
   .cf-services__tabs {
     gap: var(--cf-space-4);
   }
@@ -2926,57 +2796,45 @@ textarea.cf-dash-input {
    sidebar, no el ancho de la ventana (ver @container al final). */
 .cf-shifts {
   container-type: inline-size;
-  max-width: 1080px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
 
-/* ---------- CABECERA ---------- */
-
-.cf-shifts__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-shifts__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-  line-height: 1.15;
-  color: var(--cf-primary);
-}
-
-.cf-shifts__lede {
-  margin: var(--cf-space-1) 0 0;
-  max-width: 60ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
 /* ---------- FORMULARIO ---------- */
 
+/* Dentro de la página, arriba de la lista (maqueta 06): se ven a la vez
+   los turnos que ya hay. La cabecera es PageHead (PANEL-04). */
 .cf-shifts__form {
   display: grid;
   gap: var(--cf-space-6);
-  margin-bottom: var(--cf-space-6);
+  margin-bottom: 20px;
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: 20px;
   background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-md);
+  box-shadow: var(--cf-shadow-sm);
+}
+
+.cf-shifts__form-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--cf-space-1) var(--cf-space-3);
+}
+
+.cf-shifts__form-note {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
 }
 
 .cf-shifts__form-title {
   margin: 0;
+  color: var(--cf-text);
   font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-xl);
-  font-weight: 600;
-  color: var(--cf-primary);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 /* Tres columnas: el nombre ocupa la fila entera (__wide) y debajo van
@@ -3027,17 +2885,18 @@ textarea.cf-dash-input {
   justify-content: space-between;
   gap: var(--cf-space-2);
   padding: 0 14px;
-  border: 1px solid var(--cf-accent-soft);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
+  color: var(--cf-brand-700);
+  font-family: var(--cf-font-heading);
   font-size: 0.9375rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .cf-shifts__stat small {
-  color: var(--cf-accent-dark);
+  color: var(--cf-brand-700);
   font-size: 0.75rem;
   font-weight: 500;
   opacity: 0.85;
@@ -3132,15 +2991,12 @@ textarea.cf-dash-input {
 
 /* ---------- LISTA ---------- */
 
+/* El bloque es el común (cf-lpanel); aquí solo se recorta lo de dentro. */
 .cf-shifts__list {
   margin: 0;
   padding: 0;
-  list-style: none;
   overflow: hidden;
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
+  list-style: none;
 }
 
 /* Cinco columnas: turno, días, asignados, estado y acciones. La cabecera
@@ -3148,19 +3004,19 @@ textarea.cf-dash-input {
 .cf-shifts__head,
 .cf-shifts__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px 150px 150px 128px;
+  grid-template-columns: minmax(0, 1fr) 190px 150px 140px 128px;
   align-items: center;
   gap: var(--cf-space-4);
   padding: var(--cf-space-4) var(--cf-space-6);
 }
 
 .cf-shifts__head {
-  padding-block: var(--cf-space-3);
-  background-color: rgba(var(--cf-bg-rgb), 0.6);
+  padding-block: 12px;
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -3170,7 +3026,7 @@ textarea.cf-dash-input {
 }
 
 .cf-shifts__row:hover {
-  background-color: rgba(var(--cf-bg-rgb), 0.45);
+  background-color: #fafcfc;
 }
 
 .cf-shifts__name {
@@ -3195,23 +3051,31 @@ textarea.cf-dash-input {
   font-weight: 600;
 }
 
-/* La semana en siete marcas: menta los días que se trabaja, siempre,
+/* La tira L–D (maqueta 06): en color los días que se trabaja, siempre,
    también en un turno desactivado. */
 .cf-shifts__week {
   display: flex;
-  gap: 3px;
+  gap: 4px;
   margin-top: 6px;
 }
 
 .cf-shifts__week span {
-  width: 14px;
-  height: 4px;
-  border-radius: 2px;
-  background-color: var(--cf-border);
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--cf-border);
+  border-radius: 7px;
+  background-color: var(--cf-bg);
+  color: var(--cf-muted);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
 }
 
 .cf-shifts__week span.is-on {
-  background-color: var(--cf-accent);
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--cf-brand-600), var(--cf-brand-500));
+  color: var(--cf-white);
 }
 
 .cf-shifts__team {
@@ -3317,10 +3181,6 @@ textarea.cf-dash-input {
    medio, acciones abajo. Sin cabecera de columnas. */
 
 @container (max-width: 720px) {
-  .cf-shifts__title {
-    font-size: var(--cf-text-xl);
-  }
-
   .cf-shifts__head {
     display: none;
   }
@@ -4273,67 +4133,24 @@ textarea.cf-dash-input {
    container-type: el diseño estrecho lo decide el hueco que deja el
    sidebar, no el ancho de la ventana (ver @container al final). */
 
-/* ---------- COMÚN: CONTENEDOR Y CABECERA ---------- */
+/* ---------- COMÚN: CONTENEDOR ----------
+   La cabecera es PageHead (PANEL-04): sin ancho máximo, como el resto
+   del panel. */
 
 .cf-workers,
 .cf-worker-form,
 .cf-absences {
   container-type: inline-size;
-  max-width: 1180px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
 
-.cf-workers__header,
-.cf-absences__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-workers__title,
-.cf-worker-form__title,
-.cf-absences__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-}
-
-.cf-workers__lede,
-.cf-worker-form__lede,
-.cf-absences__lede {
-  margin: var(--cf-space-2) 0 0;
-  max-width: 62ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-/* ---------- TRABAJADORES: BARRA ----------
-   Pestañas a la izquierda y buscador a la derecha, como en Servicios.
-   Las pestañas son las de Servicios (cf-services__tabs), sin copiarlas. */
-
-.cf-workers__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-4);
-}
-
-.cf-workers__toolbar .cf-dash-search {
-  width: min(340px, 100%);
-}
-
-/* ---------- TRABAJADORES: LISTA ---------- */
+/* ---------- TRABAJADORES: BARRA Y LISTA ----------
+   Las vistas, el bloque y la barra son las piezas comunes (sección 20,
+   PANEL-04). Aquí, el buscador con sugerencias dentro de la barra y la
+   tabla. */
 
 .cf-workers__list {
-  display: grid;
-  gap: var(--cf-space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -4354,14 +4171,15 @@ textarea.cf-dash-input {
   padding: var(--cf-space-3) var(--cf-space-6);
 }
 
-/* Borde transparente: el mismo grosor que la fila, así el texto de cada
-   columna empieza exactamente en el mismo punto. */
+/* La cabecera de la tabla, con el degradado suave de todas las listas. */
 .cf-workers__head {
-  border: 1px solid transparent;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -4372,26 +4190,20 @@ textarea.cf-dash-input {
 }
 
 .cf-workers__row {
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-top: 1px solid var(--cf-border);
   background-color: var(--cf-surface);
-  transition:
-    border-color var(--cf-transition),
-    box-shadow var(--cf-transition);
+  transition: background-color var(--cf-transition);
 }
 
 .cf-workers__row:hover {
-  border-color: var(--cf-primary);
-  box-shadow: var(--cf-shadow-sm);
+  background-color: #fafcfc;
 }
 
 /* Desactivado: la fila se tiñe de un tono suave y el texto se apaga,
    igual que un turno desactivado. */
 .cf-workers__row--inactive,
 .cf-workers__row--inactive:hover {
-  border-color: var(--cf-border);
   background-color: var(--cf-brand-50);
-  box-shadow: none;
 }
 
 .cf-workers__row--inactive .cf-workers__person,
@@ -4438,6 +4250,11 @@ textarea.cf-dash-input {
 }
 
 /* "Baja en curso": lo único que hay que ver de un vistazo en la lista. */
+.cf-workers__tag--self {
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
+}
+
 .cf-workers__tag--away {
   background-color: var(--cf-warning-soft);
   color: var(--cf-warning-dark);
@@ -4490,14 +4307,18 @@ textarea.cf-dash-input {
 
 /* ---------- AUSENCIAS: CABECERA ---------- */
 
+/* El enlace de vuelta, como el del detalle de una reserva: 44 px de
+   alto y en negrita (PANEL-04). */
 .cf-absences__back,
 .cf-worker-form__back {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: var(--cf-space-3);
+  gap: var(--cf-space-2);
+  min-height: 44px;
+  margin-bottom: var(--cf-space-2);
   color: var(--cf-muted);
   font-size: var(--cf-text-sm);
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -4506,20 +4327,11 @@ textarea.cf-dash-input {
   color: var(--cf-primary);
 }
 
-/* Resumen del trabajador bajo el título: puesto, turno y valoración. */
-.cf-absences__who {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-2) var(--cf-space-4);
-  margin-top: var(--cf-space-3);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-absences__who i {
-  margin-right: 4px;
-  color: var(--cf-accent-dark);
+.cf-absences__back:focus-visible,
+.cf-worker-form__back:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
 }
 
 /* ---------- AUSENCIAS: FORMULARIO ----------
@@ -4529,7 +4341,7 @@ textarea.cf-dash-input {
   margin-bottom: var(--cf-space-6);
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-lg);
+  border-radius: 20px;
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
 }
@@ -4600,8 +4412,10 @@ textarea.cf-dash-input {
   align-items: baseline;
   gap: var(--cf-space-2);
   margin: 0 0 var(--cf-space-3);
-  font-size: var(--cf-text-base);
-  font-weight: 600;
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .cf-absences__group-title span {
@@ -4610,11 +4424,15 @@ textarea.cf-dash-input {
   font-weight: 400;
 }
 
+/* Un solo bloque blanco por grupo, una fila por ausencia (PANEL-04). */
 .cf-absences__list {
-  display: grid;
-  gap: var(--cf-space-3);
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
   list-style: none;
 }
 
@@ -4623,10 +4441,12 @@ textarea.cf-dash-input {
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: var(--cf-space-4);
-  padding: var(--cf-space-4) var(--cf-space-6);
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  padding: var(--cf-space-4) 20px;
   background-color: var(--cf-surface);
+}
+
+.cf-absences__row + .cf-absences__row {
+  border-top: 1px solid var(--cf-border);
 }
 
 /* Las pasadas, apagadas: ya no afectan a nada. */
@@ -4728,10 +4548,6 @@ textarea.cf-dash-input {
    Como el formulario de servicios: una tarjeta con secciones y, a la
    derecha, cómo se verá en el equipo. */
 
-.cf-worker-form__header {
-  margin-bottom: var(--cf-space-6);
-}
-
 .cf-worker-form__editor {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
@@ -4744,9 +4560,9 @@ textarea.cf-dash-input {
   gap: var(--cf-space-6);
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: 20px;
   background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-md);
+  box-shadow: var(--cf-shadow-sm);
 }
 
 /* Cada bloque es un <fieldset>, separado del anterior por una línea que
@@ -4766,19 +4582,18 @@ textarea.cf-dash-input {
   border-top: 1px solid var(--cf-border);
 }
 
-/* Deshace el legend de Bootstrap: flotante, a todo lo ancho y grande. */
+/* Deshace el legend de Bootstrap (flotante, a todo lo ancho y grande) y
+   lo deja como el título de los bloques del panel (PANEL-04). */
 .cf-worker-form__legend {
   float: none;
   width: auto;
   margin: 0 0 var(--cf-space-4);
   padding: 0;
-  color: var(--cf-muted);
-  font-family: var(--cf-font-body);
-  font-size: 0.75rem;
-  font-weight: 600;
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1rem;
+  font-weight: 700;
   line-height: 1.2;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 /* align-items: start: un campo con error no estira a sus vecinos. */
@@ -4898,8 +4713,9 @@ textarea.cf-dash-input {
   display: grid;
   gap: var(--cf-space-4);
   padding: var(--cf-space-6);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-primary-soft);
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
 }
 
 .cf-worker-form__aside-label {
@@ -4965,7 +4781,6 @@ textarea.cf-dash-input {
 }
 
 /* Los bloques de texto gris ocupan el hueco que dejan pastilla y botón. */
-.cf-absences__skel-head,
 .cf-worker-form__skel-head {
   flex: 1;
 }
@@ -5032,16 +4847,12 @@ textarea.cf-dash-input {
   width: 70%;
 }
 
-/* Ausencias */
-.cf-absences__skel-title {
-  width: min(340px, 80%);
-  height: 30px;
-  margin-top: var(--cf-space-2);
-}
-
-.cf-absences__skel-who {
-  width: min(300px, 70%);
-  margin-top: var(--cf-space-4);
+/* Ausencias: la forma de la cabecera, mientras llega el nombre. */
+.cf-absences__skel-head {
+  display: block;
+  height: 110px;
+  margin-bottom: var(--cf-space-6);
+  border-radius: 24px;
 }
 
 .cf-absences__skel-dates {
@@ -10797,14 +10608,6 @@ textarea.cf-dash-input {
   font-family: var(--cf-font-body);
 }
 
-/* El buscador de siempre (SearchBox), a todo lo ancho de la barra. */
-.cf-clients__bar .cf-dash-search {
-  flex: 1 1 320px;
-  width: auto;
-  max-width: 520px;
-  margin-bottom: 0;
-}
-
 .cf-clients__list {
   margin: 0;
   padding: 0;
@@ -11757,6 +11560,23 @@ textarea.cf-dash-input {
   align-items: center;
   gap: var(--cf-space-2);
   margin-left: auto;
+}
+
+/* El buscador con sugerencias de siempre (SearchBox), a lo ancho de la
+   barra: Trabajadores, Clientes, Servicios y Tareas. */
+.cf-lbar .cf-dash-search {
+  flex: 1 1 320px;
+  width: auto;
+  max-width: 520px;
+  margin-bottom: 0;
+}
+
+/* «N resultados para…», dentro del bloque, bajo la barra. */
+.cf-lpanel > .cf-dash-results {
+  margin: 0;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--cf-border);
+  border-radius: 0;
 }
 
 /* «Filtrar por», delante de los desplegables cuando no hay buscador. */

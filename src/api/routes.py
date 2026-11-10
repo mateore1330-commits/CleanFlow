@@ -488,6 +488,12 @@ def update_worker(worker_id):
             "message": "No se han enviado datos"
         }), 400
 
+    # Nadie puede desactivarse a sí mismo: se quedaría fuera de la
+    # aplicación. Lo mismo que comprueba PATCH /workers/<id>/status, y
+    # antes de tocar nada, para no dejar un cambio a medias (PANEL-04).
+    if worker.user_id == current_user().user_id and data.get("is_active") is False:
+        return jsonify({"message": "No puedes desactivar tu propia cuenta"}), 403
+
     # --------------------------------------------------------------
     # DATOS DEL USUARIO
     # --------------------------------------------------------------

@@ -22,19 +22,21 @@ import {
     deleteShift,
 } from "../../services/shiftService"
 import "../../dashboard.css"
+import { PageHead } from "../../components/dashboard/PageHead"
+import { ListViews } from "../../components/dashboard/list/ListViews"
 
 // Mismo tope que la columna name de Shift y que la API.
 const NAME_MAX_LENGTH = 50
 
 // Lunes = 1 ... domingo = 7, como Shift.days en el backend.
 const WEEKDAYS = [
-    { value: 1, short: "Lun", long: "lunes" },
-    { value: 2, short: "Mar", long: "martes" },
-    { value: 3, short: "Mié", long: "miércoles" },
-    { value: 4, short: "Jue", long: "jueves" },
-    { value: 5, short: "Vie", long: "viernes" },
-    { value: 6, short: "Sáb", long: "sábado" },
-    { value: 7, short: "Dom", long: "domingo" },
+    { value: 1, short: "Lun", letter: "L", long: "lunes" },
+    { value: 2, short: "Mar", letter: "M", long: "martes" },
+    { value: 3, short: "Mié", letter: "X", long: "miércoles" },
+    { value: 4, short: "Jue", letter: "J", long: "jueves" },
+    { value: 5, short: "Vie", letter: "V", long: "viernes" },
+    { value: 6, short: "Sáb", letter: "S", long: "sábado" },
+    { value: 7, short: "Dom", letter: "D", long: "domingo" },
 ]
 
 // Atajos del formulario: los horarios que se usan casi siempre.
@@ -48,9 +50,9 @@ const PRESETS = [
 const EMPTY_FORM = { name: "", start_time: "", end_time: "", work_days: [1, 2, 3, 4, 5] }
 
 const FILTERS = [
-    { value: "all", label: "Todos" },
-    { value: "active", label: "Activos" },
-    { value: "inactive", label: "Desactivados" },
+    { value: "all", label: "Todos", hint: "turnos creados", icon: "fa-clock" },
+    { value: "active", label: "Activos", hint: "con horario en uso", icon: "fa-circle-check" },
+    { value: "inactive", label: "Desactivados", hint: "guardados sin usar", icon: "fa-circle-pause" },
 ]
 
 // Lo que dura el resaltado de la fila guardada (.cf-tasks__row--flash).
@@ -106,23 +108,16 @@ const workersLabel = (count) => (count === 1 ? "trabajador" : "trabajadores")
 
 // Sin onCreate, el botón no se pinta (mientras carga o con el formulario abierto).
 const PageHeader = ({ onCreate }) => (
-    <div className="cf-shifts__header">
-        <div>
-            <p className="cf-dash-eyebrow">Equipo</p>
-            <h1 className="cf-shifts__title">Turnos</h1>
-            <p className="cf-shifts__lede">
-                Los horarios del equipo. Cada trabajador tiene un turno, y sus días y horas deciden
-                cuándo se le puede reservar.
-            </p>
-        </div>
-
-        {onCreate && (
-            <button type="button" className="cf-dash-btn" onClick={onCreate}>
+    <PageHead
+        title="Turnos"
+        subtitle="Los horarios en los que trabaja tu equipo. Sin turno, un trabajador no recibe reservas."
+        actions={onCreate && (
+            <button type="button" className="cf-dash-btn cf-dash-btn--accent" onClick={onCreate}>
                 <i className="fa-solid fa-plus" aria-hidden="true" />
                 Nuevo turno
             </button>
         )}
-    </div>
+    />
 )
 
 
@@ -456,7 +451,10 @@ export const ListadoTurnos = () => {
                     onSubmit={handleSubmit}
                     noValidate
                 >
-                    <h2 className="cf-shifts__form-title">{editing.shift ? "Editar turno" : "Nuevo turno"}</h2>
+                    <div className="cf-shifts__form-head">
+                        <h2 className="cf-shifts__form-title">{editing.shift ? "Editar turno" : "Nuevo turno"}</h2>
+                        <p className="cf-shifts__form-note">Se guarda para todo el equipo</p>
+                    </div>
 
                     {formError && (
                         <p className="cf-dash-alert" role="alert">
@@ -618,31 +616,13 @@ export const ListadoTurnos = () => {
                 </div>
             ) : (
                 <>
-                    {/* Las mismas pestañas que tareas y servicios. aria-pressed y
-                        no role="tab": son filtros de una misma lista. */}
-                    <div className="cf-dash-toolbar">
-                        <div className="cf-tasks__tabs">
-                            {FILTERS.map((option) => (
-                                <button
-                                    key={option.value}
-                                    type="button"
-                                    className="cf-tasks__tab"
-                                    aria-pressed={filter === option.value}
-                                    onClick={() => setFilter(option.value)}
-                                >
-                                    {option.label}
-                                    {/* Los desactivados, en terracota: son lo que hay que mirar. */}
-                                    <span
-                                        className={`cf-tasks__count${
-                                            option.value === "inactive" && counts.inactive > 0 ? " cf-dash-count--attention" : ""
-                                        }`}
-                                    >
-                                        {counts[option.value]}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    {/* Las vistas en tarjetas (piezas comunes, PANEL-04). */}
+                    <ListViews
+                        label="Vistas de turnos"
+                        active={filter}
+                        onChange={setFilter}
+                        views={FILTERS.map((option) => ({ ...option, count: counts[option.value] }))}
+                    />
 
                     {visibleShifts.length === 0 ? (
                         <div className="cf-dash-state">
@@ -651,7 +631,7 @@ export const ListadoTurnos = () => {
                             </p>
                         </div>
                     ) : (
-                        <ul className="cf-shifts__list">
+                        <ul className="cf-lpanel cf-shifts__list">
                             {/* Cabecera de columnas: solo visual, cada fila ya se
                                 entiende sola. */}
                             <li className="cf-shifts__head" aria-hidden="true">
@@ -685,13 +665,15 @@ export const ListadoTurnos = () => {
 
                                         <div className="cf-shifts__daycell">
                                             <p className="cf-shifts__daytext">{summarizeDays(shift.work_days)}</p>
-                                            {/* Tira de siete marcas: la semana de un vistazo. */}
+                                            {/* La tira L–D: la semana de un vistazo (maqueta 06). */}
                                             <div className="cf-shifts__week" aria-hidden="true">
                                                 {WEEKDAYS.map((day) => (
                                                     <span
                                                         key={day.value}
                                                         className={shift.work_days.includes(day.value) ? "is-on" : undefined}
-                                                    />
+                                                    >
+                                                        {day.letter}
+                                                    </span>
                                                 ))}
                                             </div>
                                         </div>

@@ -13,6 +13,8 @@ import useGlobalReducer from "../../hooks/useGlobalReducer"
 import { getAllTasks, createTask, updateTask, toggleTaskStatus } from "../../services/taskService"
 import { SearchBox, Highlight, matchesSearch } from "../../components/dashboard/SearchBox"
 import "../../dashboard.css"
+import { PageHead } from "../../components/dashboard/PageHead"
+import { ListViews } from "../../components/dashboard/list/ListViews"
 
 // Mismo tope que la columna task_name en models.py y que la API.
 const TASK_NAME_MAX_LENGTH = 100
@@ -21,9 +23,9 @@ const EMPTY_FORM = { task_name: "", description: "" }
 
 // Pestañas. Filtran en el navegador: la API ya devuelve todas las tareas.
 const FILTERS = [
-    { value: "all", label: "Todas" },
-    { value: "active", label: "Activas" },
-    { value: "inactive", label: "Desactivadas" },
+    { value: "all", label: "Todas", hint: "en el catálogo", icon: "fa-list-check" },
+    { value: "active", label: "Activas", hint: "se pueden elegir", icon: "fa-circle-check" },
+    { value: "inactive", label: "Desactivadas", hint: "ocultas en los servicios", icon: "fa-circle-pause" },
 ]
 
 // Lo que dura el resaltado de la fila guardada. Igual que la animación
@@ -35,24 +37,16 @@ const SKELETON_ROWS = 6
 
 // Título, frase y botón de crear. Sin onCreate, el botón no se pinta.
 const PageHeader = ({ onCreate }) => (
-    <div className="cf-tasks__header">
-        <div>
-            {/* El grupo del sidebar al que pertenece la página. */}
-            <p className="cf-dash-eyebrow">Administrar catálogo</p>
-            <h1 className="cf-tasks__title">Catálogo de tareas</h1>
-            <p className="cf-tasks__lede">
-                Las tareas que se pueden incluir en los servicios. Desactivar una la
-                oculta de los servicios nuevos sin borrarla.
-            </p>
-        </div>
-
-        {onCreate && (
-            <button type="button" className="cf-dash-btn" onClick={onCreate}>
+    <PageHead
+        title="Tareas"
+        subtitle="Las tareas que se pueden incluir en los servicios."
+        actions={onCreate && (
+            <button type="button" className="cf-dash-btn cf-dash-btn--accent" onClick={onCreate}>
                 <i className="fa-solid fa-plus" aria-hidden="true" />
                 Nueva tarea
             </button>
         )}
-    </div>
+    />
 )
 
 export const ManageTasks = () => {
@@ -268,7 +262,7 @@ export const ManageTasks = () => {
                     este texto sí, y no se ve. */}
                 <p className="sr-only">Cargando tareas...</p>
 
-                <ul className="cf-tasks__list" aria-hidden="true">
+                <ul className="cf-lpanel cf-tasks__list" aria-hidden="true">
                     {Array.from({ length: SKELETON_ROWS }, (_, index) => (
                         <li className="cf-tasks__row" key={index}>
                             <div className="cf-tasks__info">
@@ -425,142 +419,129 @@ export const ManageTasks = () => {
                 </div>
             ) : (
                 <>
-                    {/* Pestañas a la izquierda y buscador a la derecha. aria-pressed
-                        y no role="tab": son filtros de una misma lista. */}
-                    <div className="cf-dash-toolbar">
-                        <div className="cf-tasks__tabs">
-                            {FILTERS.map((option) => (
-                                <button
-                                    key={option.value}
-                                    type="button"
-                                    className="cf-tasks__tab"
-                                    aria-pressed={filter === option.value}
-                                    onClick={() => setFilter(option.value)}
-                                >
-                                    {option.label}
-                                    {/* Las desactivadas, en terracota: son lo que hay que mirar. */}
-                                    <span
-                                        className={`cf-tasks__count${
-                                            option.value === "inactive" && counts.inactive > 0 ? " cf-dash-count--attention" : ""
-                                        }`}
-                                    >
-                                        {counts[option.value]}
-                                    </span>
+                    {/* Las vistas en tarjetas y, debajo, un solo bloque con el
+                        buscador, la tabla y su pie (piezas comunes, PANEL-04). */}
+                    <ListViews
+                        label="Vistas de tareas"
+                        active={filter}
+                        onChange={setFilter}
+                        views={FILTERS.map((option) => ({ ...option, count: counts[option.value] }))}
+                    />
+
+                    <div className="cf-lpanel">
+                        <div className="cf-lbar cf-tasks__bar">
+                            <SearchBox
+                                id="task-search"
+                                label="Buscar tarea"
+                                value={query}
+                                onChange={setQuery}
+                                options={searchOptions}
+                                inactiveLabel="Desactivada"
+                                onSelect={selectSuggestion}
+                            />
+                        </div>
+
+                        {searching && (
+                            <p className="cf-dash-results" role="status">
+                                <span>
+                                    {foundTasks.length} {foundTasks.length === 1 ? "resultado" : "resultados"} para «{query.trim()}»
+                                </span>
+                                <button type="button" onClick={() => setQuery("")}>
+                                    Borrar búsqueda
                                 </button>
-                            ))}
-                        </div>
-
-                        <SearchBox
-                            id="task-search"
-                            label="Buscar tarea"
-                            value={query}
-                            onChange={setQuery}
-                            options={searchOptions}
-                            inactiveLabel="Desactivada"
-                            onSelect={selectSuggestion}
-                        />
-                    </div>
-
-                    {searching && (
-                        <p className="cf-dash-results" role="status">
-                            <span>
-                                {foundTasks.length} {foundTasks.length === 1 ? "resultado" : "resultados"} para «{query.trim()}»
-                            </span>
-                            <button type="button" onClick={() => setQuery("")}>
-                                Borrar búsqueda
-                            </button>
-                        </p>
-                    )}
-
-                    {foundTasks.length === 0 ? (
-                        <div className="cf-dash-state">
-                            <span className="cf-dash-state__icon">
-                                <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
-                            </span>
-                            <p className="cf-dash-state__title">Ninguna tarea coincide con «{query.trim()}»</p>
-                            <p className="cf-dash-state__text">
-                                Prueba con otra palabra: se busca en el nombre y en la descripción.
                             </p>
-                            <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
-                                Borrar búsqueda
-                            </button>
-                        </div>
-                    ) : visibleTasks.length === 0 ? (
-                        <div className="cf-dash-state">
-                            <p className="cf-dash-state__text">
-                                {filter === "active" ? "No hay tareas activas" : "No hay tareas desactivadas"}
-                                {searching ? " con esa búsqueda." : "."}
-                            </p>
-                        </div>
-                    ) : (
-                        <ul className="cf-tasks__list">
-                            {/* Cabecera de columnas: solo visual, cada fila
-                                ya se entiende sola. */}
-                            <li className="cf-tasks__head" aria-hidden="true">
-                                <span>Tarea</span>
-                                <span>Estado</span>
-                                <span className="cf-tasks__actions">Acciones</span>
-                            </li>
+                        )}
 
-                            {visibleTasks.map((task) => {
-                                const rowClass = [
-                                    "cf-tasks__row",
-                                    !task.is_active && "cf-tasks__row--inactive",
-                                    flashId === task.task_id && "cf-tasks__row--flash",
-                                ]
-                                    .filter(Boolean)
-                                    .join(" ")
+                        {foundTasks.length === 0 ? (
+                            <div className="cf-dash-state">
+                                <span className="cf-dash-state__icon">
+                                    <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
+                                </span>
+                                <p className="cf-dash-state__title">Ninguna tarea coincide con «{query.trim()}»</p>
+                                <p className="cf-dash-state__text">
+                                    Prueba con otra palabra: se busca en el nombre y en la descripción.
+                                </p>
+                                <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
+                                    Borrar búsqueda
+                                </button>
+                            </div>
+                        ) : visibleTasks.length === 0 ? (
+                            <div className="cf-dash-state">
+                                <p className="cf-dash-state__text">
+                                    {filter === "active" ? "No hay tareas activas" : "No hay tareas desactivadas"}
+                                    {searching ? " con esa búsqueda." : "."}
+                                </p>
+                            </div>
+                        ) : (
+                            <ul className="cf-tasks__list">
+                                {/* Cabecera de columnas: solo visual, cada fila
+                                    ya se entiende sola. */}
+                                <li className="cf-tasks__head" aria-hidden="true">
+                                    <span>Tarea</span>
+                                    <span>Estado</span>
+                                    <span className="cf-tasks__actions">Acciones</span>
+                                </li>
 
-                                return (
-                                    <li key={task.task_id} className={rowClass}>
-                                        <div className="cf-tasks__info">
-                                            <p className="cf-tasks__name">
-                                                <Highlight text={task.task_name} query={query} />
-                                            </p>
-                                            {task.description ? (
-                                                <p className="cf-tasks__desc">
-                                                    <Highlight text={task.description} query={query} />
+                                {visibleTasks.map((task) => {
+                                    const rowClass = [
+                                        "cf-tasks__row",
+                                        !task.is_active && "cf-tasks__row--inactive",
+                                        flashId === task.task_id && "cf-tasks__row--flash",
+                                    ]
+                                        .filter(Boolean)
+                                        .join(" ")
+
+                                    return (
+                                        <li key={task.task_id} className={rowClass}>
+                                            <div className="cf-tasks__info">
+                                                <p className="cf-tasks__name">
+                                                    <Highlight text={task.task_name} query={query} />
                                                 </p>
-                                            ) : (
-                                                <p className="cf-tasks__desc cf-tasks__desc--empty">Sin descripción</p>
-                                            )}
-                                        </div>
+                                                {task.description ? (
+                                                    <p className="cf-tasks__desc">
+                                                        <Highlight text={task.description} query={query} />
+                                                    </p>
+                                                ) : (
+                                                    <p className="cf-tasks__desc cf-tasks__desc--empty">Sin descripción</p>
+                                                )}
+                                            </div>
 
-                                        <div className="cf-tasks__status">
-                                            <label className="cf-dash-switch" htmlFor={`task-status-${task.task_id}`}>
-                                                <input
-                                                    id={`task-status-${task.task_id}`}
-                                                    type="checkbox"
-                                                    role="switch"
-                                                    checked={task.is_active}
-                                                    onChange={() => handleToggle(task)}
-                                                    disabled={togglingId === task.task_id}
-                                                />
-                                                <span className="cf-dash-switch__text">
-                                                    {task.is_active ? "Activa" : "Desactivada"}
-                                                </span>
-                                            </label>
-                                        </div>
+                                            <div className="cf-tasks__status">
+                                                <label className="cf-dash-switch" htmlFor={`task-status-${task.task_id}`}>
+                                                    <input
+                                                        id={`task-status-${task.task_id}`}
+                                                        type="checkbox"
+                                                        role="switch"
+                                                        checked={task.is_active}
+                                                        onChange={() => handleToggle(task)}
+                                                        disabled={togglingId === task.task_id}
+                                                    />
+                                                    <span className="cf-dash-switch__text">
+                                                        {task.is_active ? "Activa" : "Desactivada"}
+                                                    </span>
+                                                </label>
+                                            </div>
 
-                                        <div className="cf-tasks__actions">
-                                            {/* aria-label: con muchos botones "Editar" iguales,
-                                                el lector de pantalla necesita saber cuál es cuál. */}
-                                            <button
-                                                type="button"
-                                                className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
-                                                onClick={() => openEdit(task)}
-                                                disabled={saving}
-                                                aria-label={`Editar ${task.task_name}`}
-                                            >
-                                                <i className="fa-solid fa-pen" aria-hidden="true" />
-                                                Editar
-                                            </button>
-                                        </div>
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    )}
+                                            <div className="cf-tasks__actions">
+                                                {/* aria-label: con muchos botones "Editar" iguales,
+                                                    el lector de pantalla necesita saber cuál es cuál. */}
+                                                <button
+                                                    type="button"
+                                                    className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
+                                                    onClick={() => openEdit(task)}
+                                                    disabled={saving}
+                                                    aria-label={`Editar ${task.task_name}`}
+                                                >
+                                                    <i className="fa-solid fa-pen" aria-hidden="true" />
+                                                    Editar
+                                                </button>
+                                            </div>
+                                        </li>
+                                    )
+                                })}
+                            </ul>
+                        )}
+                    </div>
                 </>
             )}
         </section>

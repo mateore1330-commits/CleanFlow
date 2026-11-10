@@ -15,12 +15,14 @@ import { getAllServices, createService, updateService, toggleServiceStatus } fro
 import { ServiceForm, formatPrice, taskWord } from "../../components/dashboard/ServiceForm"
 import { SearchBox, Highlight, matchesSearch } from "../../components/dashboard/SearchBox"
 import "../../dashboard.css"
+import { PageHead } from "../../components/dashboard/PageHead"
+import { ListViews } from "../../components/dashboard/list/ListViews"
 
 // Pestañas. Filtran en el navegador: la API ya devuelve todos los servicios.
 const FILTERS = [
-    { value: "all", label: "Todos" },
-    { value: "active", label: "Activos" },
-    { value: "inactive", label: "Desactivados" },
+    { value: "all", label: "Todos", hint: "en el catálogo", icon: "fa-broom" },
+    { value: "active", label: "Activos", hint: "se ven en la web", icon: "fa-eye" },
+    { value: "inactive", label: "Desactivados", hint: "ocultos en la web", icon: "fa-eye-slash" },
 ]
 
 // Lo que dura el resaltado de la fila guardada. Igual que la animación
@@ -32,23 +34,16 @@ const SKELETON_ROWS = 4
 
 // Título, frase y botón de crear. Sin onCreate, el botón no se pinta.
 const PageHeader = ({ onCreate }) => (
-    <div className="cf-services__header">
-        <div>
-            {/* El grupo del sidebar al que pertenece la página. */}
-            <p className="cf-dash-eyebrow">Administrar catálogo</p>
-            <h1 className="cf-services__title">Catálogo de servicios</h1>
-            <p className="cf-services__lede">
-                Los tipos de limpieza que se contratan en la web. Desactivar uno lo oculta de la web sin borrarlo.
-            </p>
-        </div>
-
-        {onCreate && (
-            <button type="button" className="cf-dash-btn" onClick={onCreate}>
+    <PageHead
+        title="Servicios"
+        subtitle="Los tipos de limpieza que se contratan en la web. Desactivar uno lo oculta de la web sin borrarlo."
+        actions={onCreate && (
+            <button type="button" className="cf-dash-btn cf-dash-btn--accent" onClick={onCreate}>
                 <i className="fa-solid fa-plus" aria-hidden="true" />
                 Nuevo servicio
             </button>
         )}
-    </div>
+    />
 )
 
 export const ManageServices = () => {
@@ -260,7 +255,7 @@ export const ManageServices = () => {
                     este texto sí, y no se ve. */}
                 <p className="sr-only">Cargando servicios...</p>
 
-                <ul className="cf-services__list" aria-hidden="true">
+                <ul className="cf-lpanel cf-services__list" aria-hidden="true">
                     {Array.from({ length: SKELETON_ROWS }, (_, index) => (
                         <li className="cf-services__row" key={index}>
                             <div className="cf-services__info">
@@ -314,7 +309,7 @@ export const ManageServices = () => {
         return (
             <section className="cf-services">
                 <button type="button" className="cf-services__back" onClick={closeForm} disabled={saving}>
-                    <i className="fa-solid fa-chevron-left" aria-hidden="true" />
+                    <i className="fa-solid fa-arrow-left" aria-hidden="true" />
                     Volver a servicios
                 </button>
 
@@ -379,172 +374,159 @@ export const ManageServices = () => {
                 </div>
             ) : (
                 <>
-                    {/* Pestañas a la izquierda y buscador a la derecha. aria-pressed
-                        y no role="tab": son filtros de una misma lista. */}
-                    <div className="cf-dash-toolbar">
-                        <div className="cf-services__tabs">
-                            {FILTERS.map((option) => (
-                                <button
-                                    key={option.value}
-                                    type="button"
-                                    className="cf-services__tab"
-                                    aria-pressed={filter === option.value}
-                                    onClick={() => setFilter(option.value)}
-                                >
-                                    {option.label}
-                                    {/* Los desactivados, en terracota: son lo que hay que mirar. */}
-                                    <span
-                                        className={`cf-services__count${
-                                            option.value === "inactive" && counts.inactive > 0 ? " cf-dash-count--attention" : ""
-                                        }`}
-                                    >
-                                        {counts[option.value]}
-                                    </span>
+                    {/* Las vistas en tarjetas y, debajo, un solo bloque con el
+                        buscador, la tabla y su pie (piezas comunes, PANEL-04). */}
+                    <ListViews
+                        label="Vistas de servicios"
+                        active={filter}
+                        onChange={setFilter}
+                        views={FILTERS.map((option) => ({ ...option, count: counts[option.value] }))}
+                    />
+
+                    <div className="cf-lpanel">
+                        <div className="cf-lbar cf-services__bar">
+                            <SearchBox
+                                id="service-search"
+                                label="Buscar servicio"
+                                value={query}
+                                onChange={setQuery}
+                                options={searchOptions}
+                                inactiveLabel="Desactivado"
+                                onSelect={selectSuggestion}
+                            />
+                        </div>
+
+                        {searching && (
+                            <p className="cf-dash-results" role="status">
+                                <span>
+                                    {foundServices.length} {foundServices.length === 1 ? "resultado" : "resultados"} para «{query.trim()}»
+                                </span>
+                                <button type="button" onClick={() => setQuery("")}>
+                                    Borrar búsqueda
                                 </button>
-                            ))}
-                        </div>
-
-                        <SearchBox
-                            id="service-search"
-                            label="Buscar servicio"
-                            value={query}
-                            onChange={setQuery}
-                            options={searchOptions}
-                            inactiveLabel="Desactivado"
-                            onSelect={selectSuggestion}
-                        />
-                    </div>
-
-                    {searching && (
-                        <p className="cf-dash-results" role="status">
-                            <span>
-                                {foundServices.length} {foundServices.length === 1 ? "resultado" : "resultados"} para «{query.trim()}»
-                            </span>
-                            <button type="button" onClick={() => setQuery("")}>
-                                Borrar búsqueda
-                            </button>
-                        </p>
-                    )}
-
-                    {foundServices.length === 0 ? (
-                        <div className="cf-dash-state">
-                            <span className="cf-dash-state__icon">
-                                <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
-                            </span>
-                            <p className="cf-dash-state__title">Ningún servicio coincide con «{query.trim()}»</p>
-                            <p className="cf-dash-state__text">
-                                Prueba con otra palabra: se busca en el nombre y en la descripción.
                             </p>
-                            <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
-                                Borrar búsqueda
-                            </button>
-                        </div>
-                    ) : visibleServices.length === 0 ? (
-                        <div className="cf-dash-state">
-                            <p className="cf-dash-state__text">
-                                {filter === "active" ? "No hay servicios activos" : "No hay servicios desactivados"}
-                                {searching ? " con esa búsqueda." : "."}
-                            </p>
-                        </div>
-                    ) : (
-                        <ul className="cf-services__list">
-                            {/* Cabecera de columnas: solo visual. En pantallas
-                                estrechas se oculta y cada dato lleva su etiqueta. */}
-                            <li className="cf-services__head" aria-hidden="true">
-                                <span>Servicio</span>
-                                <span>Precio</span>
-                                <span>Tareas</span>
-                                <span>Horas</span>
-                                <span>Estado</span>
-                                <span className="cf-services__actions">Acciones</span>
-                            </li>
+                        )}
 
-                            {visibleServices.map((service) => {
-                                const rowClass = [
-                                    "cf-services__row",
-                                    !service.is_active && "cf-services__row--inactive",
-                                    flashId === service.service_id && "cf-services__row--flash",
-                                ]
-                                    .filter(Boolean)
-                                    .join(" ")
+                        {foundServices.length === 0 ? (
+                            <div className="cf-dash-state">
+                                <span className="cf-dash-state__icon">
+                                    <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
+                                </span>
+                                <p className="cf-dash-state__title">Ningún servicio coincide con «{query.trim()}»</p>
+                                <p className="cf-dash-state__text">
+                                    Prueba con otra palabra: se busca en el nombre y en la descripción.
+                                </p>
+                                <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
+                                    Borrar búsqueda
+                                </button>
+                            </div>
+                        ) : visibleServices.length === 0 ? (
+                            <div className="cf-dash-state">
+                                <p className="cf-dash-state__text">
+                                    {filter === "active" ? "No hay servicios activos" : "No hay servicios desactivados"}
+                                    {searching ? " con esa búsqueda." : "."}
+                                </p>
+                            </div>
+                        ) : (
+                            <ul className="cf-services__list">
+                                {/* Cabecera de columnas: solo visual. En pantallas
+                                    estrechas se oculta y cada dato lleva su etiqueta. */}
+                                <li className="cf-services__head" aria-hidden="true">
+                                    <span>Servicio</span>
+                                    <span>Precio</span>
+                                    <span>Tareas</span>
+                                    <span>Horas</span>
+                                    <span>Estado</span>
+                                    <span className="cf-services__actions">Acciones</span>
+                                </li>
 
-                                return (
-                                    <li key={service.service_id} className={rowClass}>
-                                        <div className="cf-services__info">
-                                            <p className="cf-services__name">
-                                                <Highlight text={service.name} query={query} />
-                                            </p>
-                                            <p className="cf-services__desc">
-                                                <Highlight text={service.description} query={query} />
-                                            </p>
-                                        </div>
+                                {visibleServices.map((service) => {
+                                    const rowClass = [
+                                        "cf-services__row",
+                                        !service.is_active && "cf-services__row--inactive",
+                                        flashId === service.service_id && "cf-services__row--flash",
+                                    ]
+                                        .filter(Boolean)
+                                        .join(" ")
 
-                                        <div className="cf-services__fact cf-services__price">
-                                            <span className="cf-services__label">Precio</span>
-                                            <strong>{formatPrice(service.base_hourly_rate)}</strong>
-                                            <span className="cf-services__sub">por hora</span>
-                                        </div>
+                                    return (
+                                        <li key={service.service_id} className={rowClass}>
+                                            <div className="cf-services__info">
+                                                <p className="cf-services__name">
+                                                    <Highlight text={service.name} query={query} />
+                                                </p>
+                                                <p className="cf-services__desc">
+                                                    <Highlight text={service.description} query={query} />
+                                                </p>
+                                            </div>
 
-                                        {/* tasks_per_hour lo calcula la API; null = no lleva tareas. */}
-                                        {service.tasks_per_hour ? (
-                                            <div className="cf-services__fact cf-services__tasks">
-                                                <span className="cf-services__label">Tareas</span>
-                                                <strong>{service.minutes_per_task} min</strong>
+                                            <div className="cf-services__fact cf-services__price">
+                                                <span className="cf-services__label">Precio</span>
+                                                <strong>{formatPrice(service.base_hourly_rate)}</strong>
+                                                <span className="cf-services__sub">por hora</span>
+                                            </div>
+
+                                            {/* tasks_per_hour lo calcula la API; null = no lleva tareas. */}
+                                            {service.tasks_per_hour ? (
+                                                <div className="cf-services__fact cf-services__tasks">
+                                                    <span className="cf-services__label">Tareas</span>
+                                                    <strong>{service.minutes_per_task} min</strong>
+                                                    <span className="cf-services__sub">
+                                                        {service.tasks_per_hour} {taskWord(service.tasks_per_hour)} por hora
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <div className="cf-services__fact cf-services__fact--none cf-services__tasks">
+                                                    <span className="cf-services__label">Tareas</span>
+                                                    <strong>Sin tareas</strong>
+                                                    <span className="cf-services__sub">solo horas</span>
+                                                </div>
+                                            )}
+
+                                            <div className="cf-services__fact cf-services__hours">
+                                                <span className="cf-services__label">Horas</span>
+                                                <strong>Desde {service.min_hours} h</strong>
                                                 <span className="cf-services__sub">
-                                                    {service.tasks_per_hour} {taskWord(service.tasks_per_hour)} por hora
+                                                    de {service.hour_step} en {service.hour_step}
+                                                    {service.max_hours && ` · máx. ${service.max_hours}`}
                                                 </span>
                                             </div>
-                                        ) : (
-                                            <div className="cf-services__fact cf-services__fact--none cf-services__tasks">
-                                                <span className="cf-services__label">Tareas</span>
-                                                <strong>Sin tareas</strong>
-                                                <span className="cf-services__sub">solo horas</span>
+
+                                            <div className="cf-services__status">
+                                                <label className="cf-dash-switch" htmlFor={`service-status-${service.service_id}`}>
+                                                    <input
+                                                        id={`service-status-${service.service_id}`}
+                                                        type="checkbox"
+                                                        role="switch"
+                                                        checked={service.is_active}
+                                                        onChange={() => handleSwitch(service)}
+                                                        disabled={togglingId === service.service_id}
+                                                    />
+                                                    <span className="cf-dash-switch__text">
+                                                        {service.is_active ? "Activo" : "Desactivado"}
+                                                    </span>
+                                                </label>
                                             </div>
-                                        )}
 
-                                        <div className="cf-services__fact cf-services__hours">
-                                            <span className="cf-services__label">Horas</span>
-                                            <strong>Desde {service.min_hours} h</strong>
-                                            <span className="cf-services__sub">
-                                                de {service.hour_step} en {service.hour_step}
-                                                {service.max_hours && ` · máx. ${service.max_hours}`}
-                                            </span>
-                                        </div>
-
-                                        <div className="cf-services__status">
-                                            <label className="cf-dash-switch" htmlFor={`service-status-${service.service_id}`}>
-                                                <input
-                                                    id={`service-status-${service.service_id}`}
-                                                    type="checkbox"
-                                                    role="switch"
-                                                    checked={service.is_active}
-                                                    onChange={() => handleSwitch(service)}
-                                                    disabled={togglingId === service.service_id}
-                                                />
-                                                <span className="cf-dash-switch__text">
-                                                    {service.is_active ? "Activo" : "Desactivado"}
-                                                </span>
-                                            </label>
-                                        </div>
-
-                                        <div className="cf-services__actions">
-                                            {/* aria-label: con muchos botones "Editar" iguales,
-                                                el lector de pantalla necesita saber cuál es cuál. */}
-                                            <button
-                                                type="button"
-                                                className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
-                                                onClick={() => openForm(service)}
-                                                aria-label={`Editar ${service.name}`}
-                                            >
-                                                <i className="fa-solid fa-pen" aria-hidden="true" />
-                                                Editar
-                                            </button>
-                                        </div>
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    )}
+                                            <div className="cf-services__actions">
+                                                {/* aria-label: con muchos botones "Editar" iguales,
+                                                    el lector de pantalla necesita saber cuál es cuál. */}
+                                                <button
+                                                    type="button"
+                                                    className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
+                                                    onClick={() => openForm(service)}
+                                                    aria-label={`Editar ${service.name}`}
+                                                >
+                                                    <i className="fa-solid fa-pen" aria-hidden="true" />
+                                                    Editar
+                                                </button>
+                                            </div>
+                                        </li>
+                                    )
+                                })}
+                            </ul>
+                        )}
+                    </div>
                 </>
             )}
 

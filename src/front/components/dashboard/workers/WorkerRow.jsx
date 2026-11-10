@@ -40,6 +40,9 @@ export const WorkerRow = ({ worker, query, isSelf, busy, onSwitch }) => {
                 <div className="cf-workers__who">
                     <p className="cf-workers__name">
                         <Highlight text={fullName} query={query} />
+                        {/* Tu propia fila (maqueta 06): así se entiende que su
+                            interruptor esté bloqueado. */}
+                        {isSelf && <span className="cf-workers__tag cf-workers__tag--self">Tú</span>}
                         {worker.on_leave_today && (
                             <span className="cf-workers__tag cf-workers__tag--away">Baja en curso</span>
                         )}
