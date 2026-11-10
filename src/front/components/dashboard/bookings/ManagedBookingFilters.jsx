@@ -27,9 +27,12 @@ import { useEffect, useRef, useState } from "react"
 import { ListViews } from "../list/ListViews"
 import { ListBar, ListDrop } from "../list/ListBar"
 
+// «No realizadas» va aparte: no se hicieron, así que no son «Realizadas»
+// (FIX-02). El servidor las cuenta igual que las demás.
 const ESTADOS = [
     { value: "pending", label: "Pendientes" },
     { value: "done", label: "Realizadas" },
+    { value: "not_done", label: "No realizadas" },
     { value: "cancelled", label: "Canceladas" },
 ]
 

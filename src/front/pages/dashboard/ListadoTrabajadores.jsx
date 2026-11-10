@@ -81,7 +81,9 @@ export const ListadoTrabajadores = () => {
         if (result.ok) {
             setWorkers(result.data.workers)
         } else {
-            setLoadError(result.data.error || result.data.msg || "No se han podido cargar los trabajadores.")
+            // El servidor manda su motivo en «message» (FIX-02): antes se
+            // leía error o msg, que nunca llegan, y salía siempre el genérico.
+            setLoadError(result.data?.message || "No se han podido cargar los trabajadores.")
         }
 
         setLoading(false)

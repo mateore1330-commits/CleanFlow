@@ -686,8 +686,8 @@ CLIENTS_PAGE_SIZE = 25
 # en ello ahora mismo.
 CANCEL_AL_DAR_DE_BAJA = (BookingStatus.PENDING, BookingStatus.CONFIRMED)
 
-# El motivo que queda guardado. Lo leería el cliente en Mis reservas si
-# algún día se le vuelve a dar de alta.
+# El motivo que queda guardado. Lo leería el cliente en Servicios
+# contratados si algún día se le vuelve a dar de alta.
 MOTIVO_BAJA = "Este servicio se canceló al desactivar tu cuenta."
 
 
@@ -956,10 +956,12 @@ BOOKINGS_PAGE_SIZE = 25
 
 # A qué grupo va cada estado. "En curso" es un pendiente: el servicio se
 # está haciendo ahora mismo, así que no está ni realizado ni cancelado.
-# Es el mismo reparto que hace la pantalla del cliente.
+# "No realizada" va aparte y no con las realizadas: no se hizo, y meterla
+# en "Realizadas" decía lo contrario de lo que pasó (FIX-02).
 GRUPOS_DE_ESTADO = {
     "pending": (BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS),
-    "done": (BookingStatus.COMPLETED, BookingStatus.NOT_DONE),
+    "done": (BookingStatus.COMPLETED,),
+    "not_done": (BookingStatus.NOT_DONE,),
     "cancelled": (BookingStatus.CANCELLED,),
 }
 

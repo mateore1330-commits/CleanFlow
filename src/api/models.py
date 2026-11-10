@@ -1027,7 +1027,7 @@ class Booking(db.Model):
         """La reserva completa: servicio, dirección, tramos, tareas con sus
         fotos e incidencias.
 
-        La usan la confirmación del panel, "Mis reservas" del cliente (#16)
+        La usan la confirmación del panel, "Servicios contratados" del cliente (#16)
         y el seguimiento del trabajador (#82). Lo pesado (fotos e
         incidencias) va solo aquí: `serialize()` se queda ligera porque la
         usan las listas, como la de Reservas afectadas.
