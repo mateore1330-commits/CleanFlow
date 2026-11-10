@@ -1,5 +1,5 @@
 /**
- * INCIDENCIAS · la pantalla del encargado.
+ * INCIDENCIAS · la pantalla del encargado (maqueta 06, PANEL-04).
  *
  * Todo lo que ha salido mal, lo cuente el trabajador (#18) o el cliente
  * al reclamar (#83). Se filtran por estado, por motivo y por quién las
@@ -9,16 +9,19 @@
  * que nadie podía resolver. Al cerrar la reclamación de un cliente, su
  * reserva sale de "en revisión" sola.
  *
- * YA NO ESTÁ EN EL MENÚ: se entra desde la marca "N incidencias" de la
- * reserva, en Reservas, que llega con ?booking=<id>. La pantalla sigue
- * aquí entera porque esto no cabe en un diálogo: una incidencia lleva su
- * motivo, quién la abrió, sus fotos y el historial de las resueltas.
+ * Está en el menú (Operativa) y también se llega desde la marca
+ * "N incidencias" de una reserva, con ?booking=<id>: entonces enseña solo
+ * las suyas, y la reserva sale como un filtro más de la barra, con su ✕.
  *
- * Estilos: dashboard.css, sección 11 (cf-incidents y cf-incard).
+ * Arriba, las dos vistas en tarjetas (Abiertas y Resueltas); debajo, la
+ * barra con los dos desplegables y las tarjetas de cada incidencia.
+ *
+ * Estilos: dashboard.css, sección 11 (cf-incidents y cf-incard) y las
+ * piezas comunes de la sección 20.
  */
 
 import "../../dashboard.css";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 import { getIncidents, resolveIncident } from "../../services/incidentService";
@@ -26,6 +29,9 @@ import { INCIDENTS_CHANGED } from "../../components/dashboard/incidents/Incident
 import { IncidentCard } from "../../components/dashboard/incidents/IncidentCard";
 import { BookingZoom } from "../../components/dashboard/bookings/BookingZoom";
 import { ResolveForm } from "../../components/dashboard/incidents/ResolveForm";
+import { PageHead } from "../../components/dashboard/PageHead";
+import { ListViews } from "../../components/dashboard/list/ListViews";
+import { ListBar, ListDrop } from "../../components/dashboard/list/ListBar";
 
 // Las dos pestañas, con lo que dice cada una cuando se queda vacía.
 const TABS = [
@@ -33,13 +39,11 @@ const TABS = [
     { value: "true", label: "Resueltas", empty: "Todavía no has cerrado ninguna." },
 ];
 
-// Los dos desplegables preguntan cosas distintas. En ambos, el primer
-// valor quiere decir "no filtres".
+// Los dos desplegables preguntan cosas distintas.
 
 // El motivo: de qué lado vino el problema. Mismas palabras que ve el
 // trabajador al abrirla, para no tener dos vocabularios.
 const TYPES = [
-    { value: "", label: "Cualquier motivo" },
     { value: "client", label: "Por algo del cliente" },
     { value: "company", label: "Por algo nuestro" },
 ];
@@ -48,9 +52,8 @@ const TYPES = [
 // incidencias por algo nuestro, pero el trabajador abre de los dos
 // motivos. Se filtra por aquí para ver quién espera respuesta.
 const SOURCES = [
-    { value: "", label: "Quién la abrió" },
-    { value: "worker", label: "La abrió el trabajador" },
-    { value: "client", label: "La abrió el cliente" },
+    { value: "worker", label: "El trabajador" },
+    { value: "client", label: "El cliente" },
 ];
 
 const SKELETON_ROWS = 3;
@@ -156,96 +159,113 @@ export const ListadoIncidencias = () => {
         window.dispatchEvent(new Event(INCIDENTS_CHANGED));
     };
 
+    // ---------- LOS DESPLEGABLES ----------
+
+    // Cuál está abierto, o null. Se cierran al pulsar fuera y con Escape.
+    const [open, setOpen] = useState(null);
+    const bar = useRef(null);
+
+    useEffect(() => {
+        if (!open) return;
+
+        const outside = (event) => {
+            if (!bar.current?.contains(event.target)) setOpen(null);
+        };
+        const escape = (event) => {
+            if (event.key === "Escape") setOpen(null);
+        };
+
+        document.addEventListener("mousedown", outside);
+        document.addEventListener("keydown", escape);
+
+        return () => {
+            document.removeEventListener("mousedown", outside);
+            document.removeEventListener("keydown", escape);
+        };
+    }, [open]);
+
+    const toggle = (which) => () => setOpen(open === which ? null : which);
+
+    /** Elige una opción (o la quita si ya estaba) y cierra el panel. */
+    const pick = (setter, current) => (value) => {
+        setter(current === value ? "" : value);
+        setOpen(null);
+    };
+
+    const dropBooking = () => {
+        params.delete("booking");
+        setParams(params, { replace: true });
+    };
+
     const filtering = Boolean(type || source);
+
+    const views = [
+        {
+            value: "false", label: "Abiertas", count: counts.false, icon: "fa-triangle-exclamation",
+            hint: counts.false > 0 ? "por resolver" : "ninguna pendiente",
+            tone: counts.false > 0 ? "hot" : undefined,
+        },
+        { value: "true", label: "Resueltas", count: counts.true, hint: "con su nota", icon: "fa-circle-check" },
+    ];
 
     return (
         <div className="cf-incidents">
 
-            {/* ---------- CABECERA ---------- */}
-
-            <div className="cf-incidents__header">
-                <div>
-                    {/* El grupo del sidebar al que pertenece la página. */}
-                    <p className="cf-dash-eyebrow">Operativa</p>
-                    <h1 className="cf-incidents__title">Incidencias</h1>
-                    <p className="cf-incidents__lede">
-                        Lo que ha salido mal en los servicios. Resuélvelas con una nota:
-                        el cliente la verá.
-                    </p>
-                </div>
-            </div>
-
-            {/* Si se llega desde una reserva, se dice y se da salida: si
-                no, parecería que la empresa solo tiene estas. */}
-            {booking && (
-                <p className="cf-dash-results" role="status">
-                    <span>Solo las incidencias de la reserva #{booking}</span>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            params.delete("booking");
-                            setParams(params, { replace: true });
-                        }}
-                    >
-                        Ver todas
-                    </button>
-                </p>
-            )}
+            <PageHead
+                title="Incidencias"
+                subtitle="Lo que ha ido mal en un servicio. Resuélvelas con una nota; si la abrió el cliente, la verá."
+            />
 
             {error && <p className="cf-dash-alert" role="alert">{error}</p>}
 
+            <ListViews label="Vistas de incidencias" views={views} active={resolved} onChange={setResolved} />
+
             {/* ---------- FILTROS ----------
-                Pestañas a la izquierda y los dos desplegables a la
-                derecha, como en el resto del panel. */}
+                Sin buscador: los dos desplegables y, si se llega desde una
+                reserva, la reserva como un filtro más, con su ✕. */}
+            <div className="cf-lpanel cf-incidents__bar">
+                <ListBar
+                    barRef={bar}
+                    onClear={filtering || booking ? () => { setType(""); setSource(""); dropBooking(); } : null}
+                >
+                    <span className="cf-lbar__label">Filtrar por</span>
 
-            <div className="cf-incidents__toolbar">
-                <div className="cf-services__tabs">
-                    {TABS.map((option) => (
-                        <button
-                            key={option.value}
-                            type="button"
-                            className="cf-services__tab"
-                            aria-pressed={resolved === option.value}
-                            onClick={() => setResolved(option.value)}
-                        >
-                            {option.label}
-                            {/* Las abiertas en terracota: son las que piden algo. */}
-                            <span
-                                className={`cf-services__count${
-                                    option.value === "false" && counts.false > 0
-                                        ? " cf-dash-count--attention"
-                                        : ""
-                                }`}
-                            >
-                                {counts[option.value]}
-                            </span>
-                        </button>
-                    ))}
-                </div>
+                    {booking && (
+                        <ListDrop label="Reserva" value={`n.º ${booking}`} onClear={dropBooking} />
+                    )}
 
-                <div className="cf-incidents__picks">
-                    <select
-                        className={`cf-incidents__pick${type ? " cf-incidents__pick--on" : ""}`}
-                        aria-label="Filtrar por motivo"
-                        value={type}
-                        onChange={(event) => setType(event.target.value)}
+                    <ListDrop
+                        label="Motivo"
+                        value={TYPES.find((option) => option.value === type)?.label.replace("Por algo ", "")}
+                        open={open === "type"}
+                        onToggle={toggle("type")}
+                        onClear={() => setType("")}
                     >
+                        <p className="cf-ldrop__head">Motivo</p>
                         {TYPES.map((option) => (
-                            <option key={option.value} value={option.value}>{option.label}</option>
+                            <button key={option.value} type="button" className="cf-ldrop__choice"
+                                aria-pressed={type === option.value} onClick={() => pick(setType, type)(option.value)}>
+                                {option.label}
+                            </button>
                         ))}
-                    </select>
+                    </ListDrop>
 
-                    <select
-                        className={`cf-incidents__pick${source ? " cf-incidents__pick--on" : ""}`}
-                        aria-label="Filtrar por quién la abrió"
-                        value={source}
-                        onChange={(event) => setSource(event.target.value)}
+                    <ListDrop
+                        label="Quién la abrió"
+                        value={SOURCES.find((option) => option.value === source)?.label.toLowerCase()}
+                        open={open === "source"}
+                        onToggle={toggle("source")}
+                        onClear={() => setSource("")}
                     >
+                        <p className="cf-ldrop__head">Quién la abrió</p>
                         {SOURCES.map((option) => (
-                            <option key={option.value} value={option.value}>{option.label}</option>
+                            <button key={option.value} type="button" className="cf-ldrop__choice"
+                                aria-pressed={source === option.value} onClick={() => pick(setSource, source)(option.value)}>
+                                {option.label}
+                            </button>
                         ))}
-                    </select>
-                </div>
+                    </ListDrop>
+                </ListBar>
             </div>
 
             {/* ---------- LISTA ---------- */}
