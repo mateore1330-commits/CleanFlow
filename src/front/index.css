@@ -425,6 +425,18 @@ img {
   color: var(--cf-info);
 }
 
+/* ---------- TARJETA ----------
+   Para lo nuevo de WEB y PANEL. Las cajas que ya existen se pasan a esta
+   cuando se rehaga su página (decidido en el plan de DISENO-02). */
+
+.cf-card {
+  padding: var(--cf-space-6);
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+}
+
 /* ======================================================================
    3. SECCIÓN SOBRE CLEANFLOW (AboutSection.jsx, en la home)
    ====================================================================== */

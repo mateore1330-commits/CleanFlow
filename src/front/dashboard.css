@@ -27,6 +27,7 @@
     16. Inicio del trabajador (cf-worker-home__*)
     17. Inicio del cliente (cf-client-home__*, cf-client-empty__*)
     18. Movimiento reducido
+    19. Grupos de botones: los de una decisión, iguales
 
    Prefijo cf-dash- y no cf-: web.css sigue cargado en el dashboard y un
    .cf-btn de aquí pisaría el de la web pública.
@@ -443,17 +444,18 @@ textarea.cf-dash-input {
    el dialog: así un clic en el propio dialog solo puede ser en el fondo. */
 
 .cf-dash-modal {
-  width: min(460px, calc(100% - 2rem));
+  width: min(520px, calc(100% - 2rem));
   padding: 0;
   border: 0;
-  border-radius: var(--cf-radius-lg);
+  border-radius: var(--cf-radius-xl);
   background-color: var(--cf-surface);
   color: var(--cf-text);
-  box-shadow: 0 20px 50px rgba(var(--cf-text-rgb), 0.25);
+  box-shadow: 0 30px 60px rgba(var(--cf-brand-900-rgb), 0.3);
 }
 
 .cf-dash-modal::backdrop {
-  background-color: rgba(var(--cf-text-rgb), 0.45);
+  background-color: rgba(var(--cf-brand-900-rgb), 0.5);
+  backdrop-filter: blur(3px);
 }
 
 .cf-dash-modal__body {
@@ -10890,5 +10892,76 @@ textarea.cf-dash-input {
   /* El título cede el ancho que necesiten los dos sellos. */
   .cf-bookings__head {
     gap: var(--cf-space-2);
+  }
+}
+
+/* ======================================================================
+   19. GRUPOS DE BOTONES (DISENO-02)
+   Al final del archivo a propósito: tiene que ganar a la disposición que
+   cada sección da a sus botones más arriba.
+   ====================================================================== */
+
+/* ---------- GRUPOS DE BOTONES ----------
+   Dos botones que plantean una decisión («Volver» / «Sí, cancelar») miden
+   lo mismo: si uno es más ancho solo porque su texto es más largo, parece
+   más importante, y la ventana se ve descuadrada. En las ventanas y los
+   paneles laterales se reparten el ancho; en los formularios («Guardar» /
+   «Cancelar») miden lo que el más largo. */
+
+.cf-dash-modal__actions > .cf-dash-btn,
+.cf-inc-sheet__foot > .cf-dash-btn,
+.cf-resched__foot > .cf-dash-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  /* Si aun así el texto no cabe, que baje de línea antes que salirse. */
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+}
+
+/* Un botón solo («Entendido», «Cerrar») no tiene con quién igualarse:
+   su tamaño, a la derecha. */
+.cf-dash-modal__actions > .cf-dash-btn:only-child {
+  flex: 0 1 auto;
+  min-width: 9.5rem;
+}
+
+/* En el móvil, la mitad del ancho no da para «Confirmar cancelación»:
+   uno encima del otro, a lo ancho. La acción principal arriba y «Volver»
+   debajo (column-reverse: en el código «Volver» va primero, para que el
+   foco empiece por la opción segura). */
+@media (max-width: 480px) {
+  .cf-dash-modal__actions,
+  .cf-inc-sheet__foot,
+  .cf-resched__foot {
+    flex-direction: column-reverse;
+  }
+
+  .cf-dash-modal__actions > .cf-dash-btn,
+  .cf-inc-sheet__foot > .cf-dash-btn,
+  .cf-resched__foot > .cf-dash-btn {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+/* Los formularios: una rejilla de columnas iguales, así los dos toman el
+   ancho del más largo («Guardar cambios» y «Cancelar» miden lo mismo). */
+.cf-services__form-actions,
+.cf-tasks__form-actions,
+.cf-shifts__form-actions,
+.cf-worker-form__actions {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+@media (max-width: 480px) {
+  .cf-services__form-actions,
+  .cf-tasks__form-actions,
+  .cf-shifts__form-actions,
+  .cf-worker-form__actions {
+    display: grid;
+    grid-auto-flow: row;
   }
 }
