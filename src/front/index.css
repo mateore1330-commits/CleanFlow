@@ -514,6 +514,134 @@ textarea.cf-input {
   }
 }
 
+/* ---------- CARGA DE PÁGINAS (PageLoading.jsx, WEB-03) ----------
+   La barra de arriba al cambiar de página, el logo al abrir directamente
+   una página que aún no está y el aviso si no se pudo descargar. */
+
+/* Encima de todo (también del aviso de portfolio y del menú fijo). */
+.cf-loading-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2000;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cf-loading-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(90deg, var(--cf-brand-500), var(--cf-accent));
+  box-shadow: 0 0 8px rgba(95, 211, 166, 0.7);
+  animation: cf-loading-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes cf-loading-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(260%); }
+}
+
+.cf-loading-splash {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--cf-bg);
+  color: var(--cf-primary);
+}
+
+.cf-loading-splash svg {
+  animation: cf-loading-breathe 1.6s ease-in-out infinite;
+}
+
+.cf-loading-splash p {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+}
+
+@keyframes cf-loading-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.cf-loading-error {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--cf-space-6) var(--cf-gutter);
+  background-color: var(--cf-bg);
+}
+
+.cf-loading-error__box {
+  width: 100%;
+  max-width: 400px;
+  padding: 28px;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+  text-align: center;
+}
+
+.cf-loading-error__box > i {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  border-radius: 12px;
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
+  font-size: 1.125rem;
+}
+
+.cf-loading-error__box h1 {
+  margin: 0;
+  color: var(--cf-text);
+  font-size: 1.25rem;
+  text-wrap: balance;
+}
+
+.cf-loading-error__box p {
+  margin: 8px 0 20px;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  text-wrap: pretty;
+}
+
+/* Los dos botones, uno encima de otro y del mismo ancho y alto. */
+.cf-loading-error__actions {
+  display: grid;
+  gap: 10px;
+}
+
+.cf-loading-error__actions .cf-btn {
+  min-height: 44px;
+}
+
+/* Quien pide menos movimiento ve la barra y el logo quietos. */
+@media (prefers-reduced-motion: reduce) {
+  .cf-loading-bar::before {
+    width: 100%;
+    animation: none;
+  }
+
+  .cf-loading-splash svg {
+    animation: none;
+  }
+}
+
 /* ---------- AVISOS ----------
    Rojo por defecto (es para lo que se usan hoy: errores). Variantes:
    --warning, --success e --info. */
