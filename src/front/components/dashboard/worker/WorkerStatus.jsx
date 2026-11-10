@@ -12,12 +12,12 @@
  */
 
 const STATES = {
-    confirmed: { label: "Asignado", tone: "wait", icon: "fa-calendar-check" },
-    pending: { label: "Asignado", tone: "wait", icon: "fa-calendar-check" },
+    confirmed: { label: "Asignado", tone: "info", icon: "fa-calendar-check" },
+    pending: { label: "Asignado", tone: "warning", icon: "fa-calendar-check" },
     in_progress: { label: "En curso", tone: "live", dot: true },
     completed: { label: "Finalizado", tone: "done", icon: "fa-check" },
-    not_done: { label: "No realizado", tone: "fail", dot: true },
-    cancelled: { label: "Cancelado", tone: "wait", icon: "fa-circle-xmark" },
+    not_done: { label: "No realizado", tone: "wait", dot: true },
+    cancelled: { label: "Cancelado", tone: "fail", icon: "fa-circle-xmark" },
 };
 
 export const WorkerStatus = ({ status }) => {

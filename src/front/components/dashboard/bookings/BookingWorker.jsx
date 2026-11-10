@@ -10,24 +10,14 @@
  * Estilos: dashboard.css (cf-bookworker).
  */
 
-import { initialsOf } from "./bookingFormat";
+import { Avatar } from "../Avatar";
 
 export const BookingWorker = ({ booking }) => (
     <section className="cf-bookblock">
         <h2 className="cf-bookblock__title">Información del trabajador</h2>
 
         <div className="cf-bookworker">
-            {booking.worker_avatar_url ? (
-                <img
-                    className="cf-bookworker__photo"
-                    src={booking.worker_avatar_url}
-                    alt=""
-                />
-            ) : (
-                <span className="cf-bookworker__initials" aria-hidden="true">
-                    {initialsOf(booking.worker_name)}
-                </span>
-            )}
+            <Avatar name={booking.worker_name} src={booking.worker_avatar_url} size="md" tone="accent" />
 
             <div>
                 <p className="cf-bookworker__name">

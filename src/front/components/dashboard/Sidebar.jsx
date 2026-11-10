@@ -424,7 +424,7 @@ export const Sidebar = () => {
                     <p className="cf-side__paneltag">{PANEL_LABEL[role]}</p>
 
                     <div className="cf-side__user">
-                        <Avatar user={store.user} size="md" />
+                        <Avatar user={store.user} size="md" tone="accent" />
 
                         {/* Cada línea se recorta: el bloque mide igual con
                             cualquier nombre y con cualquier correo. */}

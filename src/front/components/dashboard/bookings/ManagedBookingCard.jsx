@@ -31,7 +31,8 @@
  */
 
 import { BookingStatusPill } from "./BookingStatusPill"
-import { EUROS, dayOf, monthOf, timeOf, initialsOf } from "./bookingFormat"
+import { EUROS, dayOf, monthOf, timeOf } from "./bookingFormat"
+import { Avatar } from "../Avatar"
 
 // "Ausencia: baja" -> "baja". El motivo se lee dentro de la frase de la
 // marca, así que va en minúscula y sin la etiqueta de delante.
@@ -109,16 +110,17 @@ export const ManagedBookingCard = ({ booking, onAffected, onIncidents }) => {
                     {/* El cliente primero y en negrita: es lo que distingue
                         esta lista de la del cliente, donde sobra decirlo. */}
                     <span>
-                        <span className="cf-bookcard__who cf-bookcard__who--client" aria-hidden="true">
-                            {initialsOf(booking.client_name)}
-                        </span>
+                        <Avatar
+                            name={booking.client_name}
+                            src={booking.client_avatar_url}
+                            size="xs"
+                            className="cf-bookcard__who--client"
+                        />
                         <strong>{booking.client_name}</strong>
                     </span>
 
                     <span>
-                        <span className="cf-bookcard__worker" aria-hidden="true">
-                            {initialsOf(booking.worker_name)}
-                        </span>
+                        <Avatar name={booking.worker_name} src={booking.worker_avatar_url} size="xs" tone="accent" />
                         {booking.worker_name || "Sin asignar"}
                     </span>
                 </p>

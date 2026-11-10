@@ -27,6 +27,7 @@
     16. Inicio del trabajador (cf-worker-home__*)
     17. Inicio del cliente (cf-client-home__*, cf-client-empty__*)
     18. Movimiento reducido
+    19. Grupos de botones: los de una decisión, iguales
 
    Prefijo cf-dash- y no cf-: web.css sigue cargado en el dashboard y un
    .cf-btn de aquí pisaría el de la web pública.
@@ -37,70 +38,9 @@
    ====================================================================== */
 
 /* ---------- BOTONES ----------
-   La pastilla de la web pública (.cf-btn) en tamaño dashboard.
-   Variantes: --ghost (secundario) y --sm (dentro de una fila). */
-
-.cf-dash-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--cf-space-2);
-  padding: var(--cf-space-3) var(--cf-space-6);
-
-  border: 1px solid var(--cf-primary);
-  border-radius: 999px;
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
-
-  font-family: var(--cf-font-body);
-  font-size: var(--cf-text-sm);
-  font-weight: 600;
-  line-height: 1;
-
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color var(--cf-transition),
-    border-color var(--cf-transition),
-    color var(--cf-transition);
-}
-
-.cf-dash-btn:hover {
-  background-color: var(--cf-primary-dark);
-  border-color: var(--cf-primary-dark);
-  color: var(--cf-on-primary);
-}
-
-.cf-dash-btn:focus-visible {
-  outline: 3px solid var(--cf-ring);
-  outline-offset: 2px;
-}
-
-.cf-dash-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.cf-dash-btn--ghost {
-  background-color: transparent;
-  color: var(--cf-primary);
-}
-
-.cf-dash-btn--ghost:hover {
-  background-color: var(--cf-primary-soft);
-  border-color: var(--cf-primary);
-  color: var(--cf-primary);
-}
-
-.cf-dash-btn--sm {
-  padding: var(--cf-space-2) var(--cf-space-4);
-  font-size: 0.8125rem;
-}
-
-/* Icono de Font Awesome dentro del botón. */
-.cf-dash-btn i {
-  font-size: 0.8125rem;
-}
+   Los comunes de index.css (PIEZAS COMUNES): cf-dash-btn y sus variantes
+   --ghost, --accent, --danger, --sm y --block. El tamaño del panel es el
+   de por defecto, así que aquí no hace falta nada. */
 
 /* ---------- CAMPOS DE FORMULARIO ---------- */
 
@@ -161,17 +101,7 @@ textarea.cf-dash-input {
 }
 
 /* ---------- AVISO DE ERROR ----------
-   Con los tokens de estado (--cf-danger*), igual que .auth-alert. */
-
-.cf-dash-alert {
-  margin: 0;
-  padding: 10px 14px;
-  border: 1px solid var(--cf-danger-line);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-danger-soft);
-  color: var(--cf-danger);
-  font-size: var(--cf-text-sm);
-}
+   El común de index.css (PIEZAS COMUNES: cf-alert). */
 
 /* ---------- INTERRUPTOR ----------
    Un checkbox de verdad (role="switch") con aspecto de interruptor: sigue
@@ -508,41 +438,24 @@ textarea.cf-dash-input {
   border-color: var(--cf-danger);
 }
 
-/* ---------- BOTÓN PELIGROSO ----------
-   Confirma acciones que quitan algo de la vista del cliente.
-   Rojo de peligro: --cf-danger. */
-
-/* Lo que no tiene vuelta atrás, en el rojo de peligro de la marca
-   (--cf-danger: 6,4:1 con el texto blanco encima). */
-.cf-dash-btn--danger {
-  background-color: var(--cf-danger);
-  border-color: var(--cf-danger);
-  color: var(--cf-on-primary);
-}
-
-.cf-dash-btn--danger:hover {
-  background-color: var(--cf-danger-dark);
-  border-color: var(--cf-danger-dark);
-  color: var(--cf-on-primary);
-}
-
 /* ---------- VENTANA DE CONFIRMACIÓN ----------
    <dialog> abierto con showModal(): el navegador lo centra, oscurece el
    fondo (::backdrop) y bloquea la página. El padding va en __body y no en
    el dialog: así un clic en el propio dialog solo puede ser en el fondo. */
 
 .cf-dash-modal {
-  width: min(460px, calc(100% - 2rem));
+  width: min(520px, calc(100% - 2rem));
   padding: 0;
   border: 0;
-  border-radius: var(--cf-radius-lg);
+  border-radius: var(--cf-radius-xl);
   background-color: var(--cf-surface);
   color: var(--cf-text);
-  box-shadow: 0 20px 50px rgba(var(--cf-text-rgb), 0.25);
+  box-shadow: 0 30px 60px rgba(var(--cf-brand-900-rgb), 0.3);
 }
 
 .cf-dash-modal::backdrop {
-  background-color: rgba(var(--cf-text-rgb), 0.45);
+  background-color: rgba(var(--cf-brand-900-rgb), 0.5);
+  backdrop-filter: blur(3px);
 }
 
 .cf-dash-modal__body {
@@ -2585,41 +2498,7 @@ textarea.cf-dash-input {
    ====================================================================== */
 
 /* ---------- AVATAR (Avatar.jsx) ----------
-   Con foto, recortada en redondo; sin foto, las iniciales sobre verde
-   suave. Tres tallas, las mismas que el componente conoce. */
-
-.cf-dash-avatar {
-  display: inline-grid;
-  place-items: center;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  font-family: var(--cf-font-body);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  object-fit: cover;
-  overflow: hidden;
-}
-
-.cf-dash-avatar--sm {
-  width: 32px;
-  height: 32px;
-  font-size: 0.75rem;
-}
-
-.cf-dash-avatar--md {
-  width: 48px;
-  height: 48px;
-  font-size: 0.9375rem;
-}
-
-.cf-dash-avatar--lg {
-  width: 96px;
-  height: 96px;
-  font-size: 1.75rem;
-}
+   El común de index.css (PIEZAS COMUNES): lo usa también la web. */
 
 /* ---------- MARCO Y PESTAÑAS (AccountLayout.jsx) ---------- */
 
@@ -2996,19 +2875,9 @@ textarea.cf-dash-input {
   border-top: 1px solid var(--cf-border);
 }
 
-/* Quitar, apartado a la derecha: el mismo rojo que el botón lleno,
-   en texto y borde en vez de en fondo. */
+/* Quitar, apartado a la derecha (el botón de peligro común). */
 .cf-dash-btn--danger-ghost {
   margin-left: auto;
-  border-color: var(--cf-danger-line);
-  background: none;
-  color: var(--cf-danger-dark);
-}
-
-.cf-dash-btn--danger-ghost:hover {
-  background-color: var(--cf-danger-soft);
-  border-color: var(--cf-danger-dark);
-  color: var(--cf-danger-dark);
 }
 
 /* ---------- CARGANDO ---------- */
@@ -5537,18 +5406,6 @@ textarea.cf-dash-input {
 }
 
 /* Iniciales del trabajador: el mismo círculo de acento del avatar. */
-.cf-bookcard__worker {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
-  font-size: 0.625rem;
-  font-weight: 700;
-}
 
 .cf-bookcard__side {
   display: grid;
@@ -5580,39 +5437,58 @@ textarea.cf-dash-input {
 }
 
 /* ---------- ESTADO ----------
-   Texto en color con un punto, como "Activo / Desactivado" del catálogo.
-   Sin fondo: la única excepción es "pendiente de confirmar", que lleva
-   el mismo tratamiento que "Baja en curso" en Trabajadores. */
+   Píldora con fondo suave y un punto o un icono, como en las maquetas: el
+   color solo no basta, porque no todo el mundo lo ve igual. Los tonos los
+   eligen BookingStatusPill y WorkerStatus. */
 
 .cf-bookstate {
   display: inline-flex;
   align-items: center;
   gap: var(--cf-space-1);
-  font-size: 0.8438rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.4;
   white-space: nowrap;
 }
 
-.cf-bookstate--live,
+/* Un tono por situación, el mismo en todo el panel (maquetas 04-06). */
+.cf-bookstate--live {
+  /* en curso */
+  background-color: var(--cf-brand-100);
+  color: var(--cf-brand-700);
+}
+
 .cf-bookstate--done {
-  color: var(--cf-primary);
+  /* finalizada, resuelta */
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
+}
+
+.cf-bookstate--info {
+  /* confirmada */
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
+}
+
+.cf-bookstate--warning,
+.cf-bookstate--action {
+  /* pendiente, o pide que hagas algo */
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 .cf-bookstate--fail {
-  color: var(--cf-danger-dark);
+  /* cancelada, incidencia abierta */
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
 }
 
 .cf-bookstate--wait {
-  color: var(--cf-muted);
-  font-weight: 500;
-}
-
-.cf-bookstate--action {
-  padding: 3px 10px;
-  border-radius: 999px;
-  background-color: var(--cf-warning-soft);
-  color: var(--cf-warning-dark);
-  font-size: 0.75rem;
+  /* lo que ya no está en juego (no realizada) */
+  background-color: var(--cf-neutral-soft);
+  color: var(--cf-neutral);
 }
 
 .cf-bookstate__dot {
@@ -5621,10 +5497,6 @@ textarea.cf-dash-input {
   flex: none;
   border-radius: 50%;
   background-color: currentColor;
-}
-
-.cf-bookstate--fail .cf-bookstate__dot {
-  background-color: var(--cf-danger);
 }
 
 /* El punto late mientras el trabajador está en la casa. */
@@ -6025,27 +5897,7 @@ textarea.cf-dash-input {
   gap: var(--cf-space-3);
 }
 
-.cf-bookworker__photo {
-  width: 46px;
-  height: 46px;
-  flex: none;
-  border-radius: 50%;
-  object-fit: cover;
-}
 
-.cf-bookworker__initials {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  flex: none;
-  border-radius: 50%;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
-  font-family: var(--cf-font-heading);
-  font-size: 1.0625rem;
-  font-weight: 600;
-}
 
 .cf-bookworker__name {
   margin: 0;
@@ -7038,7 +6890,7 @@ textarea.cf-dash-input {
 
 .cf-wact__quiet:hover {
   border-color: var(--cf-border);
-  background-color: var(--cf-surface);
+  background: var(--cf-surface);
   color: var(--cf-accent-dark);
 }
 
@@ -10733,21 +10585,11 @@ textarea.cf-dash-input {
   border-left: 3px solid var(--cf-warning);
 }
 
-/* El cliente en el color de marca y el trabajador en menta (cf-bookcard__worker,
-   que ya existía): dos personas en la misma línea tienen que
-   distinguirse de un vistazo. */
+/* El cliente con el avatar de marca y el trabajador con el menta (Avatar
+   tone="accent"): dos personas en la misma línea tienen que distinguirse
+   de un vistazo. Aquí, el avatar del cliente algo separado de su nombre. */
 .cf-bookcard__who--client {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  margin-right: var(--cf-space-2);
-  border-radius: 50%;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  font-size: 0.625rem;
-  font-weight: 700;
+  margin-right: var(--cf-space-1);
 }
 
 /* ---------- LAS DOS MARCAS ---------- */
@@ -10974,5 +10816,76 @@ textarea.cf-dash-input {
   /* El título cede el ancho que necesiten los dos sellos. */
   .cf-bookings__head {
     gap: var(--cf-space-2);
+  }
+}
+
+/* ======================================================================
+   19. GRUPOS DE BOTONES (DISENO-02)
+   Al final del archivo a propósito: tiene que ganar a la disposición que
+   cada sección da a sus botones más arriba.
+   ====================================================================== */
+
+/* ---------- GRUPOS DE BOTONES ----------
+   Dos botones que plantean una decisión («Volver» / «Sí, cancelar») miden
+   lo mismo: si uno es más ancho solo porque su texto es más largo, parece
+   más importante, y la ventana se ve descuadrada. En las ventanas y los
+   paneles laterales se reparten el ancho; en los formularios («Guardar» /
+   «Cancelar») miden lo que el más largo. */
+
+.cf-dash-modal__actions > .cf-dash-btn,
+.cf-inc-sheet__foot > .cf-dash-btn,
+.cf-resched__foot > .cf-dash-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  /* Si aun así el texto no cabe, que baje de línea antes que salirse. */
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+}
+
+/* Un botón solo («Entendido», «Cerrar») no tiene con quién igualarse:
+   su tamaño, a la derecha. */
+.cf-dash-modal__actions > .cf-dash-btn:only-child {
+  flex: 0 1 auto;
+  min-width: 9.5rem;
+}
+
+/* En el móvil, la mitad del ancho no da para «Confirmar cancelación»:
+   uno encima del otro, a lo ancho. La acción principal arriba y «Volver»
+   debajo (column-reverse: en el código «Volver» va primero, para que el
+   foco empiece por la opción segura). */
+@media (max-width: 480px) {
+  .cf-dash-modal__actions,
+  .cf-inc-sheet__foot,
+  .cf-resched__foot {
+    flex-direction: column-reverse;
+  }
+
+  .cf-dash-modal__actions > .cf-dash-btn,
+  .cf-inc-sheet__foot > .cf-dash-btn,
+  .cf-resched__foot > .cf-dash-btn {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+/* Los formularios: una rejilla de columnas iguales, así los dos toman el
+   ancho del más largo («Guardar cambios» y «Cancelar» miden lo mismo). */
+.cf-services__form-actions,
+.cf-tasks__form-actions,
+.cf-shifts__form-actions,
+.cf-worker-form__actions {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+@media (max-width: 480px) {
+  .cf-services__form-actions,
+  .cf-tasks__form-actions,
+  .cf-shifts__form-actions,
+  .cf-worker-form__actions {
+    display: grid;
+    grid-auto-flow: row;
   }
 }
