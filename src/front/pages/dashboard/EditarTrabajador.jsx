@@ -10,6 +10,7 @@ import {
 import { getShifts } from "../../services/shiftService";
 import { summarizeDays } from "./ListadoTurnos";
 import { WorkerSummary } from "../../components/dashboard/workers/WorkerSummary";
+import { PageHead } from "../../components/dashboard/PageHead";
 import "../../dashboard.css";
 
 // Los dos roles del equipo, en chips.
@@ -224,14 +225,8 @@ export const EditarTrabajador = () => {
     if (loading) {
         return (
             <section className="cf-worker-form" aria-busy="true">
-                <div className="cf-worker-form__header">
-                    {backLink}
-                    <p className="cf-dash-eyebrow">Equipo</p>
-                    <h1 className="cf-worker-form__title">
-                        {isEditing ? "Editar trabajador" : "Nuevo trabajador"}
-                    </h1>
-                    <p className="cf-worker-form__lede">{lede}</p>
-                </div>
+                {backLink}
+                <PageHead title={isEditing ? "Editar trabajador" : "Nuevo trabajador"} subtitle={lede} />
 
                 <p className="sr-only">Cargando datos del trabajador...</p>
 
@@ -281,7 +276,7 @@ export const EditarTrabajador = () => {
     if (loadError) {
         return (
             <section className="cf-worker-form">
-                <div className="cf-worker-form__header">{backLink}</div>
+                {backLink}
 
                 <div className="cf-dash-state cf-dash-state--error" role="alert">
                     <span className="cf-dash-state__icon">
@@ -316,20 +311,17 @@ export const EditarTrabajador = () => {
 
     return (
         <section className="cf-worker-form">
-            <div className="cf-worker-form__header">
-                {backLink}
-                <p className="cf-dash-eyebrow">Equipo</p>
-                {/* El nombre de la carga, no el del formulario: así el título
-                    no cambia mientras se escribe. */}
-                <h1 className="cf-worker-form__title">
-                    {!isEditing
-                        ? "Nuevo trabajador"
-                        : profile
-                            ? `Editar a ${profile.name} ${profile.last_name}`
-                            : "Editar trabajador"}
-                </h1>
-                <p className="cf-worker-form__lede">{lede}</p>
-            </div>
+            {backLink}
+            {/* El nombre de la carga, no el del formulario: así el título
+                no cambia mientras se escribe. */}
+            <PageHead
+                title={!isEditing
+                    ? "Nuevo trabajador"
+                    : profile
+                        ? `Editar a ${profile.name} ${profile.last_name}`
+                        : "Editar trabajador"}
+                subtitle={lede}
+            />
 
             <div className="cf-worker-form__editor">
                 <form onSubmit={handleSubmit} className="cf-worker-form__form">

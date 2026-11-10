@@ -21,6 +21,7 @@ import { AbsenceForm } from "../../components/dashboard/absences/AbsenceForm"
 import { AbsenceList } from "../../components/dashboard/absences/AbsenceList"
 import { absenceDates, reasonLabel, todayInMadrid } from "../../components/dashboard/absences/AbsenceRow"
 import "../../dashboard.css"
+import { PageHead } from "../../components/dashboard/PageHead"
 
 // "4.8" -> "4,8"
 const formatRating = (rating) =>
@@ -198,15 +199,9 @@ export const WorkerAbsencesPage = () => {
     if (loading) {
         return (
             <section className="cf-absences" aria-busy="true">
-                {/* Aún no se sabe el nombre: barras en lugar del título y del resumen. */}
-                <div className="cf-absences__header">
-                    <div className="cf-absences__skel-head">
-                        <BackLink />
-                        <p className="cf-dash-eyebrow">Equipo</p>
-                        <span className="cf-dash-skel cf-absences__skel-title" />
-                        <span className="cf-dash-skel cf-absences__skel-who" />
-                    </div>
-                </div>
+                {/* Aún no se sabe el nombre: la forma de la cabecera, en gris. */}
+                <BackLink />
+                <span className="cf-dash-skel cf-absences__skel-head" aria-hidden="true" />
 
                 <p className="sr-only">Cargando ausencias...</p>
 
@@ -251,44 +246,26 @@ export const WorkerAbsencesPage = () => {
 
     return (
         <section className="cf-absences">
-            <div className="cf-absences__header">
-                <div>
-                    <BackLink />
-                    <p className="cf-dash-eyebrow">Equipo</p>
-                    <h1 className="cf-absences__title">
-                        Ausencias de {worker.name} {worker.last_name}
-                    </h1>
+            <BackLink />
 
-                    {/* Resumen: lo justo para saber de quién se trata sin volver atrás. */}
-                    <div className="cf-absences__who">
-                        <span>
-                            <i className="fa-solid fa-briefcase" aria-hidden="true" />
-                            {worker.position || "Sin puesto"}
-                        </span>
-                        <span>
-                            <i className="fa-solid fa-clock" aria-hidden="true" />
-                            {worker.shift_name
-                                ? `${worker.shift_name} · ${worker.shift_start}–${worker.shift_end}`
-                                : "Sin turno"}
-                        </span>
-                        {worker.rating != null && (
-                            <span>
-                                <i className="fa-solid fa-star" aria-hidden="true" />
-                                {formatRating(worker.rating)} ({worker.reviews_count})
-                            </span>
-                        )}
-                    </div>
-                </div>
-
-                {/* Con el formulario abierto sobra: ya se está añadiendo. Sin
-                    ausencias tampoco: el botón va en el estado vacío. */}
-                {!editing && absences.length > 0 && (
-                    <button type="button" className="cf-dash-btn" onClick={() => openForm(null)}>
+            {/* Debajo del nombre, lo justo para saber de quién se trata sin
+                volver atrás: el puesto, el turno y su nota. */}
+            <PageHead
+                title={`Ausencias de ${worker.name} ${worker.last_name}`}
+                subtitle={[
+                    worker.position || "Sin puesto",
+                    worker.shift_name ? `${worker.shift_name} · ${worker.shift_start}–${worker.shift_end}` : "Sin turno",
+                    worker.rating != null && `★ ${formatRating(worker.rating)} (${worker.reviews_count})`,
+                ].filter(Boolean).join(" · ")}
+                actions={!editing && absences.length > 0 && (
+                    // Con el formulario abierto sobra: ya se está añadiendo. Sin
+                    // ausencias tampoco: el botón va en el estado vacío.
+                    <button type="button" className="cf-dash-btn cf-dash-btn--accent" onClick={() => openForm(null)}>
                         <i className="fa-solid fa-plus" aria-hidden="true" />
                         Añadir ausencia
                     </button>
                 )}
-            </div>
+            />
 
             <p className="sr-only" role="status">
                 {status}
