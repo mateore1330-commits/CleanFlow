@@ -4,10 +4,11 @@
  * Una sola pieza para todo el panel: la usan el listado, el detalle y,
  * más adelante, cancelar (#17) y confirmar o reclamar (#83).
  *
- * El tono sigue al resto del panel: verde lo que va bien, terracota lo
- * que pide atención y gris lo que solo espera. Cada estado lleva además
- * su punto o su icono, porque el color por sí solo no se ve igual para
- * todo el mundo.
+ * Los tonos son los de las maquetas aprobadas (DISENO-02): ámbar lo que
+ * está pendiente o pide algo, azul lo confirmado, marca lo que está en
+ * curso, verde lo finalizado, rojo lo cancelado y gris lo que no se hizo.
+ * Cada estado lleva además su punto o su icono, porque el color por sí
+ * solo no se ve igual para todo el mundo.
  *
  * Estilos: dashboard.css (cf-bookstate).
  */
@@ -15,12 +16,12 @@
 // Cómo se pinta cada estado: el texto, la variante de color y el adorno
 // que lo acompaña ("dot" late si el servicio está en marcha).
 const STATES = {
-    confirmed: { label: "Confirmada", tone: "wait", icon: "fa-calendar-check" },
+    confirmed: { label: "Confirmada", tone: "info", icon: "fa-calendar-check" },
     in_progress: { label: "En curso", tone: "live", dot: true },
     completed: { label: "Finalizada", tone: "done", icon: "fa-check" },
-    not_done: { label: "No realizada", tone: "fail", dot: true },
-    cancelled: { label: "Cancelada", tone: "wait", icon: "fa-circle-xmark" },
-    pending: { label: "Pendiente", tone: "wait", icon: "fa-clock" },
+    not_done: { label: "No realizada", tone: "wait", dot: true },
+    cancelled: { label: "Cancelada", tone: "fail", icon: "fa-circle-xmark" },
+    pending: { label: "Pendiente", tone: "warning", icon: "fa-clock" },
 };
 
 // Cuando el servicio está finalizado pero el cliente aún no ha dicho nada,

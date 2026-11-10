@@ -5481,39 +5481,58 @@ textarea.cf-dash-input {
 }
 
 /* ---------- ESTADO ----------
-   Texto en color con un punto, como "Activo / Desactivado" del catálogo.
-   Sin fondo: la única excepción es "pendiente de confirmar", que lleva
-   el mismo tratamiento que "Baja en curso" en Trabajadores. */
+   Píldora con fondo suave y un punto o un icono, como en las maquetas: el
+   color solo no basta, porque no todo el mundo lo ve igual. Los tonos los
+   eligen BookingStatusPill y WorkerStatus. */
 
 .cf-bookstate {
   display: inline-flex;
   align-items: center;
   gap: var(--cf-space-1);
-  font-size: 0.8438rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.4;
   white-space: nowrap;
 }
 
-.cf-bookstate--live,
+/* Un tono por situación, el mismo en todo el panel (maquetas 04-06). */
+.cf-bookstate--live {
+  /* en curso */
+  background-color: var(--cf-brand-100);
+  color: var(--cf-brand-700);
+}
+
 .cf-bookstate--done {
-  color: var(--cf-primary);
+  /* finalizada, resuelta */
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
+}
+
+.cf-bookstate--info {
+  /* confirmada */
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
+}
+
+.cf-bookstate--warning,
+.cf-bookstate--action {
+  /* pendiente, o pide que hagas algo */
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 .cf-bookstate--fail {
-  color: var(--cf-danger-dark);
+  /* cancelada, incidencia abierta */
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
 }
 
 .cf-bookstate--wait {
-  color: var(--cf-muted);
-  font-weight: 500;
-}
-
-.cf-bookstate--action {
-  padding: 3px 10px;
-  border-radius: 999px;
-  background-color: var(--cf-warning-soft);
-  color: var(--cf-warning-dark);
-  font-size: 0.75rem;
+  /* lo que ya no está en juego (no realizada) */
+  background-color: var(--cf-neutral-soft);
+  color: var(--cf-neutral);
 }
 
 .cf-bookstate__dot {
@@ -5522,10 +5541,6 @@ textarea.cf-dash-input {
   flex: none;
   border-radius: 50%;
   background-color: currentColor;
-}
-
-.cf-bookstate--fail .cf-bookstate__dot {
-  background-color: var(--cf-danger);
 }
 
 /* El punto late mientras el trabajador está en la casa. */
