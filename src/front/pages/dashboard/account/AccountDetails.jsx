@@ -354,7 +354,7 @@ export const AccountDetails = () => {
                 {photo}
 
                 <div className="cf-account__card">
-                    <h2 className="cf-account__subtitle">Datos personales</h2>
+                    <h2 className="cf-account__subtitle">Tus datos</h2>
 
                     {/* <dl>: son pares de concepto y valor, no una lista suelta. */}
                     <dl className="cf-account__data">
@@ -396,7 +396,7 @@ export const AccountDetails = () => {
             {photo}
 
             <div className="cf-account__card">
-                <h2 className="cf-account__subtitle">Datos personales</h2>
+                <h2 className="cf-account__subtitle">Tus datos</h2>
                 <p className="cf-account__lede">
                     Así te identificamos en tus reservas y así te avisa quien va a tu casa.
                 </p>
