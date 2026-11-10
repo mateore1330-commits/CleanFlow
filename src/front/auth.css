@@ -81,14 +81,9 @@
     font-size: 13.5px;
 }
 
-/* Aviso de error con los tokens de estado (--cf-danger*). */
+/* Aviso de error: el común de index.css (cf-alert), con el margen de aquí. */
 .auth-alert {
     margin: 0 0 18px;
-    padding: 10px 12px;
-    border-radius: var(--auth-radius-sm);
-    background: var(--cf-danger-soft);
-    border: 1px solid var(--cf-danger-line);
-    color: var(--cf-danger);
     font-size: 13px;
 }
 
@@ -274,29 +269,16 @@
     line-height: 1.5;
 }
 
-/* ---- Botón principal ---- */
+/* ---- Botón principal ----
+   El común de index.css (PIEZAS COMUNES); aquí, a lo ancho de la tarjeta. */
 
 .auth-btn {
-    display: block;
+    display: flex;
     width: 100%;
     margin-top: 22px;
-    appearance: none;
-    border: 1px solid var(--auth-primary);
-    background: var(--auth-primary);
-    color: var(--cf-white);
-    font: 600 15px/1 var(--auth-body);
     padding: 13px 16px;
-    border-radius: var(--auth-radius-md);
-    cursor: pointer;
-    transition: background .15s;
+    font-size: 15px;
 }
-
-.auth-btn:hover {
-    background: var(--auth-primary-dark);
-    border-color: var(--auth-primary-dark);
-}
-
-.auth-btn:focus-visible { outline: 2px solid var(--auth-primary); outline-offset: 2px; }
 
 /* ---- Pie de tarjeta y vuelta al inicio ---- */
 

@@ -52,6 +52,7 @@
   --cf-muted: #56676c; /* texto secundario, pies de foto */
   --cf-placeholder: #65767a; /* texto de ejemplo dentro de los campos */
   --cf-border: #dce5e6; /* líneas y bordes */
+  --cf-border-strong: #c3d0d2; /* borde al pasar el ratón */
   --cf-ring: rgba(12, 107, 118, 0.25); /* halo del foco del teclado */
   --cf-on-primary: #ffffff; /* texto sobre fondo --cf-primary */
   --cf-on-primary-muted: #cfe6e8; /* el mismo, apagado: textos secundarios */
@@ -72,6 +73,12 @@
   --cf-danger-line: #f0bcbc;
   --cf-info: #2a63c9;
   --cf-info-soft: #e1ebfb;
+  --cf-neutral: #4d5b5f; /* lo que ya no está en juego (no realizada) */
+  --cf-neutral-soft: #eceff0;
+  /* Desactivado: no tiene que pasar el contraste (no se puede usar),
+     pero tiene que verse claramente apagado. */
+  --cf-disabled-bg: #e7eced;
+  --cf-disabled-text: #7b8a8e;
 
   /* Los mismos colores en R, G, B, para usarlos con rgba() (sombras,
      velos y brillos con transparencia). */
@@ -87,6 +94,11 @@
   /* ---------- DEGRADADOS (los de las maquetas aprobadas) ---------- */
 
   --cf-grad-brand: linear-gradient(135deg, var(--cf-brand-600), var(--cf-brand-500));
+  /* Para fondos con texto blanco encima (botones, avatares): el de marca
+     acaba en 500, que con blanco se queda en 3,8:1. Este acaba algo más
+     oscuro y no baja de 4,7:1 en ningún punto. */
+  --cf-grad-button: linear-gradient(135deg, var(--cf-brand-600), #0f8089);
+  --cf-grad-brand-hover: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
   --cf-grad-soft: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
   --cf-grad-accent: linear-gradient(135deg, #7fe0bb, var(--cf-accent));
   --cf-grad-side: linear-gradient(180deg, var(--cf-brand-900) 0%, #08414a 55%, var(--cf-brand-700) 100%);
@@ -241,6 +253,176 @@ img {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
+}
+
+/* ======================================================================
+   PIEZAS COMUNES (DISENO-02)
+
+   Una sola definición para toda la app, con el aspecto de las maquetas
+   aprobadas. Sirven a los nombres de clase de cada zona (cf-btn en la
+   web, cf-dash-btn en el panel, auth-btn en el acceso), así que nada hay
+   que renombrar. Lo nuevo de WEB y PANEL usa los nombres comunes:
+   cf-btn, cf-btn--ghost, cf-alert, cf-card...
+   Cada zona solo ajusta lo suyo (tamaño, márgenes) en su archivo.
+   ====================================================================== */
+
+/* ---------- BOTONES ----------
+   Píldora con el degradado de marca. Variantes: --ghost (blanco con
+   borde), --accent (menta), --danger (blanco con borde y texto rojos),
+   --sm (pequeño) y --block (ancho completo). */
+
+.cf-btn,
+.cf-dash-btn,
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cf-space-2);
+  padding: var(--cf-space-3) var(--cf-space-6);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--cf-grad-button);
+  color: var(--cf-on-primary);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  font-weight: 600;
+  /* El alto lo manda el padding, no la fuente: así dos botones con
+     distinta letra salen iguales. */
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(var(--cf-primary-rgb), 0.2);
+  transition:
+    background var(--cf-transition),
+    border-color var(--cf-transition),
+    color var(--cf-transition),
+    box-shadow var(--cf-transition);
+}
+
+.cf-btn:hover,
+.cf-dash-btn:hover,
+.auth-btn:hover {
+  background: var(--cf-grad-brand-hover);
+  color: var(--cf-on-primary);
+}
+
+.cf-btn:focus-visible,
+.cf-dash-btn:focus-visible,
+.auth-btn:focus-visible {
+  outline: 3px solid var(--cf-ring);
+  outline-offset: 2px;
+}
+
+.cf-btn i,
+.cf-dash-btn i {
+  font-size: 0.8125rem;
+}
+
+/* Secundario: blanco con borde fino y el texto en negro. */
+.cf-btn--ghost,
+.cf-dash-btn--ghost {
+  background: var(--cf-surface);
+  border-color: var(--cf-border);
+  color: var(--cf-text);
+  box-shadow: none;
+}
+
+.cf-btn--ghost:hover,
+.cf-dash-btn--ghost:hover {
+  background: var(--cf-bg);
+  border-color: var(--cf-border-strong);
+  color: var(--cf-text);
+}
+
+/* Menta: lo que invita a hacer algo (reservar, empezar). */
+.cf-btn--accent,
+.cf-dash-btn--accent {
+  background: var(--cf-grad-accent);
+  color: var(--cf-on-accent);
+}
+
+.cf-btn--accent:hover,
+.cf-dash-btn--accent:hover {
+  background: var(--cf-accent);
+  color: var(--cf-on-accent);
+}
+
+/* Peligro (borrar, cancelar): no rellena, para no invitar a pulsarlo.
+   --danger-ghost es el nombre antiguo del panel: hoy son lo mismo. */
+.cf-btn--danger,
+.cf-dash-btn--danger,
+.cf-dash-btn--danger-ghost {
+  background: var(--cf-surface);
+  border-color: var(--cf-danger-line);
+  color: var(--cf-danger);
+  box-shadow: none;
+}
+
+.cf-btn--danger:hover,
+.cf-dash-btn--danger:hover,
+.cf-dash-btn--danger-ghost:hover {
+  background: var(--cf-danger-soft);
+  border-color: var(--cf-danger-line);
+  color: var(--cf-danger-dark);
+}
+
+.cf-btn--sm,
+.cf-dash-btn--sm {
+  padding: var(--cf-space-2) var(--cf-space-4);
+  font-size: 0.8125rem;
+}
+
+.cf-btn--block,
+.cf-dash-btn--block {
+  width: 100%;
+}
+
+/* Desactivado: gris, sin degradado ni sombra (va al final para ganar a
+   las variantes). */
+.cf-btn:disabled,
+.cf-dash-btn:disabled,
+.auth-btn:disabled,
+.cf-btn[aria-disabled="true"] {
+  background: var(--cf-disabled-bg);
+  border-color: transparent;
+  color: var(--cf-disabled-text);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ---------- AVISOS ----------
+   Rojo por defecto (es para lo que se usan hoy: errores). Variantes:
+   --warning, --success e --info. */
+
+.cf-alert,
+.cf-dash-alert,
+.auth-alert {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--cf-danger-line);
+  border-radius: var(--cf-radius-sm);
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-alert--warning {
+  border-color: var(--cf-warning-line);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
+}
+
+.cf-alert--success {
+  border-color: var(--cf-success-soft);
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
+}
+
+.cf-alert--info {
+  border-color: var(--cf-info-soft);
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
 }
 
 /* ======================================================================

@@ -446,52 +446,17 @@ main > section:nth-of-type(even) {
 /* ======================================================================
    BOTONES
 
-   El botón de toda la web pública, no solo del hero: lo usarán también
-   servicios, contacto y trabaja con nosotros.
+   El aspecto (degradado, variantes, desactivado) es común a toda la app
+   y está en index.css (PIEZAS COMUNES). Aquí solo el tamaño de la web,
+   algo mayor que el del panel.
 
        <Link className="cf-btn">                 acción principal
        <Link className="cf-btn cf-btn--ghost">   la secundaria
    ====================================================================== */
 
 .cf-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--cf-space-2);
   padding: var(--cf-space-4) var(--cf-space-8);
-
-  border: 1px solid var(--cf-primary);
-  border-radius: 999px;
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
-
-  font-family: var(--cf-font-body);
   font-size: var(--cf-text-base);
-  font-weight: 600;
-
-  /* El alto lo manda el padding, no la fuente: así dos botones con
-       distinta letra salen iguales. */
-  line-height: 1;
-
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color var(--cf-transition),
-    border-color var(--cf-transition),
-    color var(--cf-transition);
-}
-
-.cf-btn:hover {
-  background-color: var(--cf-primary-dark);
-  border-color: var(--cf-primary-dark);
-  color: var(--cf-on-primary);
-}
-
-/* focus-visible y no focus: el halo sale al tabular, no al hacer clic. */
-.cf-btn:focus-visible {
-  outline: 3px solid var(--cf-ring);
-  outline-offset: 2px;
 }
 
 /* Para sitios con poca altura, como la fila del navbar: el botón normal
@@ -499,17 +464,6 @@ main > section:nth-of-type(even) {
 .cf-btn--sm {
   padding: var(--cf-space-3) var(--cf-space-6);
   font-size: var(--cf-text-sm);
-}
-
-.cf-btn--ghost {
-  background-color: transparent;
-  color: var(--cf-primary);
-}
-
-.cf-btn--ghost:hover {
-  background-color: var(--cf-primary-soft);
-  border-color: var(--cf-primary);
-  color: var(--cf-primary);
 }
 
 /* ======================================================================
