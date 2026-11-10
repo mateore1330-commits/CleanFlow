@@ -12,7 +12,8 @@
       .navbar...); sus utilidades (container, d-flex, gap) sí.
    3. Clases propias con prefijo `cf-`, o chocan con Bootstrap sin avisar.
 
-   Paleta (07/09/2026): la de DESIGN_SYSTEM.md; Montserrat solo en el logo.
+   Marca (10/11/2026, DISENO-01): paleta A · Agua y Plus Jakarta Sans + Inter,
+   las del manual de marca (Recursos/Maquetas/01-manual-de-marca.html).
    ====================================================================== */
 
 /* ======================================================================
@@ -20,36 +21,92 @@
    ====================================================================== */
 
 :root {
-  /* ---------- COLOR ----------
+  /* ---------- MARCA (paleta A · Agua, manual de marca del 10/11/2026) ----------
+     La escala completa: 900 es el más oscuro (fondos de menú y bandas),
+     600 el color principal y 50 el fondo más suave. */
+
+  --cf-brand-900: #07343b;
+  --cf-brand-700: #0a5560;
+  --cf-brand-600: #0c6b76;
+  --cf-brand-500: #12909a;
+  --cf-brand-100: #d5efee;
+  --cf-brand-50: #edf7f6;
+  --cf-sun: #ffc94d; /* amarillo: estrellas y detalles puntuales */
+
+  /* ---------- COLOR POR FUNCIÓN ----------
      Nombres por función y no por aspecto (--cf-primary, no --cf-verde):
      siguen valiendo si la marca cambia de color. */
 
-  --cf-bg: #f7f3e8; /* fondo general, crema */
+  --cf-bg: #f5f8f8; /* fondo general, blanco frío */
   --cf-surface: #ffffff; /* tarjetas y bloques sobre el fondo */
-  --cf-primary: #2e3b26; /* color de marca: botones, enlaces */
-  --cf-primary-dark: #222d1c; /* el mismo, al pasar el ratón */
-  --cf-primary-soft: #e7eddf; /* fondo suave del color de marca */
-  --cf-accent: #c97b4a; /* terracota: destacados puntuales */
-  --cf-accent-dark: #9a5227; /* terracota para texto: el claro no se lee en pequeño */
-  --cf-accent-soft: #f6e6da; /* fondo suave del terracota */
-  --cf-text: #26261f; /* texto normal */
-  --cf-muted: #6e6b5e; /* texto secundario, pies de foto */
-  --cf-border: #e1dac5; /* líneas y bordes */
-  --cf-ring: rgba(46, 59, 38, 0.22); /* halo del foco del teclado */
-  --cf-on-primary: #f7f3e8; /* texto sobre fondo --cf-primary */
-  --cf-on-primary-muted: #b0b3a4; /* el mismo, apagado: textos secundarios */
-  /* Fondo y superficie en R, G, B, para usarlos con rgba(). */
-  --cf-bg-rgb: 247, 243, 232;
+  --cf-white: #ffffff; /* blanco puro: texto y bordes sobre fondos oscuros */
+  --cf-primary: var(--cf-brand-600); /* color de marca: botones, enlaces */
+  --cf-primary-dark: var(--cf-brand-700); /* el mismo, al pasar el ratón */
+  --cf-primary-soft: var(--cf-brand-100); /* fondo suave del color de marca */
+  --cf-accent: #5fd3a6; /* menta: detalles, iconos y fondos. NUNCA texto sobre claro */
+  --cf-accent-dark: #0b6648; /* la menta para texto: se lee sobre fondos claros */
+  --cf-accent-soft: #dcf6ea; /* fondo suave de la menta */
+  --cf-on-accent: var(--cf-brand-900); /* texto sobre fondo menta (el blanco no se lee) */
+  --cf-text: #0e1d21; /* texto normal */
+  --cf-muted: #56676c; /* texto secundario, pies de foto */
+  --cf-placeholder: #65767a; /* texto de ejemplo dentro de los campos */
+  --cf-border: #dce5e6; /* líneas y bordes */
+  --cf-ring: rgba(12, 107, 118, 0.25); /* halo del foco del teclado */
+  --cf-on-primary: #ffffff; /* texto sobre fondo --cf-primary */
+  --cf-on-primary-muted: #cfe6e8; /* el mismo, apagado: textos secundarios */
+
+  /* ---------- ESTADOS ----------
+     Siempre con su fondo suave (-soft) y su borde (-line). Todos pasan
+     el contraste AA (4,5:1) como texto sobre blanco y sobre su -soft. */
+
+  --cf-success: #157548;
+  --cf-success-soft: #dff3e8;
+  --cf-warning: #9a6200; /* aviso: algo pide atención (afectada, a medias, urgente) */
+  --cf-warning-dark: #7a4d00;
+  --cf-warning-soft: #fdf0d2;
+  --cf-warning-line: #f1d79c;
+  --cf-danger: #b02f2f; /* peligro: borrar, cancelar, fallos, incidencias, errores */
+  --cf-danger-dark: #8c2424;
+  --cf-danger-soft: #fbe3e3;
+  --cf-danger-line: #f0bcbc;
+  --cf-info: #2a63c9;
+  --cf-info-soft: #e1ebfb;
+
+  /* Los mismos colores en R, G, B, para usarlos con rgba() (sombras,
+     velos y brillos con transparencia). */
+  --cf-bg-rgb: 245, 248, 248;
   --cf-surface-rgb: 255, 255, 255;
+  --cf-white-rgb: 255, 255, 255;
+  --cf-text-rgb: 14, 29, 33;
+  --cf-primary-rgb: 12, 107, 118;
+  --cf-brand-900-rgb: 7, 52, 59;
+  --cf-accent-rgb: 95, 211, 166;
+  --cf-danger-rgb: 176, 47, 47;
+
+  /* ---------- DEGRADADOS (los de las maquetas aprobadas) ---------- */
+
+  --cf-grad-brand: linear-gradient(135deg, var(--cf-brand-600), var(--cf-brand-500));
+  --cf-grad-soft: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
+  --cf-grad-accent: linear-gradient(135deg, #7fe0bb, var(--cf-accent));
+  --cf-grad-side: linear-gradient(180deg, var(--cf-brand-900) 0%, #08414a 55%, var(--cf-brand-700) 100%);
+  /* Velo oscuro sobre una foto, para que se lea el texto blanco encima. */
+  --cf-grad-overlay: linear-gradient(
+    160deg,
+    rgba(var(--cf-brand-900-rgb), 0.97) 0%,
+    rgba(var(--cf-brand-900-rgb), 0.88) 50%,
+    rgba(var(--cf-brand-900-rgb), 0.6) 100%
+  );
 
   /* ---------- TIPOGRAFÍA ----------
-     Las alternativas del final se usan mientras la fuente carga. */
+     Las alternativas del final se usan mientras la fuente carga. Las dos
+     van alojadas en la propia web (@fontsource, ver main.jsx): el
+     navegador no se conecta a Google. */
 
-  --cf-font-heading: "Fraunces", Georgia, "Times New Roman", serif;
-  --cf-font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --cf-font-heading: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui, sans-serif;
+  --cf-font-body: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
 
-  /* Solo para el logotipo. Si aparece en un titular o un botón, es un error. */
-  --cf-font-brand: "Montserrat", system-ui, sans-serif;
+  /* Solo para el logotipo (Wordmark.jsx). */
+  --cf-font-brand: var(--cf-font-heading);
 
   /* Escala cerrada, para que nadie invente su "un poco más grande". En rem:
      crece si el usuario agranda la letra del navegador. */
@@ -77,9 +134,10 @@
   --cf-radius-sm: 8px; /* campos, botones */
   --cf-radius-md: 12px; /* tarjetas */
   --cf-radius-lg: 20px; /* bloques grandes */
+  --cf-radius-xl: 28px; /* bandas y tarjetas destacadas */
 
-  --cf-shadow-sm: 0 1px 3px rgba(38, 38, 31, 0.06);
-  --cf-shadow-md: 0 4px 16px rgba(38, 38, 31, 0.08);
+  --cf-shadow-sm: 0 1px 2px rgba(var(--cf-text-rgb), 0.06), 0 1px 3px rgba(var(--cf-text-rgb), 0.04);
+  --cf-shadow-md: 0 6px 24px -6px rgba(var(--cf-text-rgb), 0.12), 0 2px 6px rgba(var(--cf-text-rgb), 0.05);
 
   /* ---------- DISPOSICIÓN ---------- */
 
@@ -127,6 +185,8 @@ h4 {
   font-family: var(--cf-font-heading);
   color: var(--cf-primary);
   line-height: 1.2;
+  /* Plus Jakarta Sans pide apretar un poco las letras en tamaños grandes. */
+  letter-spacing: -0.02em;
 }
 
 a {
