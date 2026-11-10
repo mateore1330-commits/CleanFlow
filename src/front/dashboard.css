@@ -146,7 +146,7 @@
 
 /* ⚠️ A mano, como en auth.css: no hay token para el placeholder. */
 .cf-dash-input::placeholder {
-  color: #a39f92;
+  color: var(--cf-placeholder);
 }
 
 .cf-dash-input:focus {
@@ -161,15 +161,15 @@ textarea.cf-dash-input {
 }
 
 /* ---------- AVISO DE ERROR ----------
-   ⚠️ Colores a mano (los de .auth-alert): aún no hay tokens de estado. */
+   Con los tokens de estado (--cf-danger*), igual que .auth-alert. */
 
 .cf-dash-alert {
   margin: 0;
   padding: 10px 14px;
-  border: 1px solid #efc4bc;
+  border: 1px solid var(--cf-danger-line);
   border-radius: var(--cf-radius-sm);
-  background-color: #fbe9e6;
-  color: #7a2e22;
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
   font-size: var(--cf-text-sm);
 }
 
@@ -215,7 +215,7 @@ textarea.cf-dash-input {
   height: 16px;
   border-radius: 50%;
   background-color: var(--cf-surface);
-  box-shadow: 0 1px 2px rgba(38, 38, 31, 0.25);
+  box-shadow: 0 1px 2px rgba(var(--cf-text-rgb), 0.25);
   transition: transform var(--cf-transition);
 }
 
@@ -272,10 +272,10 @@ textarea.cf-dash-input {
   font-size: 1.375rem;
 }
 
-/* ⚠️ Colores a mano: ver .cf-dash-alert. */
+/* Rojos de peligro: los tokens --cf-danger*. */
 .cf-dash-state--error .cf-dash-state__icon {
-  background-color: #fbe9e6;
-  color: #7a2e22;
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
 }
 
 .cf-dash-state__title {
@@ -321,19 +321,19 @@ textarea.cf-dash-input {
 
 /* ---------- ERROR Y NOTA DE UN CAMPO ----------
    Debajo del campo, enlazados con aria-describedby; con error, el campo
-   lleva aria-invalid. ⚠️ Rojos a mano: ver .cf-dash-alert. */
+   lleva aria-invalid. Rojos de peligro: los tokens --cf-danger*. */
 
 .cf-dash-input[aria-invalid="true"] {
-  border-color: #c2574a;
+  border-color: var(--cf-danger);
 }
 
 .cf-dash-input[aria-invalid="true"]:focus {
-  box-shadow: 0 0 0 3px rgba(194, 87, 74, 0.2);
+  box-shadow: 0 0 0 3px rgba(var(--cf-danger-rgb), 0.2);
 }
 
 .cf-dash-field__error {
   margin: 0;
-  color: #7a2e22;
+  color: var(--cf-danger);
   font-size: 0.8125rem;
 }
 
@@ -503,28 +503,26 @@ textarea.cf-dash-input {
   opacity: 0.4;
 }
 
-/* ⚠️ Rojo a mano: ver .cf-dash-alert. */
+/* Rojo de peligro: --cf-danger. */
 .cf-dash-chips--invalid .cf-dash-chip span {
-  border-color: #c2574a;
+  border-color: var(--cf-danger);
 }
 
 /* ---------- BOTÓN PELIGROSO ----------
    Confirma acciones que quitan algo de la vista del cliente.
-   ⚠️ Rojo a mano: ver .cf-dash-alert. */
+   Rojo de peligro: --cf-danger. */
 
-/* Lo que no tiene vuelta atrás, en el terracota de la marca. El rojo de
-   antes no estaba en index.css y desentonaba con el resto del panel.
-   --cf-accent a secas no vale: con texto encima se queda en 3,3:1. */
+/* Lo que no tiene vuelta atrás, en el rojo de peligro de la marca
+   (--cf-danger: 6,4:1 con el texto blanco encima). */
 .cf-dash-btn--danger {
-  background-color: var(--cf-accent-dark);
-  border-color: var(--cf-accent-dark);
+  background-color: var(--cf-danger);
+  border-color: var(--cf-danger);
   color: var(--cf-on-primary);
 }
 
-/* ⚠️ El tono del hover a mano: no hay token más oscuro que accent-dark. */
 .cf-dash-btn--danger:hover {
-  background-color: #7e4320;
-  border-color: #7e4320;
+  background-color: var(--cf-danger-dark);
+  border-color: var(--cf-danger-dark);
   color: var(--cf-on-primary);
 }
 
@@ -540,11 +538,11 @@ textarea.cf-dash-input {
   border-radius: var(--cf-radius-lg);
   background-color: var(--cf-surface);
   color: var(--cf-text);
-  box-shadow: 0 20px 50px rgba(38, 38, 31, 0.25);
+  box-shadow: 0 20px 50px rgba(var(--cf-text-rgb), 0.25);
 }
 
 .cf-dash-modal::backdrop {
-  background-color: rgba(38, 38, 31, 0.45);
+  background-color: rgba(var(--cf-text-rgb), 0.45);
 }
 
 .cf-dash-modal__body {
@@ -553,15 +551,15 @@ textarea.cf-dash-input {
   padding: var(--cf-space-6);
 }
 
-/* ⚠️ Colores a mano: ver .cf-dash-alert. */
+/* Rojos de peligro: los tokens --cf-danger*. */
 .cf-dash-modal__icon {
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background-color: #fbe9e6;
-  color: #7a2e22;
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
   font-size: 1.125rem;
 }
 
@@ -590,7 +588,7 @@ textarea.cf-dash-input {
 
 /* ---------- RÓTULO SOBRE EL TÍTULO ----------
    El grupo del sidebar de la página ("Administrar catálogo"). En
-   --cf-accent-dark: el terracota claro no se lee en letra pequeña. */
+   --cf-accent-dark: la menta clara no se lee sobre fondo claro. */
 
 .cf-dash-eyebrow {
   margin: 0 0 var(--cf-space-1);
@@ -656,7 +654,7 @@ textarea.cf-dash-input {
 
 /* ⚠️ A mano, como en auth.css: no hay token para el placeholder. */
 .cf-dash-search__input::placeholder {
-  color: #a39f92;
+  color: var(--cf-placeholder);
 }
 
 .cf-dash-search__input:focus {
@@ -762,7 +760,7 @@ textarea.cf-dash-input {
   border-top: 0;
 }
 
-/* Lo que coincide con la búsqueda, en terracota. */
+/* Lo que coincide con la búsqueda, resaltado en menta. */
 .cf-dash-mark {
   padding: 0 1px;
   border-radius: 3px;
@@ -825,7 +823,7 @@ textarea.cf-dash-input {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--cf-accent-dark);
+  color: var(--cf-muted);
   font-weight: 600;
 }
 
@@ -834,7 +832,7 @@ textarea.cf-dash-input {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--cf-accent);
+  background-color: var(--cf-muted);
 }
 
 /* Selectores largos a propósito: tienen que pesar más que la regla de la
@@ -844,9 +842,9 @@ textarea.cf-dash-input {
 .cf-tasks__tab[aria-pressed="true"] .cf-tasks__count.cf-dash-count--attention,
 .cf-services__tab[aria-pressed="true"]
   .cf-services__count.cf-dash-count--attention {
-  border-color: var(--cf-accent-soft);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  border-color: var(--cf-warning-soft);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 /* ---------- SIDEBAR (Sidebar.jsx) ----------
@@ -860,13 +858,13 @@ textarea.cf-dash-input {
 .cf-side {
   --side-w: 268px;
   --side-rail: 80px;
-  --side-text: rgba(255, 255, 255, 0.82);
-  --side-muted: rgba(255, 255, 255, 0.5);
-  --side-hover: rgba(255, 255, 255, 0.09);
-  --side-line: rgba(255, 255, 255, 0.12);
-  --side-card: rgba(255, 255, 255, 0.07);
-  --side-active-bg: #f4f1e4;
-  --side-active-text: #26301f;
+  --side-text: rgba(var(--cf-white-rgb), 0.82);
+  --side-muted: rgba(var(--cf-white-rgb), 0.5);
+  --side-hover: rgba(var(--cf-white-rgb), 0.09);
+  --side-line: rgba(var(--cf-white-rgb), 0.12);
+  --side-card: rgba(var(--cf-white-rgb), 0.07);
+  --side-active-bg: rgba(var(--cf-white-rgb), 0.12);
+  --side-active-text: var(--cf-white);
 
   position: relative;
   flex: none;
@@ -877,10 +875,10 @@ textarea.cf-dash-input {
   margin: var(--cf-space-3);
   padding: var(--cf-space-4) 14px;
   border-radius: var(--cf-radius-lg);
-  /* ⚠️ Verdes a mano: el degradado del panel no está en los tokens. */
-  background: linear-gradient(180deg, #33422a, #232e1c);
+  /* El degradado del menú lateral, de los tokens (--cf-grad-side). */
+  background: var(--cf-grad-side);
   color: var(--side-text);
-  box-shadow: 0 10px 30px rgba(35, 46, 28, 0.18);
+  box-shadow: 0 10px 30px rgba(var(--cf-brand-900-rgb), 0.18);
   transition: width 0.24s ease;
 }
 
@@ -900,7 +898,7 @@ textarea.cf-dash-input {
   text-decoration: none;
 }
 
-/* El isotipo del kit de marca (Logo.jsx), en terracota sobre el verde. */
+/* El isotipo del kit de marca (Logo.jsx), en menta sobre el fondo oscuro. */
 .cf-side__logo {
   flex: none;
   display: grid;
@@ -915,23 +913,10 @@ textarea.cf-dash-input {
   height: 34px;
 }
 
-/* El logotipo, igual que en la web: Montserrat, CLEAN en negrita. */
+/* El logotipo (Wordmark.jsx, versión oscura; estilos en index.css). */
 .cf-side__name {
-  font-family: var(--cf-font-brand);
   font-size: 1.05rem;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: #ffffff;
   white-space: nowrap;
-}
-
-.cf-side__name b {
-  font-weight: 700;
-}
-
-.cf-side__name span {
-  font-weight: 400;
-  margin-left: 0.22em;
 }
 
 /* ---------- BOTÓN DE PLEGAR ----------
@@ -1042,7 +1027,7 @@ textarea.cf-dash-input {
 
 .cf-side__link:hover {
   background-color: var(--side-hover);
-  color: #ffffff;
+  color: var(--cf-white);
   transform: translateX(2px);
 }
 
@@ -1052,17 +1037,17 @@ textarea.cf-dash-input {
 }
 
 .cf-side__link:focus-visible {
-  outline: 2px solid #ffffff;
+  outline: 2px solid var(--cf-white);
   outline-offset: 2px;
 }
 
-/* La página actual: pastilla crema con una marca terracota al canto. */
+/* La página actual: pastilla translúcida con una marca menta al canto. */
 .cf-side__link[aria-current="page"] {
   background-color: var(--side-active-bg);
   color: var(--side-active-text);
   font-weight: 600;
   transform: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 4px 14px rgba(var(--cf-text-rgb), 0.14);
 }
 
 .cf-side__link[aria-current="page"]::before {
@@ -1080,7 +1065,7 @@ textarea.cf-dash-input {
 .cf-side__link[aria-current="page"] i,
 .cf-side__link[aria-current="page"] svg {
   opacity: 1;
-  color: var(--cf-primary);
+  color: var(--cf-accent);
 }
 
 /* Contador de reservas afectadas. */
@@ -1092,7 +1077,7 @@ textarea.cf-dash-input {
   padding: 0 7px;
   border-radius: 999px;
   background-color: var(--cf-accent);
-  color: #ffffff;
+  color: var(--cf-on-accent);
   font-size: 0.72rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -1156,8 +1141,8 @@ textarea.cf-dash-input {
   padding: 7px 10px;
   border-radius: var(--cf-radius-md);
   background-color: var(--side-card);
-  /* ⚠️ Terracota claro a mano: el del token no se lee sobre el verde. */
-  color: #f3d3bd;
+  /* En menta: sobre el fondo oscuro del menú se lee bien (7,3:1). */
+  color: var(--cf-accent);
   font-size: 0.56rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -1196,7 +1181,7 @@ textarea.cf-dash-input {
 
 .cf-side__username {
   display: block;
-  color: #ffffff;
+  color: var(--cf-white);
   font-size: 0.88rem;
   font-weight: 600;
   line-height: 1.25;
@@ -1245,18 +1230,18 @@ textarea.cf-dash-input {
 
 .cf-side__action:hover {
   background-color: var(--side-hover);
-  color: #ffffff;
+  color: var(--cf-white);
 }
 
-/* Cerrar sesión se tiñe de terracota: no se pulsa por error. */
+/* Cerrar sesión se tiñe de rojo: no se pulsa por error. */
 .cf-side__action--exit:hover {
-  border-color: rgba(201, 123, 74, 0.5);
-  background-color: rgba(201, 123, 74, 0.22);
-  color: #f7ded0;
+  border-color: rgba(var(--cf-danger-rgb), 0.6);
+  background-color: rgba(var(--cf-danger-rgb), 0.3);
+  color: var(--cf-danger-soft);
 }
 
 .cf-side__action:focus-visible {
-  outline: 2px solid #ffffff;
+  outline: 2px solid var(--cf-white);
   outline-offset: 2px;
 }
 
@@ -1342,7 +1327,7 @@ textarea.cf-dash-input {
   padding: 6px 10px;
   border-radius: var(--cf-radius-sm);
   background-color: var(--cf-text);
-  color: #ffffff;
+  color: var(--cf-white);
   font-size: 0.78rem;
   white-space: nowrap;
   box-shadow: var(--cf-shadow-md);
@@ -1392,9 +1377,9 @@ textarea.cf-dash-input {
     gap: var(--cf-space-3);
     height: 60px;
     padding: 0 var(--cf-space-4);
-    /* ⚠️ Verde a mano: el mismo degradado del panel. */
-    background: linear-gradient(180deg, #33422a, #232e1c);
-    color: #ffffff;
+    /* El mismo degradado del menú lateral. */
+    background: var(--cf-grad-side);
+    color: var(--cf-white);
   }
 
   /* La marca de la barra es la misma del panel, en pequeño. */
@@ -1402,7 +1387,7 @@ textarea.cf-dash-input {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #ffffff;
+    color: var(--cf-white);
     text-decoration: none;
   }
 
@@ -1432,17 +1417,17 @@ textarea.cf-dash-input {
     width: 40px;
     height: 40px;
     padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(var(--cf-white-rgb), 0.25);
     border-radius: var(--cf-radius-sm);
     background: none;
-    color: #ffffff;
+    color: var(--cf-white);
     font-size: 1.125rem;
     cursor: pointer;
   }
 
   .cf-side-toggle:focus-visible,
   .cf-side-close:focus-visible {
-    outline: 2px solid #ffffff;
+    outline: 2px solid var(--cf-white);
     outline-offset: 2px;
   }
 
@@ -1460,7 +1445,7 @@ textarea.cf-dash-input {
     margin: 0;
     border-radius: 0 var(--cf-radius-lg) var(--cf-radius-lg) 0;
     overflow-y: auto;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 40px rgba(var(--cf-text-rgb), 0.35);
     transform: translateX(-102%);
     visibility: hidden;
     transition:
@@ -1498,8 +1483,8 @@ textarea.cf-dash-input {
     inset: 0;
     z-index: 1040;
     display: block;
-    /* ⚠️ Oscurecido a mano: no hay token de velo. */
-    background-color: rgba(28, 32, 24, 0.55);
+    /* Velo oscuro de marca, con transparencia. */
+    background-color: rgba(var(--cf-brand-900-rgb), 0.55);
   }
 
   .cf-side-backdrop[hidden] {
@@ -2413,7 +2398,7 @@ textarea.cf-dash-input {
 }
 
 /* ---------- ETIQUETA "POR TAREAS" / "SOLO HORAS" ----------
-   Como los desactivados del encargado: lo distinto va en terracota. En
+   Como los desactivados del encargado: lo distinto va en el acento. En
    --cf-accent-dark, que sí se lee en letra pequeña. */
 
 .cf-catalog__kind {
@@ -3011,19 +2996,19 @@ textarea.cf-dash-input {
   border-top: 1px solid var(--cf-border);
 }
 
-/* Quitar, apartado a la derecha: el mismo terracota que el botón lleno,
+/* Quitar, apartado a la derecha: el mismo rojo que el botón lleno,
    en texto y borde en vez de en fondo. */
 .cf-dash-btn--danger-ghost {
   margin-left: auto;
-  border-color: var(--cf-accent);
+  border-color: var(--cf-danger-line);
   background: none;
-  color: var(--cf-accent-dark);
+  color: var(--cf-danger-dark);
 }
 
 .cf-dash-btn--danger-ghost:hover {
-  background-color: var(--cf-accent-soft);
-  border-color: var(--cf-accent-dark);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-danger-soft);
+  border-color: var(--cf-danger-dark);
+  color: var(--cf-danger-dark);
 }
 
 /* ---------- CARGANDO ---------- */
@@ -3213,11 +3198,11 @@ textarea.cf-dash-input {
   opacity: 0.85;
 }
 
-/* ⚠️ Rojos a mano: ver .cf-dash-alert. */
+/* Rojos de peligro: los tokens --cf-danger*. */
 .cf-shifts__stat--error {
-  border-color: #efc4bc;
-  background-color: #fbe9e6;
-  color: #7a2e22;
+  border-color: var(--cf-danger-line);
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
   font-size: 0.8125rem;
   font-weight: 600;
 }
@@ -3365,7 +3350,7 @@ textarea.cf-dash-input {
   font-weight: 600;
 }
 
-/* La semana en siete marcas: terracota los días que se trabaja, siempre,
+/* La semana en siete marcas: menta los días que se trabaja, siempre,
    también en un turno desactivado. */
 .cf-shifts__week {
   display: flex;
@@ -3393,7 +3378,7 @@ textarea.cf-dash-input {
   font-size: var(--cf-text-sm);
 }
 
-/* El número, en pastilla terracota: es lo que se busca al leer la columna. */
+/* El número, en pastilla de acento: es lo que se busca al leer la columna. */
 .cf-shifts__count {
   min-width: 28px;
   padding: 2px 9px;
@@ -3409,13 +3394,13 @@ textarea.cf-dash-input {
   font-style: italic;
 }
 
-/* Desactivado: la fila entera se tiñe de terracota suave y el texto se
+/* Desactivado: la fila entera se tiñe de un tono suave y el texto se
    apaga. El color va en el fondo, no pegado a los botones. */
 .cf-shifts__row--inactive,
 .cf-shifts__row--inactive:hover {
   background-color: color-mix(
     in srgb,
-    var(--cf-accent-soft) 55%,
+    var(--cf-brand-50) 55%,
     var(--cf-surface)
   );
 }
@@ -3436,8 +3421,8 @@ textarea.cf-dash-input {
 }
 
 /* Eliminar, en icono y neutro: solo se pone rojo al pasar por encima.
-   Así no compite con "Editar" ni con el terracota del estado.
-   ⚠️ Rojos a mano: ver .cf-dash-alert. */
+   Así no compite con "Editar" ni con el color del estado.
+   Rojos de peligro: los tokens --cf-danger*. */
 .cf-shifts__delete {
   display: inline-grid;
   place-items: center;
@@ -3456,9 +3441,9 @@ textarea.cf-dash-input {
 }
 
 .cf-shifts__delete:hover:not(:disabled) {
-  border-color: var(--cf-accent);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  border-color: var(--cf-danger-line);
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger-dark);
 }
 
 .cf-shifts__delete:focus-visible {
@@ -3711,10 +3696,10 @@ textarea.cf-dash-input {
     background-color var(--cf-transition);
 }
 
-/* ⚠️ Rojos a mano: ver .cf-dash-alert. */
+/* Rojos de peligro: los tokens --cf-danger*. */
 .cf-booking__remove:hover {
-  background-color: #fdecec;
-  color: #a4302a;
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
 }
 
 .cf-booking__add {
@@ -3734,8 +3719,8 @@ textarea.cf-dash-input {
   margin: var(--cf-space-4) 0 0;
   padding: 10px var(--cf-space-4);
   border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
   font-size: 0.8125rem;
 }
 
@@ -3940,9 +3925,9 @@ textarea.cf-dash-input {
 /* Los días extra de una reserva larga: se marcan, pero no se eligen. */
 .cf-booking__day--spill {
   border-style: dashed;
-  border-color: var(--cf-accent);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  border-color: var(--cf-warning-line);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 /* ---------- HORAS LIBRES ---------- */
@@ -4306,12 +4291,12 @@ textarea.cf-dash-input {
   box-shadow: var(--cf-shadow-sm);
 }
 
-/* Desactivado: la fila se tiñe de terracota suave y el texto se apaga,
+/* Desactivado: la fila se tiñe de un tono suave y el texto se apaga,
    igual que un turno desactivado. */
 .cf-workers__row--inactive,
 .cf-workers__row--inactive:hover {
   border-color: var(--cf-border);
-  background-color: var(--cf-accent-soft);
+  background-color: var(--cf-brand-50);
   box-shadow: none;
 }
 
@@ -4360,8 +4345,8 @@ textarea.cf-dash-input {
 
 /* "Baja en curso": lo único que hay que ver de un vistazo en la lista. */
 .cf-workers__tag--away {
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 .cf-workers__job {
@@ -4376,7 +4361,7 @@ textarea.cf-dash-input {
   font-variant-numeric: tabular-nums;
 }
 
-/* La valoración: estrella terracota, nota y cuántas reseñas la sostienen. */
+/* La valoración: estrella amarilla, nota y cuántas reseñas la sostienen. */
 .cf-workers__rating {
   display: inline-flex;
   align-items: baseline;
@@ -4386,7 +4371,7 @@ textarea.cf-dash-input {
 }
 
 .cf-workers__rating i {
-  color: var(--cf-accent);
+  color: var(--cf-sun);
 }
 
 .cf-workers__rating strong {
@@ -4568,7 +4553,7 @@ textarea.cf-dash-input {
 /* "En curso": la ausencia que afecta hoy, lo que más interesa. */
 .cf-absences__now {
   margin-left: var(--cf-space-2);
-  color: var(--cf-accent-dark);
+  color: var(--cf-warning-dark);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -4579,7 +4564,7 @@ textarea.cf-dash-input {
   font-size: var(--cf-text-sm);
 }
 
-/* El motivo, en pastilla: baja en terracota (lo delicado), vacaciones en
+/* El motivo, en pastilla: baja en ámbar de aviso (lo delicado), vacaciones en
    verde y otro en neutro. */
 .cf-absences__reason {
   padding: 4px 10px;
@@ -4590,8 +4575,8 @@ textarea.cf-dash-input {
 }
 
 .cf-absences__reason--baja {
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 .cf-absences__reason--vacaciones {
@@ -4628,11 +4613,11 @@ textarea.cf-dash-input {
   list-style: none;
 }
 
-/* Borde terracota a la izquierda: todas piden atención. */
+/* Borde ámbar a la izquierda: todas piden atención. */
 .cf-affected__card {
   padding: var(--cf-space-6);
   border: 1px solid var(--cf-border);
-  border-left: 4px solid var(--cf-accent);
+  border-left: 4px solid var(--cf-warning);
   border-radius: var(--cf-radius-lg);
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
@@ -4669,8 +4654,8 @@ textarea.cf-dash-input {
 .cf-affected__reason {
   padding: 4px 10px;
   border-radius: 999px;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -4733,8 +4718,8 @@ textarea.cf-dash-input {
   margin: 0;
   padding: 10px 14px;
   border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
   font-size: var(--cf-text-sm);
 }
 
@@ -5419,7 +5404,7 @@ textarea.cf-dash-input {
 }
 
 .cf-myservices__chip button:hover {
-  background-color: rgba(46, 59, 38, 0.12);
+  background-color: rgba(var(--cf-primary-rgb), 0.12);
 }
 
 .cf-myservices__count {
@@ -5551,7 +5536,7 @@ textarea.cf-dash-input {
   font-size: 0.8125rem;
 }
 
-/* Iniciales del trabajador: el mismo círculo terracota del avatar. */
+/* Iniciales del trabajador: el mismo círculo de acento del avatar. */
 .cf-bookcard__worker {
   display: inline-flex;
   align-items: center;
@@ -5588,8 +5573,8 @@ textarea.cf-dash-input {
   margin: 0;
   padding: var(--cf-space-2) var(--cf-space-3);
   border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
   font-size: 0.8438rem;
   font-weight: 500;
 }
@@ -5614,7 +5599,7 @@ textarea.cf-dash-input {
 }
 
 .cf-bookstate--fail {
-  color: var(--cf-accent-dark);
+  color: var(--cf-danger-dark);
 }
 
 .cf-bookstate--wait {
@@ -5625,8 +5610,8 @@ textarea.cf-dash-input {
 .cf-bookstate--action {
   padding: 3px 10px;
   border-radius: 999px;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
   font-size: 0.75rem;
 }
 
@@ -5639,7 +5624,7 @@ textarea.cf-dash-input {
 }
 
 .cf-bookstate--fail .cf-bookstate__dot {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-danger);
 }
 
 /* El punto late mientras el trabajador está en la casa. */
@@ -5832,7 +5817,7 @@ textarea.cf-dash-input {
 
 /* El camino cortado: no se pudo hacer, o se canceló. */
 .cf-timeline__step--fail .cf-timeline__mark {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-danger);
   color: var(--cf-surface);
 }
 
@@ -5869,7 +5854,7 @@ textarea.cf-dash-input {
 .cf-timeline__why {
   margin: var(--cf-space-2) 0 0;
   padding: var(--cf-space-2) var(--cf-space-3);
-  border-left: 2px solid var(--cf-accent);
+  border-left: 2px solid var(--cf-danger);
   border-radius: 0 var(--cf-radius-sm) var(--cf-radius-sm) 0;
   background-color: var(--cf-bg);
   color: var(--cf-text);
@@ -6077,11 +6062,11 @@ textarea.cf-dash-input {
 /* ---------- POR QUÉ SE CANCELÓ ----------
    El motivo va en su propio bloque y no en una línea de la línea de
    tiempo: cuando cancela CleanFlow, es lo primero que el cliente quiere
-   leer. Mismo borde terracota que las incidencias, porque es lo mismo:
+   leer. Mismo borde rojo que las incidencias, porque es lo mismo:
    algo que no salió como estaba previsto. */
 
 .cf-bookcancel {
-  border-left: 3px solid var(--cf-accent);
+  border-left: 3px solid var(--cf-danger);
   border-radius: 0 var(--cf-radius-md) var(--cf-radius-md) 0;
 }
 
@@ -6090,7 +6075,7 @@ textarea.cf-dash-input {
   align-items: center;
   gap: var(--cf-space-2);
   margin: 0;
-  color: var(--cf-accent-dark);
+  color: var(--cf-danger-dark);
   font-size: 0.9063rem;
   font-weight: 600;
 }
@@ -6178,7 +6163,7 @@ textarea.cf-dash-input {
 }
 
 .cf-bookzoom::backdrop {
-  background-color: rgba(38, 38, 31, 0.66);
+  background-color: rgba(var(--cf-text-rgb), 0.66);
 }
 
 .cf-bookzoom__img {
@@ -6212,9 +6197,9 @@ textarea.cf-dash-input {
   display: grid;
   gap: var(--cf-space-3);
   padding: var(--cf-space-4);
-  border: 1px solid var(--cf-accent);
+  border: 1px solid var(--cf-warning-line);
   border-radius: var(--cf-radius-md);
-  background-color: var(--cf-accent-soft);
+  background-color: var(--cf-warning-soft);
 }
 
 .cf-ask__title {
@@ -6222,7 +6207,7 @@ textarea.cf-dash-input {
   align-items: center;
   gap: var(--cf-space-2);
   margin: 0;
-  color: var(--cf-accent-dark);
+  color: var(--cf-warning-dark);
   font-family: var(--cf-font-heading);
   font-size: var(--cf-text-lg);
   font-weight: 600;
@@ -6230,7 +6215,7 @@ textarea.cf-dash-input {
 
 .cf-ask__text {
   margin: 0;
-  color: var(--cf-accent-dark);
+  color: var(--cf-warning-dark);
   font-size: 0.8438rem;
 }
 
@@ -6243,8 +6228,8 @@ textarea.cf-dash-input {
   width: fit-content;
   padding: 6px var(--cf-space-3);
   border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.6);
-  color: var(--cf-accent-dark);
+  background-color: rgba(var(--cf-white-rgb), 0.6);
+  color: var(--cf-warning-dark);
   font-size: 0.7813rem;
   font-weight: 500;
 }
@@ -6382,7 +6367,7 @@ textarea.cf-dash-input {
   gap: var(--cf-space-2);
   padding: var(--cf-space-3) var(--cf-space-4);
   border: 1px solid var(--cf-border);
-  border-left: 3px solid var(--cf-accent);
+  border-left: 3px solid var(--cf-danger);
   border-radius: 0 var(--cf-radius-sm) var(--cf-radius-sm) 0;
   background-color: var(--cf-bg);
 }
@@ -6800,7 +6785,7 @@ textarea.cf-dash-input {
 }
 
 .cf-wtrack__step--fail .cf-wtrack__mark {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-danger);
   color: var(--cf-surface);
 }
 
@@ -7219,14 +7204,14 @@ textarea.cf-dash-input {
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background-color: rgba(38, 38, 31, 0.7);
+  background-color: rgba(var(--cf-text-rgb), 0.7);
   color: var(--cf-on-primary);
   font-size: 0.625rem;
   cursor: pointer;
 }
 
 .cf-wshot__del:hover {
-  background-color: var(--cf-accent-dark);
+  background-color: var(--cf-danger-dark);
 }
 
 /* Subiendo: la miniatura ya se ve y la barra avisa de que va en camino.
@@ -7335,7 +7320,7 @@ textarea.cf-dash-input {
 }
 
 .cf-inc-sheet::backdrop {
-  background-color: rgba(38, 38, 31, 0.6);
+  background-color: rgba(var(--cf-text-rgb), 0.6);
 }
 
 .cf-inc-sheet__form {
@@ -7558,14 +7543,14 @@ textarea.cf-dash-input {
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background-color: rgba(38, 38, 31, 0.7);
+  background-color: rgba(var(--cf-text-rgb), 0.7);
   color: var(--cf-on-primary);
   font-size: 0.625rem;
   cursor: pointer;
 }
 
 .cf-inc-shot__del:hover {
-  background-color: var(--cf-accent-dark);
+  background-color: var(--cf-danger-dark);
 }
 
 /* ---------- RECLAMAR: LAS FOTOS ----------
@@ -7625,14 +7610,14 @@ textarea.cf-dash-input {
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background-color: rgba(38, 38, 31, 0.7);
+  background-color: rgba(var(--cf-text-rgb), 0.7);
   color: var(--cf-on-primary);
   font-size: 0.625rem;
   cursor: pointer;
 }
 
 .cf-claim__del:hover {
-  background-color: var(--cf-accent-dark);
+  background-color: var(--cf-danger-dark);
 }
 
 /* Cuántas van. Solo aparece con alguna puesta: con la rejilla vacía
@@ -7652,10 +7637,10 @@ textarea.cf-dash-input {
   gap: var(--cf-space-2);
   margin: 0;
   padding: var(--cf-space-3);
-  border-left: 3px solid var(--cf-accent);
+  border-left: 3px solid var(--cf-warning);
   border-radius: 0 var(--cf-radius-sm) var(--cf-radius-sm) 0;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
   font-size: 0.8438rem;
 }
 
@@ -7784,7 +7769,7 @@ textarea.cf-dash-input {
   gap: var(--cf-space-3);
   padding: var(--cf-space-4) var(--cf-space-5, 18px);
   border: 1px solid var(--cf-border);
-  border-left: 3px solid var(--cf-accent);
+  border-left: 3px solid var(--cf-danger);
   border-radius: 0 var(--cf-radius-md) var(--cf-radius-md) 0;
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
@@ -7831,7 +7816,7 @@ textarea.cf-dash-input {
 
 /* La etiqueta que lo cambia todo: el servicio no llegó a hacerse. */
 .cf-incard__tag--notdone {
-  background-color: var(--cf-accent-dark);
+  background-color: var(--cf-danger-dark);
   color: var(--cf-on-primary);
 }
 
@@ -8184,8 +8169,7 @@ textarea.cf-dash-input {
    La nota que deja el cliente y las dos formas de enseñarla: su bloque
    en el detalle de la reserva y la media del trabajador en su cabecera.
 
-   En terracota y no en dorado: el dorado de las reseñas de internet no
-   está en index.css y desentonaría con el resto del panel.
+   En el amarillo de la marca (--cf-sun), el de las maquetas aprobadas.
 
    cf-review__* no se puede usar: ya es el bloque de "Lo estamos
    revisando" de la sección 9, que es otra cosa. */
@@ -8225,7 +8209,7 @@ textarea.cf-dash-input {
 }
 
 .cf-stars__btn--on {
-  color: var(--cf-accent);
+  color: var(--cf-sun);
 }
 
 /* Solo lectura: más juntas y sin zona de pulsación, que no se toca. */
@@ -8240,7 +8224,7 @@ textarea.cf-dash-input {
 }
 
 .cf-stars__mark--on {
-  color: var(--cf-accent);
+  color: var(--cf-sun);
 }
 
 .cf-stars__count {
@@ -8302,8 +8286,7 @@ textarea.cf-dash-input {
   display: block;
 }
 
-/* ⚠️ El fondo a mano, como en .cf-inc-shot__del: es --cf-text con
-   transparencia, y no hay token para eso. */
+/* El fondo, como en .cf-inc-shot__del: --cf-text con transparencia. */
 .cf-rate__drop {
   position: absolute;
   top: 4px;
@@ -8315,14 +8298,14 @@ textarea.cf-dash-input {
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background-color: rgba(38, 38, 31, 0.7);
+  background-color: rgba(var(--cf-text-rgb), 0.7);
   color: var(--cf-on-primary);
   font-size: 0.625rem;
   cursor: pointer;
 }
 
 .cf-rate__drop:hover {
-  background-color: var(--cf-accent-dark);
+  background-color: var(--cf-danger-dark);
 }
 
 /* Añadir fotos es una franja de lado a lado y no un cuadradito: es
@@ -8385,7 +8368,7 @@ textarea.cf-dash-input {
 }
 
 /* ---------- QUE PUEDE PUBLICARSE ----------
-   En verde suave y no en terracota: es información, no una advertencia.
+   En verde suave y no en ámbar: es información, no una advertencia.
    Va antes del botón porque después ya no sirve de nada. */
 
 .cf-rate__public {
@@ -8440,7 +8423,7 @@ textarea.cf-dash-input {
   font-size: var(--cf-text-sm);
 }
 
-/* Su comentario, entre comillas visuales: la barra terracota lo separa
+/* Su comentario, entre comillas visuales: la barra de acento lo separa
    de lo que dice la aplicación. */
 .cf-rate__mine {
   margin: var(--cf-space-3) 0 0;
@@ -8559,8 +8542,8 @@ textarea.cf-dash-input {
   margin-top: var(--cf-space-6);
   padding: var(--cf-space-4) var(--cf-space-6);
   border-radius: var(--cf-radius-md);
-  /* ⚠️ El tinte a mano: es --cf-text al 3,5 %, y no hay token para eso. */
-  background-color: rgba(38, 38, 31, 0.035);
+  /* El tinte: --cf-text al 3,5 %. */
+  background-color: rgba(var(--cf-text-rgb), 0.035);
 }
 
 .cf-bookend__ask {
@@ -8632,7 +8615,7 @@ textarea.cf-dash-input {
 }
 
 .cf-resched::backdrop {
-  background-color: rgba(38, 38, 31, 0.6);
+  background-color: rgba(var(--cf-text-rgb), 0.6);
 }
 
 /* Cabecera y pie quietos, el centro se desplaza: el calendario más las
@@ -8840,17 +8823,17 @@ textarea.cf-dash-input {
 }
 
 /* Que cambie quien viene no es un error, pero tampoco puede pasar
-   inadvertido: terracota, que es el color de avisar. */
+   inadvertido: en ámbar, que es el color de avisar. */
 .cf-resched__swap {
   display: flex;
   align-items: flex-start;
   gap: var(--cf-space-2);
   margin: var(--cf-space-3) 0 0;
   padding: var(--cf-space-3);
-  border: 1px solid var(--cf-accent);
+  border: 1px solid var(--cf-warning-line);
   border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
   font-size: var(--cf-text-sm);
 }
 
@@ -8881,7 +8864,7 @@ textarea.cf-dash-input {
   overflow: hidden;
   padding: 34px 36px;
   border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-primary);
+  background-color: var(--cf-band);
   color: var(--cf-on-primary);
 }
 
@@ -8902,7 +8885,7 @@ textarea.cf-dash-input {
   right: -90px;
   background: radial-gradient(
     circle,
-    rgba(201, 123, 74, 0.26),
+    rgba(var(--cf-accent-rgb), 0.26),
     transparent 68%
   );
 }
@@ -8914,7 +8897,7 @@ textarea.cf-dash-input {
   left: 18%;
   background: radial-gradient(
     circle,
-    rgba(231, 237, 223, 0.14),
+    rgba(var(--cf-white-rgb), 0.14),
     transparent 70%
   );
 }
@@ -8930,7 +8913,7 @@ textarea.cf-dash-input {
 
 .cf-home__date {
   margin: 0 0 10px;
-  color: rgba(247, 243, 232, 0.62);
+  color: rgba(var(--cf-white-rgb), 0.62);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -8955,7 +8938,7 @@ textarea.cf-dash-input {
 .cf-home__sub {
   margin: 12px 0 0;
   max-width: 40ch;
-  color: rgba(247, 243, 232, 0.74);
+  color: rgba(var(--cf-white-rgb), 0.74);
   font-size: 0.9375rem;
   line-height: 1.55;
 }
@@ -8975,7 +8958,7 @@ textarea.cf-dash-input {
   gap: 7px;
   padding: 7px 13px;
   border-radius: 999px;
-  background-color: rgba(247, 243, 232, 0.12);
+  background-color: rgba(var(--cf-white-rgb), 0.12);
   color: var(--cf-on-primary);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -8983,17 +8966,17 @@ textarea.cf-dash-input {
 }
 
 .cf-home__pill:hover {
-  background-color: rgba(247, 243, 232, 0.2);
+  background-color: rgba(var(--cf-white-rgb), 0.2);
   color: var(--cf-on-primary);
 }
 
-/* Lo que quema, en terracota. Lo que solo espera, no. */
+/* Lo que quema, en ámbar de aviso. Lo que solo espera, no. */
 .cf-home__pill--hot {
-  background-color: var(--cf-accent);
+  background-color: var(--cf-warning);
 }
 
 .cf-home__pill--hot:hover {
-  background-color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-dark);
 }
 
 .cf-home__pill b {
@@ -9010,7 +8993,7 @@ textarea.cf-dash-input {
 .cf-home__money {
   padding: 20px 22px;
   border-radius: var(--cf-radius-md);
-  background-color: rgba(247, 243, 232, 0.1);
+  background-color: rgba(var(--cf-white-rgb), 0.1);
 }
 
 .cf-home__tag {
@@ -9019,7 +9002,7 @@ textarea.cf-dash-input {
   padding: 4px 10px;
   border-radius: 999px;
   background-color: var(--cf-accent);
-  color: var(--cf-on-primary);
+  color: var(--cf-on-accent);
   font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -9043,7 +9026,7 @@ textarea.cf-dash-input {
 
 .cf-home__where {
   margin: 3px 0 0;
-  color: rgba(247, 243, 232, 0.7);
+  color: rgba(var(--cf-white-rgb), 0.7);
   font-size: 0.8125rem;
 }
 
@@ -9136,7 +9119,7 @@ textarea.cf-dash-input {
   height: 100%;
 }
 
-/* En curso en terracota porque está pasando ahora; confirmadas en el
+/* En curso en menta porque está pasando ahora; confirmadas en el
    verde de marca; pendientes en el beige, que es esperar. */
 .cf-home__bar-doing {
   background-color: var(--cf-accent);
@@ -9300,7 +9283,7 @@ textarea.cf-dash-input {
   background-color: var(--cf-primary);
 }
 .cf-home__dot--not_done {
-  background-color: var(--cf-accent-dark);
+  background-color: var(--cf-danger-dark);
 }
 
 .cf-home__hour {
@@ -9335,7 +9318,7 @@ textarea.cf-dash-input {
   align-items: center;
   gap: 5px;
   margin-top: 3px;
-  color: var(--cf-accent-dark);
+  color: var(--cf-warning-dark);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -9406,7 +9389,7 @@ textarea.cf-dash-input {
   max-height: none;
   padding: var(--cf-space-4);
   border: 0;
-  background-color: rgba(38, 38, 31, 0.5);
+  background-color: rgba(var(--cf-text-rgb), 0.5);
 }
 
 .cf-home__sheet-in {
@@ -9511,7 +9494,7 @@ textarea.cf-dash-input {
 .cf-worker-home__hero {
   display: grid;
   gap: var(--cf-space-3);
-  background: var(--cf-primary);
+  background: var(--cf-band);
   color: var(--cf-on-primary);
 }
 
@@ -9581,9 +9564,9 @@ textarea.cf-dash-input {
 .cf-worker-home__card { background: var(--cf-surface); display: grid; align-content: start; gap: var(--cf-space-4); }
 .cf-worker-home__grid,
 .cf-worker-home__aside { display: grid; gap: var(--cf-space-6); min-width: 0; align-content: start; }
-.cf-worker-home__unfinished { background: var(--cf-accent-soft); }
+.cf-worker-home__unfinished { background: var(--cf-warning-soft); }
 .cf-worker-home__unfinished .cf-dash-eyebrow,
-.cf-worker-home__unfinished h2 { color: var(--cf-accent-dark); }
+.cf-worker-home__unfinished h2 { color: var(--cf-warning-dark); }
 .cf-worker-home__list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--cf-space-4); }
 .cf-worker-home__list li { display: grid; gap: var(--cf-space-2); }
 .cf-worker-home__list a { display: grid; gap: var(--cf-space-1); color: var(--cf-text); padding-block: var(--cf-space-2); }
@@ -9758,8 +9741,8 @@ textarea.cf-dash-input {
 }
 
 .cf-client-action--urgent {
-  border-color: var(--cf-accent);
-  background-color: var(--cf-accent-soft);
+  border-color: var(--cf-warning-line);
+  background-color: var(--cf-warning-soft);
 }
 
 .cf-client-action__icon {
@@ -9774,7 +9757,7 @@ textarea.cf-dash-input {
 
 .cf-client-action--urgent .cf-client-action__icon {
   background-color: var(--cf-surface);
-  color: var(--cf-accent-dark);
+  color: var(--cf-warning-dark);
 }
 
 .cf-client-action__content h3 {
@@ -10120,12 +10103,12 @@ textarea.cf-dash-input {
   box-shadow: var(--cf-shadow-sm);
 }
 
-/* De baja: terracota suave y el texto apagado, el mismo criterio que un
+/* De baja: un tono suave y el texto apagado, el mismo criterio que un
    trabajador desactivado. Así las dos pantallas se leen igual. */
 .cf-clients__row--inactive,
 .cf-clients__row--inactive:hover {
   border-color: var(--cf-border);
-  background-color: var(--cf-accent-soft);
+  background-color: var(--cf-brand-50);
   box-shadow: none;
 }
 
@@ -10327,8 +10310,8 @@ textarea.cf-dash-input {
   align-items: flex-start;
   gap: var(--cf-space-3);
   border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
   padding: var(--cf-space-3) var(--cf-space-4);
   font-size: var(--cf-text-sm);
 }
@@ -10528,7 +10511,7 @@ textarea.cf-dash-input {
   border: 1px solid var(--cf-border);
   border-radius: var(--cf-radius-md);
   background-color: var(--cf-surface);
-  box-shadow: 0 10px 30px rgba(38, 38, 31, 0.16);
+  box-shadow: 0 10px 30px rgba(var(--cf-text-rgb), 0.16);
   padding: var(--cf-space-2);
   display: flex;
   flex-direction: column;
@@ -10688,7 +10671,7 @@ textarea.cf-dash-input {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background-color: rgba(46, 59, 38, 0.14);
+  background-color: rgba(var(--cf-primary-rgb), 0.14);
   font-size: 11px;
 }
 
@@ -10747,10 +10730,10 @@ textarea.cf-dash-input {
 /* Lo que tiene algo sin resolver se reconoce sin leer, igual que un
    cliente de baja en su listado. */
 .cf-bookcard--todo {
-  border-left: 3px solid var(--cf-accent);
+  border-left: 3px solid var(--cf-warning);
 }
 
-/* El cliente en verde y el trabajador en terracota (cf-bookcard__worker,
+/* El cliente en el color de marca y el trabajador en menta (cf-bookcard__worker,
    que ya existía): dos personas en la misma línea tienen que
    distinguirse de un vistazo. */
 .cf-bookcard__who--client {
@@ -10824,8 +10807,8 @@ textarea.cf-dash-input {
 /* Rellena: se resuelve aquí mismo. */
 .cf-bookings__mark--affected {
   border: 1px solid transparent;
-  background-color: var(--cf-accent-soft);
-  color: var(--cf-accent-dark);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
 }
 
 .cf-bookings__mark--affected:hover {
@@ -10835,13 +10818,13 @@ textarea.cf-dash-input {
 /* De contorno: lleva a otra pantalla. La forma dice lo que hace, para
    no tener que aprenderse cuál es cuál. */
 .cf-bookings__mark--incident {
-  border: 1px solid var(--cf-accent);
+  border: 1px solid var(--cf-danger-line);
   background-color: var(--cf-surface);
-  color: var(--cf-accent-dark);
+  color: var(--cf-danger-dark);
 }
 
 .cf-bookings__mark--incident:hover {
-  background-color: var(--cf-accent-soft);
+  background-color: var(--cf-danger-soft);
 }
 
 .cf-bookings__mark:focus-visible {

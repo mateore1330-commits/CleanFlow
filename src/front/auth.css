@@ -47,27 +47,20 @@
     color: var(--auth-primary);
 }
 
+/* El logotipo (Wordmark.jsx, estilos en index.css): aquí solo su tamaño. */
 .auth-word {
-    font-family: var(--cf-font-brand);
     font-size: 28px;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
 }
-
-.auth-word b { font-weight: 700; }
-.auth-word span { font-weight: 400; margin-left: 0.22em; }
 
 /* ---- Tarjeta ---- */
 
 .auth-card {
     width: 100%;
     max-width: 400px;
-    background: #fff;
+    background: var(--cf-surface);
     border: 1px solid var(--auth-border);
     border-radius: var(--auth-radius-lg);
-    box-shadow: 0 4px 16px rgba(38, 38, 31, 0.06);
+    box-shadow: 0 4px 16px rgba(var(--cf-text-rgb), 0.06);
     padding: 32px 28px 28px;
 }
 
@@ -88,16 +81,14 @@
     font-size: 13.5px;
 }
 
-/* ⚠️ Los colores de aviso y error están escritos a mano: la paleta no
-   tiene todavía tokens de estado. Cuando se decidan (los necesitarán
-   WEB-09, WEB-11 y el dashboard), sustituir aquí. */
+/* Aviso de error con los tokens de estado (--cf-danger*). */
 .auth-alert {
     margin: 0 0 18px;
     padding: 10px 12px;
     border-radius: var(--auth-radius-sm);
-    background: #fbe9e6;
-    border: 1px solid #efc4bc;
-    color: #7a2e22;
+    background: var(--cf-danger-soft);
+    border: 1px solid var(--cf-danger-line);
+    color: var(--cf-danger);
     font-size: 13px;
 }
 
@@ -107,7 +98,7 @@
     margin: 0 0 18px;
     padding: 10px 12px;
     border-radius: var(--auth-radius-sm);
-    background: #f0ede0;
+    background: var(--cf-brand-50);
     border: 1px solid var(--auth-border);
     color: var(--auth-text);
     font-size: 13px;
@@ -128,7 +119,7 @@
     width: 100%;
     font: 15px/1.4 var(--auth-body);
     color: var(--auth-text);
-    background: #fff;
+    background: var(--cf-surface);
     border: 1px solid var(--auth-border);
     border-radius: var(--auth-radius-sm);
     padding: 10px 12px;
@@ -136,7 +127,7 @@
     transition: border-color .15s, box-shadow .15s;
 }
 
-.auth-input::placeholder { color: #a39f92; }
+.auth-input::placeholder { color: var(--cf-placeholder); }
 
 .auth-input:focus {
     border-color: var(--auth-primary);
@@ -147,7 +138,7 @@
    no en el input, para que el contorno los rodee como una sola pieza. */
 .auth-group {
     display: flex;
-    background: #fff;
+    background: var(--cf-surface);
     border: 1px solid var(--auth-border);
     border-radius: var(--auth-radius-sm);
     transition: border-color .15s, box-shadow .15s;
@@ -261,7 +252,7 @@
     flex: none;
     overflow: hidden;
     border-radius: 50%;
-    background: #fff;
+    background: var(--cf-surface);
     color: var(--auth-muted);
 }
 
@@ -292,7 +283,7 @@
     appearance: none;
     border: 1px solid var(--auth-primary);
     background: var(--auth-primary);
-    color: #fff;
+    color: var(--cf-white);
     font: 600 15px/1 var(--auth-body);
     padding: 13px 16px;
     border-radius: var(--auth-radius-md);

@@ -17,6 +17,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import useGlobalReducer from "../../hooks/useGlobalReducer"
 import { Avatar } from "./Avatar"
 import { Logo } from "../Logo"
+import { Wordmark } from "../Wordmark"
 import { BookingsCount } from "./bookings/BookingsCount"
 // Estilos del menú (cf-side__*).
 import "../../dashboard.css"
@@ -298,10 +299,7 @@ export const Sidebar = () => {
                     <span className="cf-side__logo">
                         <Logo size={28} />
                     </span>
-                    <span className="cf-side__name">
-                        <b>CLEAN</b>
-                        <span>FLOW</span>
-                    </span>
+                    <Wordmark className="cf-side__name" dark />
                 </Link>
 
                 {/* aria-controls dice QUÉ abre y aria-expanded si está abierto. */}
@@ -344,10 +342,7 @@ export const Sidebar = () => {
                     <span className="cf-side__logo">
                         <Logo size={34} />
                     </span>
-                    <span className="cf-side__name">
-                        <b>CLEAN</b>
-                        <span>FLOW</span>
-                    </span>
+                    <Wordmark className="cf-side__name" dark />
                 </Link>
 
                 {/* Solo en móvil: cerrar el panel. */}

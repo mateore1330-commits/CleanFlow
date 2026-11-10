@@ -11,6 +11,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "../Logo";
+import { Wordmark } from "../Wordmark";
 import { ServicesDropdown } from "./ServicesDropdown";
 import { useActiveSection } from "../../hooks/useActiveSection";
 
@@ -145,7 +146,7 @@ export const Navbar = () => {
 
                     <Link to="/" className="cf-brand">
                         <Logo size={36} />
-                        <span className="cf-brand__name"><b>CLEAN</b><span>FLOW</span></span>
+                        <Wordmark className="cf-brand__name" />
                     </Link>
 
                     {/* Botón de menú, solo visible en móvil.
