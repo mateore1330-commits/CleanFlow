@@ -31,6 +31,7 @@
         cf-client-pending__*, cf-client-rebook__*)
     18. Movimiento reducido
     19. Grupos de botones: los de una decisión, iguales
+    20. Listas del encargado: piezas comunes (cf-views, cf-lbar, cf-ldrop)
 
    Prefijo cf-dash- y no cf-: web.css sigue cargado en el dashboard y un
    .cf-btn de aquí pisaría el de la web pública.
@@ -12180,5 +12181,523 @@ textarea.cf-dash-input {
   .cf-worker-form__actions {
     display: grid;
     grid-auto-flow: row;
+  }
+}
+
+/* ======================================================================
+   20. LISTAS DEL ENCARGADO: PIEZAS COMUNES
+       (list/ListViews.jsx y list/ListBar.jsx, maqueta 06, PANEL-04)
+   ======================================================================
+
+   Lo mismo en todas las listas del encargado, para no aprender cada
+   pantalla: arriba las vistas en tarjetas que se pulsan (cf-views) y
+   debajo un solo bloque blanco (cf-lpanel) con la barra (cf-lbar), la
+   cabecera de la tabla, las filas (cf-lrows) y el pie. */
+
+/* ---------- LAS VISTAS ---------- */
+
+.cf-views {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: var(--cf-space-4);
+}
+
+.cf-view {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: var(--cf-space-4) 18px;
+  border: 1.5px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow var(--cf-transition),
+    transform var(--cf-transition);
+}
+
+.cf-view:hover {
+  box-shadow: var(--cf-shadow-md);
+  transform: translateY(-2px);
+}
+
+.cf-view:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
+.cf-view__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 14px;
+  background-color: var(--cf-brand-50);
+  color: var(--cf-brand-600);
+  font-size: 1.0625rem;
+}
+
+.cf-view__text {
+  display: grid;
+  min-width: 0;
+}
+
+.cf-view__text small {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.cf-view__text b {
+  font-family: var(--cf-font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-view__text span {
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+}
+
+.cf-view__go {
+  margin-left: auto;
+  color: #8a999c;
+  font-size: 0.8125rem;
+}
+
+/* Lo que pide algo: en ámbar o en rojo, con su borde. */
+.cf-view--warn {
+  border-color: #f1dcae;
+}
+
+.cf-view--warn .cf-view__icon {
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
+}
+
+.cf-view--warn .cf-view__text b {
+  color: var(--cf-warning-dark);
+}
+
+.cf-view--hot {
+  border-color: #f1c9c9;
+}
+
+.cf-view--hot .cf-view__icon {
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
+}
+
+.cf-view--hot .cf-view__text b {
+  color: var(--cf-danger);
+}
+
+/* La elegida, en oscuro. */
+.cf-view[aria-pressed="true"] {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--cf-brand-900), var(--cf-brand-700) 60%, var(--cf-brand-600));
+  box-shadow: 0 14px 30px -18px rgba(var(--cf-brand-900-rgb), 0.7);
+  color: var(--cf-white);
+}
+
+.cf-view[aria-pressed="true"] .cf-view__text small,
+.cf-view[aria-pressed="true"] .cf-view__text span {
+  color: rgba(var(--cf-white-rgb), 0.8);
+}
+
+.cf-view[aria-pressed="true"] .cf-view__text b {
+  color: var(--cf-white);
+}
+
+.cf-view[aria-pressed="true"] .cf-view__icon {
+  background-color: rgba(var(--cf-white-rgb), 0.14);
+  color: var(--cf-accent);
+}
+
+.cf-view--hot[aria-pressed="true"] .cf-view__icon,
+.cf-view--warn[aria-pressed="true"] .cf-view__icon {
+  color: #ffc9c9;
+}
+
+.cf-view[aria-pressed="true"] .cf-view__go {
+  color: rgba(var(--cf-white-rgb), 0.7);
+}
+
+/* ---------- EL BLOQUE DE LA LISTA ---------- */
+
+.cf-lpanel {
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+}
+
+/* Los extremos redondeados de lo de dentro: el bloque no lleva overflow
+   hidden porque los desplegables de la barra tienen que salirse. */
+.cf-lpanel > :last-child {
+  border-bottom-right-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+
+.cf-lrows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-lpanel .cf-dash-state {
+  margin: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.cf-lpanel__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-3);
+  padding: 12px 20px;
+  border-top: 1px solid var(--cf-border);
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-lpanel__foot p {
+  margin: 0;
+}
+
+/* ---------- LA BARRA ---------- */
+
+.cf-lbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--cf-border);
+}
+
+.cf-lbar__search {
+  position: relative;
+  display: flex;
+  flex: 1 1 280px;
+  align-items: center;
+}
+
+.cf-lbar__search i {
+  position: absolute;
+  left: 14px;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  pointer-events: none;
+}
+
+.cf-lbar__search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 38px;
+  border: 1px solid var(--cf-border);
+  border-radius: 10px;
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-lbar__search input:focus {
+  border-color: var(--cf-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--cf-ring);
+}
+
+.cf-lbar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cf-space-2);
+  margin-left: auto;
+}
+
+/* «Filtrar por», delante de los desplegables cuando no hay buscador. */
+.cf-lbar__label {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-lbar__clear {
+  min-height: 40px;
+  padding: 0 var(--cf-space-2);
+  border: 0;
+  background: none;
+  color: var(--cf-primary);
+  font-family: var(--cf-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cf-lbar__clear:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cf-lbar__clear:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+  border-radius: var(--cf-radius-sm);
+}
+
+/* ---------- LOS DESPLEGABLES ---------- */
+
+.cf-ldrop {
+  position: relative;
+}
+
+.cf-ldrop__set {
+  display: inline-flex;
+}
+
+.cf-ldrop__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--cf-border);
+  border-radius: 10px;
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cf-ldrop__btn:hover {
+  border-color: var(--cf-primary);
+}
+
+.cf-ldrop__btn:focus-visible,
+.cf-ldrop__x:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 2px;
+}
+
+.cf-ldrop__chev {
+  color: var(--cf-muted);
+  font-size: 0.6875rem;
+}
+
+/* Con algo elegido: en color y con su ✕ pegada. */
+.cf-ldrop__btn--set {
+  border-color: transparent;
+  border-radius: 10px 0 0 10px;
+  background: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
+  color: var(--cf-white);
+}
+
+.cf-ldrop__x {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid rgba(var(--cf-white-rgb), 0.25);
+  border-radius: 0 10px 10px 0;
+  background-color: var(--cf-brand-600);
+  color: var(--cf-white);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.cf-ldrop__x:hover {
+  background-color: var(--cf-brand-700);
+}
+
+.cf-ldrop__pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  gap: 2px;
+  width: 260px;
+  padding: var(--cf-space-2);
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-md);
+}
+
+.cf-ldrop__pop[hidden] {
+  display: none;
+}
+
+.cf-ldrop__head {
+  margin: 0;
+  padding: 6px 10px;
+  color: var(--cf-muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cf-ldrop__opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: var(--cf-radius-sm);
+  font-size: var(--cf-text-sm);
+  cursor: pointer;
+}
+
+.cf-ldrop__opt:hover {
+  background-color: var(--cf-bg);
+}
+
+.cf-ldrop__opt input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cf-primary);
+}
+
+.cf-ldrop__n {
+  margin-left: auto;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-ldrop__quick {
+  display: grid;
+  gap: 2px;
+}
+
+.cf-ldrop__quick button {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--cf-radius-sm);
+  background: none;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-ldrop__quick button:hover {
+  background-color: var(--cf-bg);
+}
+
+.cf-ldrop__quick button[aria-pressed="true"] {
+  background-color: var(--cf-primary-soft);
+  color: var(--cf-primary);
+  font-weight: 600;
+}
+
+.cf-ldrop__range {
+  display: grid;
+  gap: var(--cf-space-2);
+  margin-top: var(--cf-space-1);
+  padding: var(--cf-space-3) 10px var(--cf-space-1);
+  border-top: 1px solid var(--cf-border);
+}
+
+.cf-ldrop__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cf-ldrop__field span {
+  width: 44px;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-ldrop__field .cf-dash-input {
+  height: 36px;
+  padding: 0 10px;
+  font-size: 0.8125rem;
+}
+
+/* Elegir una sola: un botón por opción, la elegida marcada. */
+.cf-ldrop__choice {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--cf-radius-sm);
+  background: none;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cf-ldrop__choice:hover {
+  background-color: var(--cf-bg);
+}
+
+.cf-ldrop__choice:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: -2px;
+}
+
+.cf-ldrop__choice[aria-pressed="true"] {
+  background-color: var(--cf-primary-soft);
+  color: var(--cf-primary);
+  font-weight: 600;
+}
+
+/* ---------- ESTRECHO ---------- */
+
+@media (max-width: 860px) {
+  .cf-views {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .cf-view {
+    padding: 12px var(--cf-space-4);
+  }
+
+  .cf-view__text b {
+    font-size: 1.375rem;
+  }
+
+  .cf-lbar {
+    padding: 12px var(--cf-space-4);
+  }
+
+  .cf-lbar__search {
+    flex-basis: 100%;
+  }
+
+  .cf-lbar__filters {
+    margin-left: 0;
+  }
+
+  /* El panel abierto, pegado a la izquierda de su botón: a la derecha se
+     saldría de la pantalla. */
+  .cf-ldrop__pop {
+    right: auto;
+    left: 0;
   }
 }
