@@ -264,6 +264,9 @@ export const ManagerHome = () => {
      * estén. Desde aquí se cancela cualquiera.
      */
     const confirmDrop = async () => {
+        // El servidor exige el motivo al encargado: sin él ni se intenta.
+        if (!reason.trim()) return;
+
         setBusy(true);
 
         const result = await cancelBooking(dropping.booking_id, store.token, reason.trim());
@@ -633,8 +636,18 @@ export const ManagerHome = () => {
                                 value={reason}
                                 onChange={(event) => setReason(event.target.value)}
                                 disabled={busy}
+                                aria-describedby={reason.trim() ? undefined : "drop-reason-why"}
                             ></textarea>
                         </div>
+
+                        {/* El motivo es obligatorio, como en Reservas (FIX-02):
+                            se dice antes de pulsar, no con un error después. */}
+                        {!reason.trim() && (
+                            <p className="cf-inc-hint" id="drop-reason-why">
+                                <i className="fa-solid fa-circle-exclamation" aria-hidden="true" />
+                                Escribe el motivo para poder cancelar
+                            </p>
+                        )}
 
                         <div className="cf-dash-modal__actions">
                             <button
@@ -651,7 +664,7 @@ export const ManagerHome = () => {
                                 type="button"
                                 className="cf-dash-btn cf-dash-btn--danger"
                                 onClick={confirmDrop}
-                                disabled={busy}
+                                disabled={busy || !reason.trim()}
                             >
                                 {busy ? "Cancelando…" : "Confirmar cancelación"}
                             </button>
