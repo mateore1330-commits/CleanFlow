@@ -17,7 +17,8 @@
         cf-worker-form__*, cf-absences__*, cf-affected__*)
      9. Mis servicios del cliente y el detalle de una reserva
         (cf-myservices__*, cf-bookcard__*, cf-bookdetail__*)
-    10. Mis tareas del trabajador (cf-mytasks__*, cf-wcard__*)
+    10. Mis servicios del trabajador y su detalle (cf-mytasks__*,
+        cf-wcard__*, cf-wdetail__*, cf-wtask__*, cf-wact__*)
     11. Incidencias: formulario y pantalla del encargado
         (cf-inc-sheet__*, cf-incidents__*, cf-incard__*)
     12. Bandejas: candidaturas y mensajes (Inbox.jsx)
@@ -5314,10 +5315,11 @@ textarea.cf-dash-input {
   margin-bottom: var(--cf-space-4);
 }
 
-/* Las pestañas de siempre, aquí en una píldora: la elegida, con el
-   degradado de la marca. Solo en esta página; el resto del panel sigue
-   con las de la línea debajo. */
-.cf-myservices__toolbar .cf-services__tabs {
+/* Las pestañas de siempre, en una píldora (cf-services__tabs--pill): la
+   elegida, con el degradado de la marca. Las usan Servicios contratados
+   y Mis servicios del trabajador; el resto del panel sigue con las de la
+   línea debajo. */
+.cf-services__tabs--pill {
   display: inline-flex;
   gap: 2px;
   margin-bottom: 0;
@@ -5327,7 +5329,7 @@ textarea.cf-dash-input {
   background-color: var(--cf-surface);
 }
 
-.cf-myservices__toolbar .cf-services__tab {
+.cf-services__tabs--pill .cf-services__tab {
   height: 36px;
   margin-bottom: 0;
   padding: 0 14px;
@@ -5341,28 +5343,28 @@ textarea.cf-dash-input {
     color var(--cf-transition);
 }
 
-.cf-myservices__toolbar .cf-services__tab::after {
+.cf-services__tabs--pill .cf-services__tab::after {
   display: none;
 }
 
-.cf-myservices__toolbar .cf-services__tab:hover {
+.cf-services__tabs--pill .cf-services__tab:hover {
   background-color: var(--cf-bg);
   color: var(--cf-text);
 }
 
-.cf-myservices__toolbar .cf-services__tab:focus-visible {
+.cf-services__tabs--pill .cf-services__tab:focus-visible {
   outline: 2px solid var(--cf-primary);
   outline-offset: 1px;
 }
 
 /* Un tono más oscuro que --cf-grad-brand: con texto blanco de 13 px,
    el extremo claro de aquel se queda por debajo de 4,5:1. */
-.cf-myservices__toolbar .cf-services__tab[aria-pressed="true"] {
+.cf-services__tabs--pill .cf-services__tab[aria-pressed="true"] {
   background: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
   color: var(--cf-on-primary);
 }
 
-.cf-myservices__toolbar .cf-services__count {
+.cf-services__tabs--pill .cf-services__count {
   border: 0;
   background-color: var(--cf-bg);
   color: inherit;
@@ -5370,7 +5372,7 @@ textarea.cf-dash-input {
 
 /* Más oscuro que la pestaña, no más claro: el número blanco gana
    contraste en vez de perderlo. */
-.cf-myservices__toolbar .cf-services__tab[aria-pressed="true"] .cf-services__count {
+.cf-services__tabs--pill .cf-services__tab[aria-pressed="true"] .cf-services__count {
   background-color: rgba(var(--cf-brand-900-rgb), 0.28);
 }
 
@@ -6845,7 +6847,7 @@ textarea.cf-dash-input {
     grid-template-columns: 54px minmax(0, 1fr) auto;
   }
 
-  .cf-myservices__toolbar .cf-services__tabs {
+  .cf-services__tabs--pill {
     max-width: 100%;
     overflow-x: auto;
   }
@@ -6869,48 +6871,28 @@ textarea.cf-dash-input {
 }
 
 /* ======================================================================
-   10. PÁGINA: MIS TAREAS DEL TRABAJADOR
-       (MisReservasTrabajador.jsx y los componentes de
-        components/dashboard/worker)
+   10. PÁGINAS: MIS SERVICIOS DEL TRABAJADOR Y SU DETALLE
+       (MisReservasTrabajador.jsx, WorkerBookingDetail.jsx y los
+        componentes de components/dashboard/worker, maqueta 05, PANEL-03)
    ======================================================================
 
-   Lo que el trabajador tiene asignado. Es la única pantalla del panel
-   que se usa sobre todo desde el móvil, de pie y en casa del cliente:
-   se diseña a 360px y lo demás viene después.
+   Lo que el trabajador tiene asignado y la pantalla donde trabaja. Es lo
+   que más se usa desde el móvil, de pie y en casa del cliente: tarjetas
+   grandes para el pulgar y el botón del momento siempre a mano.
 
    container-type: el diseño estrecho lo decide el hueco que deja el
    sidebar, no el ancho de la ventana (ver @container al final). */
 
 .cf-mytasks {
   container-type: inline-size;
-  max-width: 1180px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
 
-/* ---------- CABECERA ---------- */
-
-.cf-mytasks__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-mytasks__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-}
-
-.cf-mytasks__lede {
-  margin: var(--cf-space-2) 0 0;
-  max-width: 62ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+/* Las pestañas en píldora son las de Servicios contratados
+   (cf-services__tabs--pill, sección 9). */
+.cf-mytasks__tabs {
+  margin-bottom: var(--cf-space-4);
 }
 
 .cf-mytasks__list {
@@ -6922,31 +6904,30 @@ textarea.cf-dash-input {
 }
 
 /* ---------- TARJETA ----------
-   Fecha a la izquierda y, debajo de todo, el estado con el progreso. */
+   Fecha, servicio con la hora y la calle, la barra de tareas si hoy toca
+   y el estado a la derecha. Toda la tarjeta es el enlace al detalle. */
 
 .cf-wcard {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--cf-space-3);
-  width: 100%;
-  padding: var(--cf-space-3);
+  gap: var(--cf-space-4);
+  padding: var(--cf-space-4) 18px;
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
+  border-radius: var(--cf-radius-lg);
   background-color: var(--cf-surface);
   box-shadow: var(--cf-shadow-sm);
   color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
+  text-decoration: none;
   transition:
-    border-color var(--cf-transition),
-    box-shadow var(--cf-transition);
+    box-shadow var(--cf-transition),
+    transform var(--cf-transition);
 }
 
 .cf-wcard:hover {
-  border-color: var(--cf-primary);
   box-shadow: var(--cf-shadow-md);
+  color: inherit;
+  transform: translateY(-1px);
 }
 
 .cf-wcard:focus-visible {
@@ -6954,100 +6935,126 @@ textarea.cf-dash-input {
   outline-offset: 2px;
 }
 
-/* El de hoy manda: va el primero y se distingue sin leer nada. */
+/* La de hoy manda: va la primera y se distingue sin leer nada. */
 .cf-wcard--today {
-  border-color: var(--cf-primary);
+  border-color: var(--cf-brand-500);
+  box-shadow: 0 0 0 3px rgba(var(--cf-primary-rgb), 0.12);
 }
 
 .cf-wcard__date {
   display: grid;
   justify-items: center;
-  gap: 1px;
   padding: var(--cf-space-2) 0;
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--cf-brand-50), var(--cf-accent-soft));
 }
 
-.cf-wcard__day {
+.cf-wcard__date b {
+  color: var(--cf-brand-700);
   font-family: var(--cf-font-heading);
-  font-size: 1.375rem;
-  font-weight: 600;
-  line-height: 1;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-.cf-wcard__month {
-  font-family: var(--cf-font-brand);
-  font-size: 0.625rem;
+.cf-wcard__date small {
+  color: var(--cf-brand-600);
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.cf-wcard__service {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: 1.0625rem;
-  font-weight: 600;
-  line-height: 1.2;
+.cf-wcard--today .cf-wcard__date {
+  background: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
 }
 
-.cf-wcard__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 3px var(--cf-space-3);
-  margin: var(--cf-space-1) 0 0;
-  color: var(--cf-muted);
+.cf-wcard--today .cf-wcard__date b,
+.cf-wcard--today .cf-wcard__date small {
+  color: var(--cf-white);
+}
+
+.cf-wcard__main {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cf-wcard__service {
+  font-family: var(--cf-font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.cf-wcard__more {
+  margin-left: var(--cf-space-2);
+  color: var(--cf-brand-600);
   font-size: 0.8125rem;
 }
 
-.cf-wcard__meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* El pie ocupa las dos columnas: estado a un lado, progreso al otro. */
-.cf-wcard__foot {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-2);
-  margin-top: var(--cf-space-1);
-  padding-top: var(--cf-space-2);
-  border-top: 1px solid var(--cf-border);
-}
-
-/* ---------- PROGRESO DE TAREAS ----------
-   Una barra fina y "3 de 5". Nada de porcentajes: lo que importa es
-   cuántas quedan, no el número redondo. */
-
-.cf-progress {
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-2);
+.cf-wcard__meta {
   color: var(--cf-muted);
-  font-size: 0.7813rem;
+  font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
 }
 
-.cf-progress__track {
-  width: 84px;
-  height: 5px;
+.cf-wcard__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-wcard__track {
+  flex: 1;
+  max-width: 220px;
+  height: 6px;
   border-radius: 999px;
   background-color: var(--cf-border);
   overflow: hidden;
 }
 
-.cf-progress__fill {
+.cf-wcard__fill {
+  display: block;
   height: 100%;
   border-radius: 999px;
-  background-color: var(--cf-primary);
-  transition: width var(--cf-transition);
+  background: linear-gradient(90deg, var(--cf-brand-600), var(--cf-brand-500));
+}
+
+.cf-wcard__state {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Cargando: la misma forma, en gris. */
+.cf-wcard--skel:hover {
+  box-shadow: var(--cf-shadow-sm);
+  transform: none;
+}
+
+.cf-wcard__skel-date {
+  height: 54px;
+  border-radius: 12px;
+}
+
+.cf-wcard__skel-title {
+  width: 46%;
+  height: 16px;
+}
+
+.cf-wcard__skel-meta {
+  width: 68%;
+  height: 12px;
+  margin-top: var(--cf-space-2);
+}
+
+.cf-wcard__skel-state {
+  width: 96px;
+  height: 22px;
+  border-radius: 999px;
 }
 
 /* ---------- DETALLE DE UN SERVICIO ----------
@@ -7661,44 +7668,25 @@ textarea.cf-dash-input {
   margin-top: var(--cf-space-3);
 }
 
-/* ---------- CARGANDO ---------- */
-
-.cf-wcard--skel {
-  cursor: default;
-}
-
-.cf-wcard--skel:hover {
-  border-color: var(--cf-border);
-  box-shadow: var(--cf-shadow-sm);
-}
-
-.cf-wcard__skel-date {
-  height: 48px;
-}
-
-.cf-wcard__skel-title {
-  width: 46%;
-  height: 16px;
-}
-
-.cf-wcard__skel-meta {
-  width: 68%;
-  height: 12px;
-  margin-top: var(--cf-space-2);
-}
-
-.cf-wcard__skel-foot {
-  grid-column: 1 / -1;
-  height: 14px;
-  margin-top: var(--cf-space-2);
-}
-
 /* ---------- ESTRECHO ----------
    Es el ancho normal de esta pantalla, no la excepción. */
 
 @container (max-width: 720px) {
   .cf-wdetail__grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 640px) {
+  .cf-wcard {
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: var(--cf-space-3);
+    padding: 14px var(--cf-space-4);
+  }
+
+  .cf-wcard__state {
+    grid-column: 2;
+    justify-content: flex-start;
   }
 }
 
