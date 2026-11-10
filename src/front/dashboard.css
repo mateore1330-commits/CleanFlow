@@ -16,7 +16,7 @@
      8. Trabajadores, ausencias y reservas afectadas (cf-workers__*,
         cf-worker-form__*, cf-absences__*, cf-affected__*)
      9. Mis servicios del cliente y el detalle de una reserva
-        (cf-myservices__*, cf-bookcard__*, cf-bookdetail__*)
+        (cf-myservices__*, cf-mybooking__*, cf-bookdetail__*)
     10. Mis servicios del trabajador y su detalle (cf-mytasks__*,
         cf-wcard__*, cf-wdetail__*, cf-wtask__*, cf-wact__*)
     11. Incidencias: formulario y pantalla del encargado
@@ -4278,9 +4278,7 @@ textarea.cf-dash-input {
 .cf-workers,
 .cf-worker-form,
 .cf-absences,
-.cf-affected,
-.cf-clients,
-.cf-bookings {
+.cf-clients {
   container-type: inline-size;
   max-width: 1180px;
   color: var(--cf-text);
@@ -4289,9 +4287,7 @@ textarea.cf-dash-input {
 
 .cf-workers__header,
 .cf-absences__header,
-.cf-affected__header,
-.cf-clients__header,
-.cf-bookings__header {
+.cf-clients__header {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -4303,9 +4299,7 @@ textarea.cf-dash-input {
 .cf-workers__title,
 .cf-worker-form__title,
 .cf-absences__title,
-.cf-affected__title,
-.cf-clients__title,
-.cf-bookings__title {
+.cf-clients__title {
   margin: 0;
   font-family: var(--cf-font-heading);
   font-size: var(--cf-text-2xl);
@@ -4315,9 +4309,7 @@ textarea.cf-dash-input {
 .cf-workers__lede,
 .cf-worker-form__lede,
 .cf-absences__lede,
-.cf-affected__lede,
-.cf-clients__lede,
-.cf-bookings__lede {
+.cf-clients__lede {
   margin: var(--cf-space-2) 0 0;
   max-width: 62ch;
   color: var(--cf-muted);
@@ -4703,102 +4695,9 @@ textarea.cf-dash-input {
   gap: var(--cf-space-2);
 }
 
-/* ---------- RESERVAS AFECTADAS ---------- */
-
-.cf-affected__count {
-  margin: 0 0 var(--cf-space-4);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-affected__list {
-  display: grid;
-  gap: var(--cf-space-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Borde ámbar a la izquierda: todas piden atención. */
-.cf-affected__card {
-  padding: var(--cf-space-6);
-  border: 1px solid var(--cf-border);
-  border-left: 4px solid var(--cf-warning);
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
-}
-
-.cf-affected__top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--cf-space-3);
-}
-
-.cf-affected__id {
-  margin: 0;
-  font-size: var(--cf-text-lg);
-  font-weight: 600;
-}
-
-.cf-affected__client {
-  display: block;
-  margin-top: 2px;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-  font-weight: 400;
-}
-
-.cf-affected__reasons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.cf-affected__reason {
-  padding: 4px 10px;
-  border-radius: 999px;
-  background-color: var(--cf-warning-soft);
-  color: var(--cf-warning-dark);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.cf-affected__worker {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-3);
-  margin: var(--cf-space-4) 0 var(--cf-space-3);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-affected__link {
-  color: var(--cf-primary);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.cf-affected__days {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--cf-space-2);
-  margin: 0 0 var(--cf-space-4);
-  padding: 0;
-  list-style: none;
-}
-
-.cf-affected__day {
-  padding: 6px 12px;
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-bg);
-  font-size: var(--cf-text-sm);
-  font-variant-numeric: tabular-nums;
-}
+/* ---------- RESOLVER UNA AFECTADA (ResolveAffected.jsx) ----------
+   Dentro del diálogo de Reservas. La página suelta de reservas afectadas
+   se quitó en PANEL-04: su dirección lleva a Reservas › Afectadas. */
 
 /* Lo que se puede hacer con la reserva, separado por una línea. */
 .cf-affected__resolve {
@@ -5071,7 +4970,6 @@ textarea.cf-dash-input {
 
 /* Los bloques de texto gris ocupan el hueco que dejan pastilla y botón. */
 .cf-absences__skel-head,
-.cf-affected__skel-head,
 .cf-worker-form__skel-head {
   flex: 1;
 }
@@ -5176,45 +5074,6 @@ textarea.cf-dash-input {
   border-radius: 999px;
 }
 
-/* Reservas afectadas */
-.cf-affected__skel-count {
-  width: 220px;
-  margin-bottom: var(--cf-space-4);
-}
-
-.cf-affected__skel-id {
-  width: 30%;
-  height: 18px;
-}
-
-.cf-affected__skel-client {
-  width: 20%;
-  height: 10px;
-  margin-top: 8px;
-}
-
-.cf-affected__skel-pill {
-  width: 90px;
-  height: 24px;
-  border-radius: 999px;
-}
-
-.cf-affected__skel-line {
-  width: 160px;
-}
-
-.cf-affected__skel-day {
-  width: 150px;
-  height: 30px;
-  border-radius: 999px;
-}
-
-.cf-affected__skel-btn {
-  width: 170px;
-  height: 40px;
-  border-radius: 999px;
-}
-
 /* ---------- PANTALLAS ESTRECHAS ----------
    860px: cada trabajador pasa a tarjeta (nombre arriba, datos en medio y
    acciones abajo), sin cabecera de columnas. 640px: formularios a una
@@ -5275,7 +5134,6 @@ textarea.cf-dash-input {
   }
 
   .cf-absences__form,
-  .cf-affected__card,
   .cf-worker-form__form,
   .cf-worker-form__aside {
     padding: var(--cf-space-4);
@@ -5723,133 +5581,6 @@ textarea.cf-dash-input {
   transform: translateX(2px);
 }
 
-/* ---------- TARJETA ----------
-   Tres columnas: fecha, servicio y, a la derecha, estado y precio. El
-   aviso de confirmación pendiente ocupa una fila entera debajo. */
-
-.cf-bookcard {
-  display: grid;
-  grid-template-columns: 74px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--cf-space-5, 20px);
-  width: 100%;
-  padding: var(--cf-space-4) var(--cf-space-5, 20px);
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color var(--cf-transition),
-    box-shadow var(--cf-transition),
-    transform var(--cf-transition);
-}
-
-.cf-bookcard:hover {
-  border-color: var(--cf-primary);
-  box-shadow: var(--cf-shadow-md);
-  transform: translateY(-1px);
-}
-
-.cf-bookcard:focus-visible {
-  outline: 2px solid var(--cf-primary);
-  outline-offset: 2px;
-}
-
-/* El bloque de fecha ancla la tarjeta: es lo primero que se busca. */
-.cf-bookcard__date {
-  display: grid;
-  justify-items: center;
-  gap: 1px;
-  padding: var(--cf-space-2) 0;
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-}
-
-.cf-bookcard__day {
-  font-family: var(--cf-font-heading);
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.cf-bookcard__month {
-  font-family: var(--cf-font-brand);
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.cf-bookcard__main {
-  min-width: 0;
-}
-
-.cf-bookcard__service {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-lg);
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.cf-bookcard__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-1) var(--cf-space-4);
-  margin-top: 5px;
-  color: var(--cf-muted);
-  font-size: 0.8438rem;
-}
-
-.cf-bookcard__meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--cf-space-1);
-}
-
-.cf-bookcard__meta i,
-.cf-bookcard__meta svg {
-  font-size: 0.8125rem;
-}
-
-/* Iniciales del trabajador: el mismo círculo de acento del avatar. */
-
-.cf-bookcard__side {
-  display: grid;
-  justify-items: end;
-  gap: var(--cf-space-1);
-}
-
-.cf-bookcard__price {
-  font-family: var(--cf-font-heading);
-  font-size: 1.1875rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Aviso de que la pelota está en el tejado del cliente. Va en su propia
-   fila para no competir con el estado, que está justo encima. */
-.cf-bookcard__notice {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  margin: 0;
-  padding: var(--cf-space-2) var(--cf-space-3);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-warning-soft);
-  color: var(--cf-warning-dark);
-  font-size: 0.8438rem;
-  font-weight: 500;
-}
-
 /* ---------- ESTADO ----------
    Píldora con fondo suave y un punto o un icono, como en las maquetas: el
    color solo no basta, porque no todo el mundo lo ve igual. Los tonos los
@@ -5929,45 +5660,6 @@ textarea.cf-dash-input {
     opacity: 0.45;
     transform: scale(0.82);
   }
-}
-
-/* ---------- CARGANDO ----------
-   Barras grises con la forma de la tarjeta, como en el resto del panel. */
-
-.cf-bookcard--skel {
-  cursor: default;
-}
-
-.cf-bookcard--skel:hover {
-  transform: none;
-  border-color: var(--cf-border);
-  box-shadow: var(--cf-shadow-sm);
-}
-
-.cf-bookcard__skel-date {
-  height: 52px;
-}
-
-.cf-bookcard__skel-title {
-  width: 42%;
-  height: 17px;
-}
-
-.cf-bookcard__skel-meta {
-  width: 64%;
-  height: 13px;
-  margin-top: var(--cf-space-2);
-}
-
-.cf-bookcard__skel-state {
-  width: 88px;
-  height: 17px;
-}
-
-.cf-bookcard__skel-price {
-  width: 66px;
-  height: 17px;
-  margin-top: var(--cf-space-2);
 }
 
 /* La fila del cliente mientras carga. */
@@ -6802,22 +6494,9 @@ textarea.cf-dash-input {
 }
 
 /* ---------- ESTRECHO ----------
-   Sin sitio para tres columnas: el estado y el precio bajan a su fila. */
+   Sin sitio para seis columnas: la fila se compacta. */
 
 @container (max-width: 640px) {
-  .cf-bookcard {
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: var(--cf-space-3);
-    padding: var(--cf-space-3);
-  }
-
-  .cf-bookcard__side {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    gap: var(--cf-space-3);
-  }
-
   .cf-mybooking {
     grid-template-columns: 54px minmax(0, 1fr) auto;
     gap: 4px var(--cf-space-3);
@@ -11172,9 +10851,7 @@ textarea.cf-dash-input {
   .cf-side__link i,
   .cf-side__link svg,
   .cf-side__collapse i,
-  .cf-side__collapse svg,
-  .cf-bookcard,
-  .cf-progress__fill {
+  .cf-side__collapse svg {
     transition: none;
   }
 }
@@ -11554,416 +11231,194 @@ textarea.cf-dash-input {
 }
 
 /* ======================================================================
-   RESERVAS (ENCARGADO)
+   RESERVAS (ENCARGADO, ListadoReservas.jsx y ManagedBooking*, maqueta 06,
+   PANEL-04)
    ======================================================================
-   La tarjeta es la del cliente (cf-bookcard) con dos añadidos: de quién
-   es la reserva y qué le pasa. Aquí solo va lo propio de esta pantalla:
-   la barra con sus desplegables múltiples, las dos marcas y el ajuste
-   de la tarjeta, que aquí no se pulsa entera.
+   Las vistas, la barra y el bloque de la lista son las piezas comunes
+   (sección 20). Aquí va lo propio: la fila con Cliente y Trabajador en
+   columnas, las dos marcas y lo que se resuelve dentro del diálogo.
    ====================================================================== */
 
-/* ---------- LA BARRA ---------- */
-
-.cf-bookings__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  border-bottom: 1px solid var(--cf-border);
-  padding-bottom: var(--cf-space-3);
-}
-
-.cf-bookings__controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-2);
-}
-
-.cf-bookings__search {
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  flex: 1 1 220px;
-  min-width: 180px;
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
-  padding: var(--cf-space-2) var(--cf-space-4);
-}
-
-.cf-bookings__search i {
-  color: var(--cf-muted);
-}
-
-.cf-bookings__search input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  outline: none;
-}
-
-.cf-bookings__search:focus-within {
-  box-shadow: 0 0 0 3px var(--cf-ring);
-}
-
-/* ---------- LOS DESPLEGABLES ---------- */
-
-.cf-bookings__drop {
-  position: relative;
-}
-
-.cf-bookings__drop-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--cf-space-2);
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
+.cf-bookings {
+  container-type: inline-size;
   color: var(--cf-text);
-  padding: var(--cf-space-2) var(--cf-space-4);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    border-color var(--cf-transition),
-    background-color var(--cf-transition);
+  font-family: var(--cf-font-body);
 }
 
-.cf-bookings__drop-btn:hover,
-.cf-bookings__drop-btn[aria-expanded="true"] {
-  border-color: var(--cf-primary);
-}
+/* ---------- LA FILA ----------
+   Fecha, servicio, cliente, trabajador, estado y precio. La cabecera de
+   la tabla (cf-mrow--head) usa la misma rejilla. */
 
-/* Con algo elegido se nota sin abrirlo. */
-.cf-bookings__drop-btn[data-on="true"] {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  font-weight: 600;
-}
-
-.cf-bookings__pop {
-  position: absolute;
-  top: calc(100% + var(--cf-space-2));
-  right: 0;
-  z-index: 20;
-  min-width: 236px;
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-md);
-  background-color: var(--cf-surface);
-  box-shadow: 0 10px 30px rgba(var(--cf-text-rgb), 0.16);
-  padding: var(--cf-space-2);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Hace falta decirlo: `display: flex` de arriba pesa lo mismo que el
-   [hidden] del navegador y, al ir antes, perdería. Con el atributo en el
-   selector esta regla manda y el panel nace cerrado. */
-.cf-bookings__pop[hidden] {
-  display: none;
-}
-
-.cf-bookings__pop-head {
-  display: flex;
+.cf-mrow {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) 150px 80px;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--cf-space-3);
-  padding: var(--cf-space-1) var(--cf-space-3) var(--cf-space-2);
+  gap: 18px;
+  padding: var(--cf-space-4) 20px;
+}
+
+.cf-lrows > .cf-mrow + .cf-mrow {
+  border-top: 1px solid var(--cf-border);
+}
+
+.cf-mrow:hover:not(.cf-mrow--head) {
+  background-color: #fafcfc;
+}
+
+.cf-mrow p {
+  margin: 0;
+}
+
+.cf-mrow--head {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--cf-border);
+  background: linear-gradient(90deg, var(--cf-brand-50), #f3faf8);
   color: var(--cf-muted);
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.cf-bookings__pop-head button {
-  border: 0;
-  background: none;
-  padding: 0;
-  color: var(--cf-accent-dark);
-  font: inherit;
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  text-decoration: underline;
-  cursor: pointer;
+.cf-mrow--head > :last-child {
+  text-align: right;
 }
 
-/* Cada opción es una casilla de verdad. Se marcan varias y el panel NO
-   se cierra al marcar: casi nunca se elige una sola. */
-.cf-bookings__opt {
-  display: flex;
-  align-items: center;
-  gap: var(--cf-space-3);
-  border-radius: var(--cf-radius-sm);
-  padding: var(--cf-space-2) var(--cf-space-3);
-  font-size: var(--cf-text-sm);
-  cursor: pointer;
+.cf-mrow__date {
+  display: grid;
+  justify-items: center;
+  padding: 6px 0;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--cf-brand-50), var(--cf-accent-soft));
 }
 
-.cf-bookings__opt:hover {
-  background-color: var(--cf-primary-soft);
-}
-
-.cf-bookings__opt input {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  accent-color: var(--cf-primary);
-  cursor: pointer;
-}
-
-/* Cuántas hay de cada opción. Se cuentan sin su propio filtro: si
-   contaran lo ya filtrado, al marcar una el resto se iría a cero. */
-.cf-bookings__opt-n {
-  margin-left: auto;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+.cf-mrow__date b {
+  color: var(--cf-brand-700);
+  font-family: var(--cf-font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-/* Los atajos de fechas, los mismos que ya tiene la pantalla del cliente. */
-.cf-bookings__quick {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--cf-space-2);
-  padding: var(--cf-space-1) var(--cf-space-2) var(--cf-space-2);
+.cf-mrow__date small {
+  color: var(--cf-brand-600);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-.cf-bookings__quick button {
-  border: 1px solid var(--cf-border);
-  border-radius: 999px;
-  background-color: var(--cf-surface);
-  color: var(--cf-text);
-  padding: 5px var(--cf-space-3);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  cursor: pointer;
-}
-
-.cf-bookings__quick button:hover {
-  border-color: var(--cf-primary);
-}
-
-.cf-bookings__quick button[aria-pressed="true"] {
-  border-color: var(--cf-primary);
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
-  font-weight: 600;
-}
-
-.cf-bookings__range {
+.cf-mrow__main {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--cf-space-2);
-  border-top: 1px solid var(--cf-border);
-  padding: var(--cf-space-2) var(--cf-space-2) var(--cf-space-1);
-}
-
-.cf-bookings__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--cf-space-1);
-  color: var(--cf-muted);
-  font-size: 0.75rem;
-}
-
-/* ---------- LO QUE SE ESTÁ FILTRANDO ---------- */
-
-.cf-bookings__chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--cf-space-2);
-  margin-top: var(--cf-space-3);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-bookings__chips-label {
-  color: var(--cf-muted);
-}
-
-/* Una pastilla por valor elegido, no una por filtro: así se quita
-   "Pendientes" sin perder "Canceladas". */
-.cf-bookings__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border: 0;
-  border-radius: 999px;
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-  padding: 4px 6px 4px var(--cf-space-3);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.cf-bookings__chip:hover {
-  filter: brightness(0.96);
-}
-
-.cf-bookings__chip > span[aria-hidden] {
-  display: grid;
-  place-items: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: rgba(var(--cf-primary-rgb), 0.14);
-  font-size: 11px;
-}
-
-.cf-bookings__chips-clear {
-  border: 0;
-  background: none;
-  padding: 4px 6px;
-  color: var(--cf-accent-dark);
-  font: inherit;
-  font-size: var(--cf-text-sm);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* ---------- LA LISTA ---------- */
-
-.cf-bookings__count {
-  margin: var(--cf-space-4) 0 var(--cf-space-3);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
-.cf-bookings__list {
-  display: grid;
-  gap: var(--cf-space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.cf-bookings__foot {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--cf-space-6);
-}
-
-/* ---------- LA TARJETA, AJUSTADA ---------- */
-
-/* En el listado del cliente la tarjeta entera es un botón que abre el
-   detalle. Aquí no se abre nada, así que no debe parecer pulsable: lo
-   que se pulsa son los dos sellos.
-
-   El align-items: center de la tarjeta se deja como está: con los sellos
-   en la línea del título, las dos columnas miden lo mismo y centrarlas
-   es lo correcto. */
-.cf-bookings__list .cf-bookcard {
-  cursor: default;
-}
-
-.cf-bookings__list .cf-bookcard:hover {
-  transform: none;
-  border-color: var(--cf-border);
-  box-shadow: var(--cf-shadow-sm);
-}
-
-/* Lo que tiene algo sin resolver se reconoce sin leer, igual que un
-   cliente de baja en su listado. */
-.cf-bookcard--todo {
-  border-left: 3px solid var(--cf-warning);
-}
-
-/* El cliente con el avatar de marca y el trabajador con el menta (Avatar
-   tone="accent"): dos personas en la misma línea tienen que distinguirse
-   de un vistazo. Aquí, el avatar del cliente algo separado de su nombre. */
-.cf-bookcard__who--client {
-  margin-right: var(--cf-space-1);
-}
-
-/* ---------- LAS DOS MARCAS ---------- */
-
-/* El título y sus marcas, en una sola línea.
-   nowrap y no wrap: si envolviera, la tarjeta volvería a crecer y
-   estaríamos donde estábamos. Si no cabe, lo que cede es el nombre del
-   servicio, que se corta con puntos suspensivos; las marcas no, que son
-   lo que hay que ver. */
-.cf-bookings__head {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: var(--cf-space-3);
+  gap: 3px;
   min-width: 0;
 }
 
-.cf-bookings__head .cf-bookcard__service {
+.cf-mrow__service {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--cf-space-2);
+  font-family: var(--cf-font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.cf-mrow__sub {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-mrow__more {
+  margin-left: var(--cf-space-2);
+  color: var(--cf-brand-600);
+}
+
+/* Cliente y trabajador: el avatar y el nombre. La etiqueta solo se ve en
+   el móvil, cuando ya no hay cabecera de tabla que lo diga. */
+.cf-mrow__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   min-width: 0;
+  font-size: var(--cf-text-sm);
+}
+
+.cf-mrow__label {
+  display: none;
+}
+
+.cf-mrow__name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.cf-bookings__marks {
-  display: flex;
-  flex: none;
-  gap: var(--cf-space-2);
+.cf-mrow__name--none {
+  color: var(--cf-muted);
+  font-style: italic;
 }
 
-/* Pequeñas a propósito: van al lado de un titular y no deben pelearse
-   con él. Lo que llama la atención de lejos es la banda del borde; esto
-   es el detalle que se lee al acercarse. */
-.cf-bookings__mark {
+.cf-mrow__state {
+  display: flex;
+}
+
+.cf-mrow__price {
+  font-family: var(--cf-font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-mrow__price--cancelled {
+  color: var(--cf-muted);
+  font-weight: 600;
+  text-decoration: line-through;
+}
+
+/* ---------- LAS DOS MARCAS ----------
+   Afectada (ámbar) se resuelve aquí, en un diálogo; la incidencia (rojo)
+   lleva a su pantalla. Se ven pequeñas pero se tocan en 44 px. */
+
+.cf-mrow__mark {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  white-space: nowrap;
+  gap: 5px;
+  padding: 3px 9px;
+  border: 0;
   border-radius: 999px;
-  /* Alto fijo y no por el contenido: el título mide 22,5px y, si el
-     sello midiera un píxel más, la fila crecería y la tarjeta con avisos
-     volvería a ser más alta que las demás. box-sizing para que el borde
-     del sello de contorno no sume por fuera. */
-  height: 22px;
-  box-sizing: border-box;
-  padding: 0 10px;
-  font: inherit;
-  font-size: 0.75rem;
+  font-family: var(--cf-font-body);
+  font-size: 0.6875rem;
   font-weight: 600;
-  line-height: 1;
   cursor: pointer;
-  transition:
-    filter var(--cf-transition),
-    background-color var(--cf-transition);
 }
 
-/* Rellena: se resuelve aquí mismo. */
-.cf-bookings__mark--affected {
-  border: 1px solid transparent;
+.cf-mrow__mark::after {
+  content: "";
+  position: absolute;
+  inset: -11px -2px;
+}
+
+.cf-mrow__mark--affected {
   background-color: var(--cf-warning-soft);
   color: var(--cf-warning-dark);
 }
 
-.cf-bookings__mark--affected:hover {
+.cf-mrow__mark--incident {
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
+}
+
+.cf-mrow__mark:hover {
   filter: brightness(0.96);
 }
 
-/* De contorno: lleva a otra pantalla. La forma dice lo que hace, para
-   no tener que aprenderse cuál es cuál. */
-.cf-bookings__mark--incident {
-  border: 1px solid var(--cf-danger-line);
-  background-color: var(--cf-surface);
-  color: var(--cf-danger-dark);
-}
-
-.cf-bookings__mark--incident:hover {
-  background-color: var(--cf-danger-soft);
-}
-
-.cf-bookings__mark:focus-visible {
+.cf-mrow__mark:focus-visible {
   outline: 2px solid var(--cf-primary);
   outline-offset: 2px;
 }
@@ -12005,111 +11460,74 @@ textarea.cf-dash-input {
 
 /* ---------- ESQUELETO ---------- */
 
+.cf-bookings__skel-views {
+  height: 84px;
+  margin-bottom: var(--cf-space-4);
+  border-radius: var(--cf-radius-lg);
+}
+
+.cf-bookings__skel-search {
+  width: min(420px, 100%);
+  height: 40px;
+  border-radius: 10px;
+}
+
 .cf-bookings__skel-date {
-  height: 48px;
-  border-radius: var(--cf-radius-sm);
+  height: 52px;
+  border-radius: 12px;
 }
 
 .cf-bookings__skel-name {
-  display: block;
-  width: 46%;
+  width: 40%;
   height: 16px;
-  margin-bottom: var(--cf-space-2);
 }
 
 .cf-bookings__skel-sub {
-  display: block;
-  width: 70%;
+  width: 60%;
   height: 12px;
 }
 
 /* ---------- ESTRECHO ----------
-   Por el ancho del contenido y no el de la ventana: manda el hueco que
-   deja el sidebar. */
+   En el móvil la fila se compacta: fecha a la izquierda, servicio y
+   precio arriba, y debajo Cliente y Trabajador con su etiqueta, para que
+   nunca se confundan. */
 
-@container (max-width: 860px) {
-  /* En una sola línea, el margen negativo de las pestañas apoya su
-     subrayado en la raya de la barra. Al partirse en dos filas tiraba
-     del buscador hacia arriba y lo dejaba pegado a las pestañas. Aquí
-     cada fila va por su cuenta. */
-  .cf-bookings__toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    border-bottom: 0;
-    padding-bottom: 0;
+@container (max-width: 900px) {
+  .cf-mrow--head {
+    display: none;
   }
 
-  /* Las pestañas se parten en dos líneas en vez de deslizarse de lado,
-     que es lo que hace la regla compartida con su overflow-x. Una
-     pestaña que hay que arrastrar para descubrir es una que nadie pulsa.
-     min-width: 0 porque, siendo hijo flexible, si no crece hasta caber
-     su contenido y desborda la página por un par de píxeles. */
-  .cf-bookings__toolbar .cf-services__tabs {
-    flex-wrap: wrap;
-    overflow-x: visible;
-    min-width: 0;
-    gap: var(--cf-space-4);
-    margin-bottom: var(--cf-space-5, 20px);
+  .cf-mrow {
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+    gap: 6px var(--cf-space-3);
+    padding: 14px var(--cf-space-4);
   }
 
-  /* El subrayado de la activa se apoya en la raya de las pestañas, que
-     ahora es la suya y no la de la barra entera. */
-  .cf-bookings__toolbar .cf-services__tab {
-    margin-bottom: -1px;
+  .cf-mrow__date {
+    grid-row: span 4;
+    align-self: start;
   }
 
-  /* El buscador se queda la línea entera y los desplegables van debajo:
-     partido en dos no cabe nada escrito. */
-  .cf-bookings__search {
-    flex: 1 0 100%;
+  .cf-mrow__price {
+    grid-row: 1;
+    grid-column: 3;
+    align-self: start;
   }
 
-  .cf-bookings__pop {
-    right: auto;
-    left: 0;
-    min-width: 0;
-    width: min(280px, 78cqw);
+  .cf-mrow__who,
+  .cf-mrow__state {
+    grid-column: 2 / -1;
   }
 
-  /* En una columna estrecha no caben el título y los sellos con su
-     texto. En vez de partir la fila —que volvería a descuadrar las
-     alturas—, el sello se queda en su icono: redondo, del tamaño del
-     dedo y sin texto. Lo que dice sigue ahí para quien usa lector de
-     pantalla, y al tocarlo se explica entero. */
-  .cf-bookings__mark {
-    position: relative;
-    width: 22px;
-    padding: 0;
-    justify-content: center;
-    gap: 0;
+  .cf-mrow__label {
+    display: inline;
+    width: 76px;
+    flex: none;
+    color: var(--cf-muted);
     font-size: 0.6875rem;
-  }
-
-  /* El sello mide 22px para no levantar la fila, pero se toca en 44:
-     este cuadrado invisible agranda la zona sensible sin ocupar sitio,
-     porque va en posición absoluta y no cuenta para el tamaño. */
-  .cf-bookings__mark::after {
-    content: "";
-    position: absolute;
-    inset: -11px;
-  }
-
-  .cf-bookings__mark-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  /* El título cede el ancho que necesiten los dos sellos. */
-  .cf-bookings__head {
-    gap: var(--cf-space-2);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 }
 

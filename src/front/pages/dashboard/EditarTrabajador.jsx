@@ -480,7 +480,7 @@ export const EditarTrabajador = () => {
                                 <p>
                                     <strong>{formData.is_active ? "Activo" : "Desactivado"}</strong>
                                     {formData.is_active
-                                        ? "Si lo desactivas, no podrá entrar ni recibir reservas, y sus reservas pendientes pasarán a Reservas afectadas."
+                                        ? "Si lo desactivas, no podrá entrar ni recibir reservas, y sus reservas pendientes aparecerán en Reservas, en la vista Afectadas."
                                         : "No puede entrar ni recibir reservas. Actívalo para que vuelva a salir libre."}
                                 </p>
                                 <label className="cf-dash-switch" htmlFor="worker-status">

@@ -14,6 +14,7 @@
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Route,
 } from "react-router-dom";
 import { RootLayout } from "./pages/RootLayout";
@@ -121,7 +122,10 @@ export const router = createBrowserRouter(
             <Route path="clients" lazy={page(() => import("./pages/dashboard/ListadoClientes"), "ListadoClientes")} handle={{ crumb: "Clientes" }} />
             <Route path="bookings" lazy={page(() => import("./pages/dashboard/ListadoReservas"), "ListadoReservas")} handle={{ crumb: "Reservas" }} />
             <Route path="workers" lazy={page(() => import("./pages/dashboard/ListadoTrabajadores"), "ListadoTrabajadores")} handle={{ crumb: "Trabajadores" }} />
-            <Route path="affected-bookings" lazy={page(() => import("./pages/dashboard/AffectedBookings"), "AffectedBookings")} handle={{ crumb: [{ label: "Reservas", to: "/dashboard/bookings" }, "Afectadas"] }} />
+            {/* La página suelta de afectadas se quitó (PANEL-04, B1): su
+                dirección lleva a la vista de Reservas, para no romper
+                enlaces viejos. replace: «Atrás» no vuelve a la redirección. */}
+            <Route path="affected-bookings" element={<Navigate to="/dashboard/bookings?vista=afectadas" replace />} />
             <Route
               path="workers/:workerId/edit"
               handle={{ crumb: [{ label: "Trabajadores", to: "/dashboard/workers" }, "Editar"] }}

@@ -1,35 +1,39 @@
 /**
- * RESERVAS (ENCARGADO).
+ * RESERVAS (ENCARGADO, maqueta 06, PANEL-04).
  *
  * Todo lo que ha contratado la empresa, de quién es y en qué punto está.
  * Hasta ahora no había forma de verlo: GET /bookings es del cliente y
  * del trabajador, y cada uno veía las suyas.
  *
  * Dentro viven las dos colas que antes eran secciones aparte, cada una
- * como pestaña y como marca en la tarjeta:
+ * como vista y como marca en la fila:
  *
- *   Afectada      -> se resuelve aquí, con el mismo componente que usa
- *                    la pantalla de Reservas afectadas (ResolveAffected)
+ *   Afectada      -> se resuelve aquí, en un diálogo (ResolveAffected)
  *   N incidencias -> lleva a Incidencias filtrada por esa reserva, que
  *                    es donde viven su historia, sus fotos y su historial
  *
  * La lista viene paginada del servidor y los filtros viajan en la
  * petición: son las reservas de toda la empresa, no las de uno.
  *
- * API: services/bookingService.js · Estilos: dashboard.css (cf-bookings__*).
+ * Se puede abrir en una vista desde un enlace: ?vista=afectadas o
+ * ?vista=incidencias. Así llegan los avisos del Inicio (PANEL-04).
+ *
+ * API: services/bookingService.js · Estilos: dashboard.css (cf-bookings,
+ * cf-mrow, y las piezas comunes de la sección 20).
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import useGlobalReducer from "../../hooks/useGlobalReducer"
 import { getManagedBookings } from "../../services/bookingService"
 import { getAllServices } from "../../services/serviceService"
 import {
     getReplacements, reassignBooking, cancelCompany, refreshAffected,
 } from "../../services/absenceService"
-import { ManagedBookingFilters } from "../../components/dashboard/bookings/ManagedBookingFilters"
+import { ManagedBookingFilters, ManagedBookingViews } from "../../components/dashboard/bookings/ManagedBookingFilters"
 import { ManagedBookingCard } from "../../components/dashboard/bookings/ManagedBookingCard"
 import { ResolveAffected } from "../../components/dashboard/absences/ResolveAffected"
+import { PageHead } from "../../components/dashboard/PageHead"
 import "../../dashboard.css"
 
 const PAGE_SIZE = 25
@@ -48,22 +52,34 @@ const VACIO = {
     incident: "No hay ninguna reserva con incidencias abiertas.",
 }
 
+// La vista que pide el enlace (?vista=…) y la de cada valor, para escribirla.
+const VISTA_DE = { afectadas: "affected", incidencias: "incident" }
+const NOMBRE_DE = { affected: "afectadas", incident: "incidencias" }
+
 const PageHeader = () => (
-    <div className="cf-bookings__header">
-        <div>
-            <p className="cf-dash-eyebrow">Operativa</p>
-            <h1 className="cf-bookings__title">Reservas</h1>
-            <p className="cf-bookings__lede">
-                Todo lo que ha contratado la empresa, de quién es y en qué punto está. Lo que necesita que
-                hagas algo tiene su propia pestaña.
-            </p>
-        </div>
+    <PageHead
+        title="Reservas"
+        subtitle="Todas las reservas de CleanFlow. Lo que necesita atención, en su vista."
+    />
+)
+
+// La cabecera de la tabla: la misma rejilla que cada fila (cf-mrow).
+const TableHead = () => (
+    <div className="cf-mrow cf-mrow--head" aria-hidden="true">
+        <span></span>
+        <span>Servicio</span>
+        <span>Cliente</span>
+        <span>Trabajador</span>
+        <span>Estado</span>
+        <span>Precio</span>
     </div>
 )
 
 export const ListadoReservas = () => {
     const { store, dispatch } = useGlobalReducer()
     const navigate = useNavigate()
+    const [params, setParams] = useSearchParams()
+    const vistaPedida = VISTA_DE[params.get("vista")] || "all"
 
     // ------------------------------------------------------------------
     // ESTADO
@@ -85,7 +101,22 @@ export const ListadoReservas = () => {
     const [loadError, setLoadError] = useState("")
     const [actionError, setActionError] = useState("")
 
-    const [filters, setFilters] = useState(SIN_FILTROS)
+    const [filters, setFilters] = useState({ ...SIN_FILTROS, tab: vistaPedida })
+
+    // Si se llega con otra vista estando ya aquí (un aviso del Inicio con
+    // la página abierta en otra pestaña del navegador), se cambia a ella.
+    useEffect(() => {
+        setFilters((actuales) => (actuales.tab === vistaPedida ? actuales : { ...actuales, tab: vistaPedida }))
+    }, [vistaPedida])
+
+    /** Cambia los filtros y deja la vista escrita en la dirección. */
+    const cambiarFiltros = (nuevos) => {
+        setFilters(nuevos)
+
+        if (nuevos.tab !== filters.tab) {
+            setParams(NOMBRE_DE[nuevos.tab] ? { vista: NOMBRE_DE[nuevos.tab] } : {}, { replace: true })
+        }
+    }
 
     // El texto que se está escribiendo y el que ya se preguntó. Separarlos
     // es lo que permite esperar sin que el campo se quede trabado.
@@ -179,9 +210,7 @@ export const ListadoReservas = () => {
 
     const closeDialog = () => dialogRef.current?.close()
 
-    // Las tres llamadas que necesita ResolveAffected. Son las mismas que
-    // usa la pantalla de Reservas afectadas: aquí solo cambia desde
-    // dónde se abren.
+    // Las tres llamadas que necesita ResolveAffected.
     const onFind = async (booking) => {
         const result = await getReplacements(booking.booking_id, store.token)
 
@@ -226,20 +255,24 @@ export const ListadoReservas = () => {
                 <PageHeader />
                 <p className="sr-only">Cargando reservas...</p>
 
-                <ul className="cf-bookings__list" aria-hidden="true">
-                    {Array.from({ length: SKELETON_ROWS }, (_, index) => (
-                        <li className="cf-bookcard" key={index}>
-                            <div className="cf-dash-skel cf-bookings__skel-date" />
-                            <div className="cf-bookcard__main">
-                                <span className="cf-dash-skel cf-bookings__skel-name" />
-                                <span className="cf-dash-skel cf-bookings__skel-sub" />
-                            </div>
-                            <div className="cf-bookcard__side">
-                                <span className="cf-dash-skel cf-bookings__skel-sub" />
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                <div className="cf-dash-skel cf-bookings__skel-views" aria-hidden="true" />
+
+                <div className="cf-lpanel" aria-hidden="true">
+                    <div className="cf-lbar">
+                        <span className="cf-dash-skel cf-bookings__skel-search" />
+                    </div>
+                    <ul className="cf-lrows">
+                        {Array.from({ length: SKELETON_ROWS }, (_, index) => (
+                            <li className="cf-mrow" key={index}>
+                                <span className="cf-dash-skel cf-bookings__skel-date" />
+                                <div className="cf-mrow__main">
+                                    <span className="cf-dash-skel cf-bookings__skel-name" />
+                                    <span className="cf-dash-skel cf-bookings__skel-sub" />
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </section>
         )
     }
@@ -276,61 +309,70 @@ export const ListadoReservas = () => {
                 <p className="cf-dash-alert" role="alert">{actionError}</p>
             )}
 
-            <ManagedBookingFilters
-                filters={filters}
-                counts={counts}
-                facets={facets}
-                services={services}
-                onChange={setFilters}
-            />
+            {/* Las vistas van fuera del bloque; la barra, dentro, encima
+                de la tabla: dos franjas antes de los datos. */}
+            <ManagedBookingViews filters={filters} counts={counts} onChange={cambiarFiltros} />
 
-            {bookings.length === 0 ? (
-                <div className="cf-dash-state">
-                    <span className="cf-dash-state__icon">
-                        <i className={`fa-solid ${filtrando ? "fa-magnifying-glass" : "fa-calendar-check"}`} aria-hidden="true" />
-                    </span>
-                    <p className="cf-dash-state__title">
-                        {filtrando ? "Nada con estos filtros" : "Todavía no hay reservas"}
-                    </p>
-                    <p className="cf-dash-state__text">
-                        {filtrando ? VACIO[filters.tab] : VACIO.all}
-                    </p>
-                    {filtrando && (
-                        <button type="button" className="cf-dash-btn cf-dash-btn--ghost"
-                                onClick={() => setFilters(SIN_FILTROS)}>
-                            Quitar los filtros
-                        </button>
-                    )}
-                </div>
-            ) : (
-                <>
-                    <p className="cf-bookings__count" role="status">
-                        {loading ? "Buscando…" : filtrando
-                            ? `${total} ${total === 1 ? "reserva" : "reservas"} con estos filtros`
-                            : `Mostrando ${bookings.length} de ${total} reservas`}
-                    </p>
+            <div className="cf-lpanel">
+                <ManagedBookingFilters
+                    filters={filters}
+                    counts={counts}
+                    facets={facets}
+                    services={services}
+                    onChange={cambiarFiltros}
+                />
 
-                    <ul className="cf-bookings__list">
-                        {bookings.map((booking) => (
-                            <ManagedBookingCard
-                                key={booking.booking_id}
-                                booking={booking}
-                                onAffected={setResolving}
-                                onIncidents={onIncidents}
-                            />
-                        ))}
-                    </ul>
-
-                    {quedan > 0 && (
-                        <div className="cf-bookings__foot">
+                {bookings.length === 0 ? (
+                    <div className="cf-dash-state">
+                        <span className="cf-dash-state__icon">
+                            <i className={`fa-solid ${filtrando ? "fa-magnifying-glass" : "fa-calendar-check"}`} aria-hidden="true" />
+                        </span>
+                        <p className="cf-dash-state__title">
+                            {filtrando ? "Nada con estos filtros" : "Todavía no hay reservas"}
+                        </p>
+                        <p className="cf-dash-state__text">
+                            {filtrando ? VACIO[filters.tab] : VACIO.all}
+                        </p>
+                        {filtrando && (
                             <button type="button" className="cf-dash-btn cf-dash-btn--ghost"
-                                    onClick={loadMore} disabled={loadingMore}>
-                                {loadingMore ? "Cargando..." : "Ver más"}
+                                    onClick={() => cambiarFiltros(SIN_FILTROS)}>
+                                Quitar los filtros
                             </button>
+                        )}
+                    </div>
+                ) : (
+                    <>
+                        <TableHead />
+
+                        <ul className="cf-lrows">
+                            {bookings.map((booking) => (
+                                <ManagedBookingCard
+                                    key={booking.booking_id}
+                                    booking={booking}
+                                    onAffected={setResolving}
+                                    onIncidents={onIncidents}
+                                />
+                            ))}
+                        </ul>
+
+                        {/* El pie: cuántas se ven y «Ver más» si quedan. */}
+                        <div className="cf-lpanel__foot">
+                            <p role="status">
+                                {loading ? "Buscando…" : filtrando
+                                    ? `${total} ${total === 1 ? "reserva" : "reservas"} con estos filtros`
+                                    : `Mostrando ${bookings.length} de ${total}`}
+                            </p>
+
+                            {quedan > 0 && (
+                                <button type="button" className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
+                                        onClick={loadMore} disabled={loadingMore}>
+                                    {loadingMore ? "Cargando..." : "Ver más"}
+                                </button>
+                            )}
                         </div>
-                    )}
-                </>
-            )}
+                    </>
+                )}
+            </div>
 
             {resolving && (
                 <dialog

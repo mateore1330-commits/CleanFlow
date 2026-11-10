@@ -1,9 +1,9 @@
 /**
  * RESOLVER UNA RESERVA AFECTADA.
  *
- * Los tres momentos de resolverla, sacados aquí para que no haya dos
- * copias: lo usan la pantalla de Reservas afectadas y la marca de la
- * tarjeta en Reservas.
+ * Los tres momentos de resolverla. Lo usa la marca «Afectada» de cada
+ * fila de Reservas, dentro de un diálogo (la pantalla suelta de reservas
+ * afectadas se quitó en PANEL-04).
  *
  *   1. Sin mirar:   botón "Buscar sustituto".
  *   2. Hay libres:  desplegable con quien puede todos los días + Reasignar.

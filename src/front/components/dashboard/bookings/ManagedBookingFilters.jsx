@@ -1,9 +1,10 @@
 /**
- * BARRA DE FILTROS DE RESERVAS (ENCARGADO).
+ * BARRA DE FILTROS DE RESERVAS (ENCARGADO, maqueta 06, PANEL-04).
  *
- * Arriba las tres pestañas con su número, y a la derecha el buscador y
- * tres desplegables: estado, servicio y fechas. Debajo, lo que se está
- * filtrando en pastillas que se quitan una a una.
+ * Arriba las tres vistas en tarjetas (Todas, Afectadas y Con incidencia),
+ * y debajo una sola barra: el buscador a la izquierda y tres
+ * desplegables a la derecha (estado, servicio y fechas). Lo elegido se
+ * dice en el propio botón, con su ✕; «Limpiar» lo quita todo.
  *
  * Estado y servicio son de SELECCIÓN MÚLTIPLE: se marcan varios y el
  * panel no se cierra al marcar, porque casi nunca se elige uno solo.
@@ -17,16 +18,12 @@
  *   counts:  los tres números de las pestañas
  *   facets:  { status: {...}, service: {...} }
  *
- * Estilos: dashboard.css (cf-bookings__*).
+ * Estilos: dashboard.css, sección 20 (cf-views, cf-lbar, cf-ldrop).
  */
 
 import { useEffect, useRef, useState } from "react"
-
-const TABS = [
-    { value: "all", label: "Todas" },
-    { value: "affected", label: "Afectadas", warn: true },
-    { value: "incident", label: "Con incidencia", warn: true },
-]
+import { ListViews } from "../list/ListViews"
+import { ListBar, ListDrop } from "../list/ListBar"
 
 const ESTADOS = [
     { value: "pending", label: "Pendientes" },
@@ -107,226 +104,154 @@ export const ManagedBookingFilters = ({ filters, counts, facets, services, onCha
     const rotuloFechas = () => {
         if (atajoPuesto) return atajoPuesto.label
         if (filters.from && filters.to) return `${diaCorto(filters.from)} – ${diaCorto(filters.to)}`
-        if (filters.from) return `Desde el ${diaCorto(filters.from)}`
-        if (filters.to) return `Hasta el ${diaCorto(filters.to)}`
+        if (filters.from) return `desde el ${diaCorto(filters.from)}`
+        if (filters.to) return `hasta el ${diaCorto(filters.to)}`
 
-        return "Fechas"
+        return null
     }
 
-    /** El botón dice qué hay elegido: nada, el nombre si es uno, o cuántos. */
-    const rotulo = (lista, porDefecto, nombre) =>
-        lista.length === 0 ? porDefecto
+    /** Lo elegido, dicho en corto: el nombre si es uno, o cuántos. */
+    const elegido = (lista, nombre) =>
+        lista.length === 0 ? null
             : lista.length === 1 ? nombre(lista[0])
-                : `${porDefecto} · ${lista.length}`
+                : `${lista.length}`
 
     const nombreServicio = (id) => services.find((s) => String(s.service_id) === String(id))?.name || "Servicio"
 
-    // Una pastilla por valor elegido, no una por filtro: así se quita
-    // "Pendientes" sin perder "Canceladas".
-    const puestos = [
-        ...(filters.q.trim() ? [{ campo: "q", valor: "", texto: `«${filters.q.trim()}»` }] : []),
-        ...filters.status.map((v) => ({
-            campo: "status", valor: v, texto: ESTADOS.find((e) => e.value === v).label,
-        })),
-        ...filters.service.map((v) => ({ campo: "service", valor: v, texto: nombreServicio(v) })),
-        ...(filters.from || filters.to ? [{ campo: "dates", valor: "", texto: rotuloFechas() }] : []),
-    ]
+    const panel = (cual) => () => setAbierto(abierto === cual ? null : cual)
 
-    const quitar = ({ campo, valor }) => {
-        if (campo === "q") return set({ q: "" })
-        if (campo === "dates") return set({ from: "", to: "" })
-
-        set({ [campo]: filters[campo].filter((v) => v !== valor) })
-    }
-
-    const panel = (cual) => (abierto === cual ? null : cual)
+    const hayFiltros = Boolean(filters.q.trim() || filters.status.length || filters.service.length
+        || filters.from || filters.to)
 
     return (
-        <>
-            <div className="cf-bookings__toolbar" ref={barra}>
-                {/* aria-pressed y no role="tab": son filtros de una misma lista. */}
-                <div className="cf-services__tabs" role="group" aria-label="Filtrar reservas">
-                    {TABS.map((tab) => (
+        <ListBar
+            barRef={barra}
+            search={{
+                label: "Buscar reservas",
+                placeholder: "Buscar cliente, trabajador o servicio",
+                value: filters.q,
+                onChange: (q) => set({ q }),
+            }}
+            onClear={hayFiltros ? () => set({ q: "", status: [], service: [], from: "", to: "" }) : null}
+        >
+            {/* ---------- ESTADO ---------- */}
+            <ListDrop
+                label="Estado"
+                value={elegido(filters.status, (v) => ESTADOS.find((e) => e.value === v).label)}
+                open={abierto === "status"}
+                onToggle={panel("status")}
+                onClear={() => set({ status: [] })}
+            >
+                <p className="cf-ldrop__head">Estado</p>
+                {ESTADOS.map((e) => (
+                    <label className="cf-ldrop__opt" key={e.value}>
+                        <input
+                            type="checkbox"
+                            checked={filters.status.includes(e.value)}
+                            onChange={() => alternar("status", e.value)}
+                        />
+                        {e.label}
+                        <span className="cf-ldrop__n">{facets.status?.[e.value] ?? 0}</span>
+                    </label>
+                ))}
+            </ListDrop>
+
+            {/* ---------- SERVICIO ---------- */}
+            <ListDrop
+                label="Servicio"
+                value={elegido(filters.service, (v) => nombreServicio(v).replace("Limpieza ", ""))}
+                open={abierto === "service"}
+                onToggle={panel("service")}
+                onClear={() => set({ service: [] })}
+            >
+                <p className="cf-ldrop__head">Tipo de servicio</p>
+                {services.map((s) => (
+                    <label className="cf-ldrop__opt" key={s.service_id}>
+                        <input
+                            type="checkbox"
+                            checked={filters.service.includes(String(s.service_id))}
+                            onChange={() => alternar("service", String(s.service_id))}
+                        />
+                        {s.name}
+                        <span className="cf-ldrop__n">{facets.service?.[String(s.service_id)] ?? 0}</span>
+                    </label>
+                ))}
+            </ListDrop>
+
+            {/* ---------- FECHAS ---------- */}
+            <ListDrop
+                label="Fechas"
+                icon="fa-calendar"
+                value={rotuloFechas()}
+                open={abierto === "dates"}
+                onToggle={panel("dates")}
+                onClear={() => set({ from: "", to: "" })}
+            >
+                <div className="cf-ldrop__quick">
+                    {ATAJOS.map((a) => (
                         <button
-                            key={tab.value}
+                            key={a.value}
                             type="button"
-                            className="cf-services__tab"
-                            aria-pressed={filters.tab === tab.value}
-                            onClick={() => set({ tab: tab.value })}
+                            aria-pressed={atajoPuesto?.value === a.value}
+                            onClick={() => set(a.range(new Date()))}
                         >
-                            {tab.label}
-                            {/* Las dos de problemas, en terracota: son las que piden algo. */}
-                            <span className={`cf-services__count${
-                                tab.warn && counts[tab.value] > 0 ? " cf-dash-count--attention" : ""
-                            }`}>
-                                {counts[tab.value]}
-                            </span>
+                            {a.label}
                         </button>
                     ))}
                 </div>
 
-                <div className="cf-bookings__controls">
-                    <label className="cf-bookings__search">
-                        <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
-                        <span className="sr-only">Buscar reservas</span>
+                <div className="cf-ldrop__range">
+                    <label className="cf-ldrop__field">
+                        <span>Desde</span>
                         <input
-                            type="search"
-                            placeholder="Buscar cliente, trabajador o servicio"
-                            value={filters.q}
-                            onChange={(event) => set({ q: event.target.value })}
+                            type="date"
+                            className="cf-dash-input"
+                            value={filters.from}
+                            onChange={(event) => set({ from: event.target.value })}
                         />
                     </label>
-
-                    {/* ---------- ESTADO ---------- */}
-                    <div className="cf-bookings__drop">
-                        <button
-                            type="button"
-                            className="cf-bookings__drop-btn"
-                            data-on={filters.status.length > 0}
-                            aria-expanded={abierto === "status"}
-                            onClick={() => setAbierto(panel("status"))}
-                        >
-                            {rotulo(filters.status, "Estado", (v) => ESTADOS.find((e) => e.value === v).label)}
-                            <i className="fa-solid fa-chevron-down" aria-hidden="true" />
-                        </button>
-
-                        <div className="cf-bookings__pop" hidden={abierto !== "status"}>
-                            <div className="cf-bookings__pop-head">
-                                <span>Estado</span>
-                                <button type="button" onClick={() => set({ status: [] })}>Quitar</button>
-                            </div>
-                            {ESTADOS.map((e) => (
-                                <label className="cf-bookings__opt" key={e.value}>
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.status.includes(e.value)}
-                                        onChange={() => alternar("status", e.value)}
-                                    />
-                                    {e.label}
-                                    <span className="cf-bookings__opt-n">{facets.status?.[e.value] ?? 0}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* ---------- SERVICIO ---------- */}
-                    <div className="cf-bookings__drop">
-                        <button
-                            type="button"
-                            className="cf-bookings__drop-btn"
-                            data-on={filters.service.length > 0}
-                            aria-expanded={abierto === "service"}
-                            onClick={() => setAbierto(panel("service"))}
-                        >
-                            {rotulo(filters.service, "Servicio", (v) => nombreServicio(v).replace("Limpieza ", ""))}
-                            <i className="fa-solid fa-chevron-down" aria-hidden="true" />
-                        </button>
-
-                        <div className="cf-bookings__pop" hidden={abierto !== "service"}>
-                            <div className="cf-bookings__pop-head">
-                                <span>Tipo de servicio</span>
-                                <button type="button" onClick={() => set({ service: [] })}>Quitar</button>
-                            </div>
-                            {services.map((s) => (
-                                <label className="cf-bookings__opt" key={s.service_id}>
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.service.includes(String(s.service_id))}
-                                        onChange={() => alternar("service", String(s.service_id))}
-                                    />
-                                    {s.name}
-                                    <span className="cf-bookings__opt-n">
-                                        {facets.service?.[String(s.service_id)] ?? 0}
-                                    </span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* ---------- FECHAS ---------- */}
-                    <div className="cf-bookings__drop">
-                        <button
-                            type="button"
-                            className="cf-bookings__drop-btn"
-                            data-on={Boolean(filters.from || filters.to)}
-                            aria-expanded={abierto === "dates"}
-                            onClick={() => setAbierto(panel("dates"))}
-                        >
-                            <i className="fa-regular fa-calendar" aria-hidden="true" />
-                            {rotuloFechas()}
-                            <i className="fa-solid fa-chevron-down" aria-hidden="true" />
-                        </button>
-
-                        <div className="cf-bookings__pop" hidden={abierto !== "dates"}>
-                            <div className="cf-bookings__pop-head">
-                                <span>Fechas</span>
-                                <button type="button" onClick={() => set({ from: "", to: "" })}>Quitar</button>
-                            </div>
-
-                            <div className="cf-bookings__quick">
-                                {ATAJOS.map((a) => (
-                                    <button
-                                        key={a.value}
-                                        type="button"
-                                        aria-pressed={atajoPuesto?.value === a.value}
-                                        onClick={() => set(a.range(new Date()))}
-                                    >
-                                        {a.label}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <div className="cf-bookings__range">
-                                <label className="cf-bookings__field">
-                                    <span>Desde</span>
-                                    <input
-                                        type="date"
-                                        className="cf-dash-input"
-                                        value={filters.from}
-                                        onChange={(event) => set({ from: event.target.value })}
-                                    />
-                                </label>
-                                <label className="cf-bookings__field">
-                                    <span>Hasta</span>
-                                    <input
-                                        type="date"
-                                        className="cf-dash-input"
-                                        value={filters.to}
-                                        onChange={(event) => set({ to: event.target.value })}
-                                    />
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <label className="cf-ldrop__field">
+                        <span>Hasta</span>
+                        <input
+                            type="date"
+                            className="cf-dash-input"
+                            value={filters.to}
+                            onChange={(event) => set({ to: event.target.value })}
+                        />
+                    </label>
                 </div>
-            </div>
+            </ListDrop>
+        </ListBar>
+    )
+}
 
-            {puestos.length > 0 && (
-                <div className="cf-bookings__chips">
-                    <span className="cf-bookings__chips-label">Filtrando por</span>
+/**
+ * LAS TRES VISTAS DE RESERVAS, en tarjetas: van fuera del bloque de la
+ * lista, encima (maqueta 06).
+ */
+export const ManagedBookingViews = ({ filters, counts, onChange }) => {
+    // Lo urgente solo se pinta urgente si hay algo: un «0» en rojo asusta
+    // para nada.
+    const vistas = [
+        { value: "all", label: "Todas", count: counts.all, hint: "reservas en total", icon: "fa-layer-group" },
+        {
+            value: "affected", label: "Afectadas", count: counts.affected, icon: "fa-user-slash",
+            hint: counts.affected > 0 ? "necesitan un sustituto" : "todo en orden",
+            tone: counts.affected > 0 ? "warn" : undefined,
+        },
+        {
+            value: "incident", label: "Con incidencia", count: counts.incident, icon: "fa-triangle-exclamation",
+            hint: counts.incident > 0 ? "por resolver" : "ninguna abierta",
+            tone: counts.incident > 0 ? "hot" : undefined,
+        },
+    ]
 
-                    {puestos.map((p) => (
-                        <button
-                            key={`${p.campo}-${p.valor}`}
-                            type="button"
-                            className="cf-bookings__chip"
-                            onClick={() => quitar(p)}
-                        >
-                            {p.texto}
-                            <span aria-hidden="true">×</span>
-                            <span className="sr-only">Quitar este filtro</span>
-                        </button>
-                    ))}
-
-                    <button
-                        type="button"
-                        className="cf-bookings__chips-clear"
-                        onClick={() => set({ q: "", status: [], service: [], from: "", to: "" })}
-                    >
-                        Quitar todos
-                    </button>
-                </div>
-            )}
-        </>
+    return (
+        <ListViews
+            label="Vistas de reservas"
+            views={vistas}
+            active={filters.tab}
+            onChange={(tab) => onChange({ ...filters, tab })}
+        />
     )
 }
