@@ -1,88 +1,80 @@
 /**
- * TARJETA DE UN SERVICIO CONTRATADO.
+ * UNA FILA DE SERVICIOS CONTRATADOS (maqueta 04, PANEL-02).
  *
- * Una fila del listado del cliente: fecha, servicio, estado y precio. La
- * tarjeta entera es el enlace al detalle, así que funciona con el ratón
- * y con el teclado.
+ * La fecha, el servicio con el día y la hora, quién va, el estado, el
+ * precio y una flecha. Toda la fila es un enlace al detalle: funciona con
+ * el ratón, con el teclado y con el lector de pantalla, sin trucos.
  *
- * Solo pinta: recibe la reserva ya cargada y avisa con onOpen.
+ * Si espera la confirmación del cliente, lo dice debajo del día, en ámbar
+ * y con los días que quedan: es lo que tiene que hacer.
  *
- * Estilos: dashboard.css (cf-bookcard).
+ * Estilos: dashboard.css, sección 9 (cf-mybooking).
  */
 
+import { Link } from "react-router-dom";
 import { BookingStatusPill, awaitsConfirmation } from "./BookingStatusPill";
 import { EUROS, dayOf, monthOf, timeOf, daysLeft } from "./bookingFormat";
 import { Avatar } from "../Avatar";
 
-export const BookingCard = ({ booking, onOpen }) => {
+// "Sábado": el día de la semana del primer día.
+const weekdayOf = (isoDate) => {
+    const text = new Date(`${isoDate.slice(0, 10)}T12:00:00`).toLocaleDateString("es-ES", { weekday: "long" });
+    return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
+export const BookingCard = ({ booking, to }) => {
     const [first] = booking.days;
     const moreDays = booking.days.length - 1;
     const waiting = awaitsConfirmation(booking);
     const left = waiting ? daysLeft(booking.completed_at) : 0;
-
-    // Enter y Espacio abren el detalle: la tarjeta es un enlace, y un
-    // enlace tiene que responder al teclado como tal.
-    const handleKeyDown = (event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-
-        event.preventDefault();
-        onOpen?.(booking);
-    };
+    const cancelled = booking.status === "cancelled";
 
     return (
         <li>
-            <article
-                className="cf-bookcard"
-                role="link"
-                tabIndex={0}
-                onClick={() => onOpen?.(booking)}
-                onKeyDown={handleKeyDown}
-            >
-                <div className="cf-bookcard__date">
-                    <span className="cf-bookcard__day">{dayOf(first.starts_at)}</span>
-                    <span className="cf-bookcard__month">{monthOf(first.starts_at)}</span>
-                </div>
+            <Link className="cf-mybooking" to={to}>
+                <span className="cf-mybooking__date" aria-hidden="true">
+                    <b>{dayOf(first.starts_at)}</b>
+                    <small>{monthOf(first.starts_at)}</small>
+                </span>
 
-                <div className="cf-bookcard__main">
-                    <h2 className="cf-bookcard__service">
+                <span className="cf-mybooking__main">
+                    <span className="cf-mybooking__service">
                         {booking.service?.name || "Servicio no disponible"}
-                    </h2>
+                    </span>
 
-                    <p className="cf-bookcard__meta">
-                        <span>
-                            <i className="fa-regular fa-clock" aria-hidden="true"></i>
-                            {timeOf(first.starts_at)} – {timeOf(first.ends_at)}
-                        </span>
-
+                    <span className="cf-mybooking__meta">
+                        {weekdayOf(first.starts_at)} · {timeOf(first.starts_at)} – {timeOf(first.ends_at)}
                         {/* Solo si el servicio dura varios días: lo normal es uno. */}
                         {moreDays > 0 && (
-                            <span>+{moreDays} {moreDays === 1 ? "día" : "días"}</span>
+                            <b className="cf-mybooking__more">+{moreDays} {moreDays === 1 ? "día" : "días"}</b>
                         )}
-
-                        <span>
-                            <Avatar name={booking.worker_name} src={booking.worker_avatar_url} size="xs" tone="accent" />
-                            {booking.worker_name || "Sin asignar"}
-                        </span>
-                    </p>
-                </div>
-
-                <div className="cf-bookcard__side">
-                    <BookingStatusPill status={booking.status} />
-                    <span className="cf-bookcard__price">
-                        {EUROS.format(booking.total_price)}
                     </span>
-                </div>
 
-                {/* El aviso ocupa su propia fila: al lado del estado, los
-                    dos competirían y no se leería ninguno. */}
-                {waiting && (
-                    <p className="cf-bookcard__notice">
-                        <i className="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-                        Esperando tu confirmación
-                        {left > 0 && ` · ${left === 1 ? "queda 1 día" : `quedan ${left} días`}`}
-                    </p>
-                )}
-            </article>
+                    {waiting && (
+                        <span className="cf-mybooking__notice">
+                            <i className="fa-solid fa-clock" aria-hidden="true"></i>
+                            Confírmala
+                            {left > 0 && `: ${left === 1 ? "queda 1 día" : `quedan ${left} días`}`}
+                        </span>
+                    )}
+                </span>
+
+                <span className="cf-mybooking__who">
+                    <Avatar name={booking.worker_name} src={booking.worker_avatar_url} size="sm" tone="accent" />
+                    {booking.worker_name || "Sin asignar"}
+                </span>
+
+                <span className="cf-mybooking__state">
+                    <BookingStatusPill status={booking.status} awaitingConfirmation={waiting} />
+                </span>
+
+                {/* Cancelada, tachado: ya no se cobra. */}
+                <span className={cancelled ? "cf-mybooking__price cf-mybooking__price--cancelled" : "cf-mybooking__price"}>
+                    {EUROS.format(booking.total_price)}
+                </span>
+
+                <i className="fa-solid fa-chevron-right cf-mybooking__chevron" aria-hidden="true"></i>
+            </Link>
         </li>
     );
 };

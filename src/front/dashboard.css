@@ -5170,67 +5170,104 @@ textarea.cf-dash-input {
 
 .cf-myservices {
   container-type: inline-size;
-  max-width: 1180px;
   color: var(--cf-text);
   font-family: var(--cf-font-body);
 }
 
-/* ---------- CABECERA ---------- */
-
-.cf-myservices__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--cf-space-4);
-  margin-bottom: var(--cf-space-6);
-}
-
-.cf-myservices__title {
-  margin: 0;
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-2xl);
-  font-weight: 600;
-}
-
-.cf-myservices__lede {
-  margin: var(--cf-space-2) 0 0;
-  max-width: 62ch;
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
-}
-
 /* ---------- BARRA DE FILTROS ----------
-   Una sola línea: el estado a la izquierda, buscar y fechas a la
-   derecha. Los campos de fecha viven dentro de un panel que solo se abre
-   al pulsar, para que la barra en reposo no sea un formulario. */
+   Una sola línea (maqueta 04): las pestañas en píldora a la izquierda,
+   fechas y buscar a la derecha. Los campos de fecha viven dentro de un
+   panel que solo se abre al pulsar, para que la barra en reposo no sea un
+   formulario. */
 
 .cf-myservices__toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--cf-space-2) var(--cf-space-6);
+  gap: var(--cf-space-3);
   margin-bottom: var(--cf-space-4);
-  border-bottom: 1px solid var(--cf-border);
 }
 
-/* Las pestañas son las del catálogo; la línea la pone la barra. */
+/* Las pestañas de siempre, aquí en una píldora: la elegida, con el
+   degradado de la marca. Solo en esta página; el resto del panel sigue
+   con las de la línea debajo. */
 .cf-myservices__toolbar .cf-services__tabs {
+  display: inline-flex;
+  gap: 2px;
   margin-bottom: 0;
-  border-bottom: 0;
+  padding: 4px;
+  border: 1px solid var(--cf-border);
+  border-radius: 999px;
+  background-color: var(--cf-surface);
+}
+
+.cf-myservices__toolbar .cf-services__tab {
+  height: 36px;
+  margin-bottom: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition:
+    background-color var(--cf-transition),
+    color var(--cf-transition);
+}
+
+.cf-myservices__toolbar .cf-services__tab::after {
+  display: none;
+}
+
+.cf-myservices__toolbar .cf-services__tab:hover {
+  background-color: var(--cf-bg);
+  color: var(--cf-text);
+}
+
+.cf-myservices__toolbar .cf-services__tab:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: 1px;
+}
+
+/* Un tono más oscuro que --cf-grad-brand: con texto blanco de 13 px,
+   el extremo claro de aquel se queda por debajo de 4,5:1. */
+.cf-myservices__toolbar .cf-services__tab[aria-pressed="true"] {
+  background: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
+  color: var(--cf-on-primary);
+}
+
+.cf-myservices__toolbar .cf-services__count {
+  border: 0;
+  background-color: var(--cf-bg);
+  color: inherit;
+}
+
+/* Más oscuro que la pestaña, no más claro: el número blanco gana
+   contraste en vez de perderlo. */
+.cf-myservices__toolbar .cf-services__tab[aria-pressed="true"] .cf-services__count {
+  background-color: rgba(var(--cf-brand-900-rgb), 0.28);
 }
 
 .cf-myservices__tools {
   display: flex;
   align-items: center;
   gap: var(--cf-space-2);
-  margin-bottom: var(--cf-space-2);
 }
 
+/* Ancho fijo con tope, no min(…, 100%): la barra mide lo que su
+   contenido, y un porcentaje ahí dejaba el buscador en el ancho propio
+   del campo, con el texto de ayuda cortado. */
 .cf-myservices__tools .cf-dash-search {
-  width: min(260px, 100%);
+  width: 290px;
+  max-width: 100%;
   margin-bottom: 0;
+}
+
+/* Vacío no hay «×» de borrar: su hueco a la derecha se le da al texto de
+   ayuda, que en móvil iba justo. */
+.cf-myservices__tools .cf-dash-search input:placeholder-shown {
+  padding-right: var(--cf-space-3);
 }
 
 /* ---------- FECHAS ---------- */
@@ -5410,14 +5447,152 @@ textarea.cf-dash-input {
   color: var(--cf-primary);
 }
 
-/* ---------- LISTA ---------- */
+/* ---------- LISTA ----------
+   Un solo bloque blanco y una fila por servicio (maqueta 04), separadas
+   por una línea fina. */
 
 .cf-myservices__list {
-  display: grid;
-  gap: var(--cf-space-3);
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
   list-style: none;
+}
+
+.cf-myservices__list > li + li {
+  border-top: 1px solid var(--cf-border);
+}
+
+/* ---------- FILA ----------
+   Fecha, servicio con el día y la hora, quién va, el estado, el precio y
+   la flecha. Toda la fila es el enlace al detalle. */
+
+.cf-mybooking {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1.6fr) minmax(0, 1fr) 210px 80px 20px;
+  align-items: center;
+  gap: 18px;
+  padding: var(--cf-space-4) 20px;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color var(--cf-transition);
+}
+
+.cf-mybooking:hover {
+  background-color: #fafcfc;
+  color: inherit;
+}
+
+.cf-mybooking:focus-visible {
+  outline: 2px solid var(--cf-primary);
+  outline-offset: -3px;
+}
+
+.cf-mybooking__date {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  height: 58px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
+}
+
+.cf-mybooking__date b {
+  color: var(--cf-brand-700);
+  font-family: var(--cf-font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-mybooking__date small {
+  color: var(--cf-muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cf-mybooking__main {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cf-mybooking__service {
+  overflow: hidden;
+  font-family: var(--cf-font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cf-mybooking__meta {
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-mybooking__more {
+  margin-left: var(--cf-space-2);
+  color: var(--cf-primary);
+  font-weight: 600;
+}
+
+/* Lo que le toca al cliente, en ámbar y con el plazo. */
+.cf-mybooking__notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cf-warning-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cf-mybooking__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+
+.cf-mybooking__state {
+  display: flex;
+}
+
+.cf-mybooking__price {
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cancelada: tachado, porque ya no se cobra. */
+.cf-mybooking__price--cancelled {
+  color: var(--cf-muted);
+  font-weight: 600;
+  text-decoration: line-through;
+}
+
+.cf-mybooking__chevron {
+  color: #a9b6b8;
+  font-size: 0.8125rem;
+  transition:
+    color var(--cf-transition),
+    transform var(--cf-transition);
+}
+
+.cf-mybooking:hover .cf-mybooking__chevron {
+  color: var(--cf-primary);
+  transform: translateX(2px);
 }
 
 /* ---------- TARJETA ----------
@@ -5665,6 +5840,38 @@ textarea.cf-dash-input {
   width: 66px;
   height: 17px;
   margin-top: var(--cf-space-2);
+}
+
+/* La fila del cliente mientras carga. */
+.cf-mybooking--skel {
+  grid-template-columns: 64px minmax(0, 1fr) 120px 66px;
+}
+
+.cf-mybooking__skel-date {
+  height: 58px;
+  border-radius: 12px;
+}
+
+.cf-mybooking__skel-title {
+  width: 42%;
+  height: 16px;
+}
+
+.cf-mybooking__skel-meta {
+  width: 60%;
+  height: 12px;
+  margin-top: var(--cf-space-2);
+}
+
+.cf-mybooking__skel-state {
+  width: 110px;
+  height: 22px;
+  border-radius: 999px;
+}
+
+.cf-mybooking__skel-price {
+  width: 66px;
+  height: 16px;
 }
 
 /* ---------- DETALLE DE UNA RESERVA ----------
@@ -6403,9 +6610,39 @@ textarea.cf-dash-input {
     gap: var(--cf-space-3);
   }
 
-  .cf-myservices__header .cf-dash-btn {
-    width: 100%;
-    justify-content: center;
+  .cf-mybooking {
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+    gap: 4px var(--cf-space-3);
+    padding: 14px var(--cf-space-4);
+  }
+
+  .cf-mybooking__date {
+    grid-row: span 2;
+    height: 54px;
+  }
+
+  .cf-mybooking__who,
+  .cf-mybooking__chevron {
+    display: none;
+  }
+
+  .cf-mybooking__state {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+
+  .cf-mybooking__price {
+    grid-row: 1;
+    grid-column: 3;
+  }
+
+  .cf-mybooking--skel {
+    grid-template-columns: 54px minmax(0, 1fr) auto;
+  }
+
+  .cf-myservices__toolbar .cf-services__tabs {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   .cf-bookdetail__grid {
