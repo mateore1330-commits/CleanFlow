@@ -16,6 +16,17 @@
  * token de Google a quien lo pidió. Es lo que usa Ajustes → Seguridad
  * para conectar un Google a una sesión que ya está abierta.
  *
+ * `text`: lo que pone el botón. "continue_with" (Continuar con Google) o
+ * "signup_with" (Registrarse con Google), los que admite Google.
+ * `shape`: "rectangular" (Ajustes) o "pill" (acceso, como sus botones).
+ *
+ * `children`: lo que va justo debajo (la línea de privacidad, el «o con
+ * tu correo»). Solo se pinta si el botón llega a salir: sin botón, un
+ * «o con tu correo» no tendría sentido.
+ *
+ * `onUnavailable`: avisa si el botón no va a salir, para que nadie diga
+ * «entra con el botón de Google» cuando no hay botón.
+ *
  * Estilos: auth.css (auth-google) o los que le pase `className`.
  */
 
@@ -50,7 +61,7 @@ const loadGoogle = () => new Promise((resolve, reject) => {
     document.head.appendChild(script);
 });
 
-export const GoogleButton = ({ onError, onCredential, className = "auth-google" }) => {
+export const GoogleButton = ({ onError, onCredential, className = "auth-google", text = "continue_with", shape = "rectangular", onUnavailable, children }) => {
     const { dispatch } = useGlobalReducer();
     const navigate = useNavigate();
     const location = useLocation();
@@ -62,8 +73,8 @@ export const GoogleButton = ({ onError, onCredential, className = "auth-google" 
     // que cambian de identidad en cada render, y Ajustes se repinta con
     // cada tecla del formulario: con ellas en las dependencias, Google
     // volvería a dibujar su botón una y otra vez.
-    const handlers = useRef({ onError, onCredential });
-    handlers.current = { onError, onCredential };
+    const handlers = useRef({ onError, onCredential, onUnavailable });
+    handlers.current = { onError, onCredential, onUnavailable };
 
     // Mientras se carga el script no hay nada que enseñar. Y si no carga
     // —sin conexión, o un bloqueador— tampoco: mejor que no exista a que
@@ -85,6 +96,7 @@ export const GoogleButton = ({ onError, onCredential, className = "auth-google" 
         if (!CLIENT_ID) {
             console.warn("Falta VITE_GOOGLE_CLIENT_ID: el botón de Google no se pinta.");
             setFailed(true);
+            handlers.current.onUnavailable?.();
             return;
         }
 
@@ -136,23 +148,35 @@ export const GoogleButton = ({ onError, onCredential, className = "auth-google" 
                     callback: responder,
                 });
 
+                // Tan ancho como el formulario: Google admite entre 200
+                // y 400 px y no se adapta solo si cambia la ventana.
+                const width = Math.round(Math.min(400, Math.max(200, box.current.offsetWidth || 320)));
+
                 window.google.accounts.id.renderButton(box.current, {
                     theme: "outline",
                     size: "large",
-                    width: 320,
-                    text: "continue_with",
+                    shape,
+                    width,
+                    text,
                     locale: "es",
                 });
             })
             .catch(() => {
-                if (alive) setFailed(true);
+                if (!alive) return;
+                setFailed(true);
+                handlers.current.onUnavailable?.();
             });
 
         return () => { alive = false; };
     // Solo al montar: volver a inicializar pintaría el botón dos veces.
-    }, [dispatch, navigate, from, cameFrom]);
+    }, [dispatch, navigate, from, cameFrom, text, shape]);
 
     if (failed) return null;
 
-    return <div className={className} ref={box} />;
+    return (
+        <>
+            <div className={className} ref={box} />
+            {children}
+        </>
+    );
 };

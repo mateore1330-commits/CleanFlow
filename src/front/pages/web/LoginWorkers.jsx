@@ -14,7 +14,8 @@ export const LoginWorkers = () => {
     return (
         <LoginForm
             title="Área de empleados"
-            subtitle="Entra a tu panel de trabajo"
+            subtitle="Entra con el correo y la contraseña que te dio CleanFlow."
+            submitLabel="Entrar al panel"
             foot={() => (
                 <>
                     ¿Quieres trabajar con nosotros? <Link to="/work-with-us">Envía tu candidatura</Link>

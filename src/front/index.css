@@ -261,8 +261,8 @@ img {
 
    Una sola definición para toda la app, con el aspecto de las maquetas
    aprobadas. Sirven a los nombres de clase de cada zona (cf-btn en la
-   web, cf-dash-btn en el panel, auth-btn en el acceso), así que nada hay
-   que renombrar. Lo nuevo de WEB y PANEL usa los nombres comunes:
+   web y el acceso, cf-dash-btn en el panel), así que nada hay que
+   renombrar. Lo nuevo de WEB y PANEL usa los nombres comunes:
    cf-btn, cf-btn--ghost, cf-alert, cf-card...
    Cada zona solo ajusta lo suyo (tamaño, márgenes) en su archivo.
    ====================================================================== */
@@ -273,8 +273,7 @@ img {
    --sm (pequeño) y --block (ancho completo). */
 
 .cf-btn,
-.cf-dash-btn,
-.auth-btn {
+.cf-dash-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -302,15 +301,13 @@ img {
 }
 
 .cf-btn:hover,
-.cf-dash-btn:hover,
-.auth-btn:hover {
+.cf-dash-btn:hover {
   background: var(--cf-grad-brand-hover);
   color: var(--cf-on-primary);
 }
 
 .cf-btn:focus-visible,
-.cf-dash-btn:focus-visible,
-.auth-btn:focus-visible {
+.cf-dash-btn:focus-visible {
   outline: 3px solid var(--cf-ring);
   outline-offset: 2px;
 }
@@ -383,7 +380,6 @@ img {
    las variantes). */
 .cf-btn:disabled,
 .cf-dash-btn:disabled,
-.auth-btn:disabled,
 .cf-btn[aria-disabled="true"] {
   background: var(--cf-disabled-bg);
   border-color: transparent;
@@ -446,6 +442,33 @@ img {
   border-color: var(--cf-danger);
 }
 
+/* Debajo del campo: la pista en gris o, si algo está mal, el error en
+   rojo con su icono (WEB-02). El campo lo apunta con aria-describedby. */
+.cf-field__hint,
+.cf-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.cf-field__hint {
+  color: var(--cf-muted);
+  text-wrap: pretty;
+}
+
+.cf-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--cf-danger);
+}
+
+.cf-field__error i {
+  flex: none;
+  margin-top: 2px;
+  font-size: 0.75rem;
+}
+
 textarea.cf-input {
   min-height: 120px;
   resize: vertical;
@@ -496,8 +519,7 @@ textarea.cf-input {
    --warning, --success e --info. */
 
 .cf-alert,
-.cf-dash-alert,
-.auth-alert {
+.cf-dash-alert {
   margin: 0;
   padding: 10px 14px;
   border: 1px solid var(--cf-danger-line);
