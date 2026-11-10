@@ -15,8 +15,10 @@
  * Solo pinta y avisa: quien filtra de verdad es la API.
  *
  *   filters: { tab, q, status[], service[], from, to }  ·  onChange: los nuevos
- *   counts:  los tres números de las pestañas
  *   facets:  { status: {...}, service: {...} }
+ *
+ * Las tres vistas, con sus números (counts), van aparte: ManagedBookingViews,
+ * al final de este archivo, porque se pintan fuera del bloque de la lista.
  *
  * Estilos: dashboard.css, sección 20 (cf-views, cf-lbar, cf-ldrop).
  */
@@ -59,7 +61,7 @@ const ATAJOS = [
 const diaCorto = (iso) =>
     new Date(`${iso}T12:00`).toLocaleDateString("es-ES", { day: "numeric", month: "short" }).replace(".", "")
 
-export const ManagedBookingFilters = ({ filters, counts, facets, services, onChange }) => {
+export const ManagedBookingFilters = ({ filters, facets, services, onChange }) => {
     // Cuál de los tres paneles está abierto, o null. Solo uno: dos a la
     // vez se solaparían.
     const [abierto, setAbierto] = useState(null)

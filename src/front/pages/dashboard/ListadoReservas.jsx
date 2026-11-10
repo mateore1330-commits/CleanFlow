@@ -316,7 +316,6 @@ export const ListadoReservas = () => {
             <div className="cf-lpanel">
                 <ManagedBookingFilters
                     filters={filters}
-                    counts={counts}
                     facets={facets}
                     services={services}
                     onChange={cambiarFiltros}
