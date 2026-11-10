@@ -185,7 +185,7 @@ export const ResolveAffected = ({ booking, onFind, onReassign, onCancel }) => {
                         ¿Cancelar la reserva #{id}?
                     </p>
                     <p className="cf-affected__confirm-text">
-                        {booking.client_name} la verá cancelada por CleanFlow en Mis reservas, con el motivo
+                        {booking.client_name} la verá cancelada por CleanFlow en Servicios contratados, con el motivo
                         que has escrito. No se puede deshacer.
                     </p>
                     <div className="cf-affected__resolve-row">

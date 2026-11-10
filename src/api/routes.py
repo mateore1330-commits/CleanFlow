@@ -686,8 +686,8 @@ CLIENTS_PAGE_SIZE = 25
 # en ello ahora mismo.
 CANCEL_AL_DAR_DE_BAJA = (BookingStatus.PENDING, BookingStatus.CONFIRMED)
 
-# El motivo que queda guardado. Lo leería el cliente en Mis reservas si
-# algún día se le vuelve a dar de alta.
+# El motivo que queda guardado. Lo leería el cliente en Servicios
+# contratados si algún día se le vuelve a dar de alta.
 MOTIVO_BAJA = "Este servicio se canceló al desactivar tu cuenta."
 
 
