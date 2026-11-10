@@ -11,6 +11,7 @@
 
 import { Link, Outlet, useNavigate } from "react-router-dom"
 import { Logo } from "../../components/Logo"
+import { Wordmark } from "../../components/Wordmark"
 import useGlobalReducer from "../../hooks/useGlobalReducer"
 import "../../auth.css"
 
@@ -43,7 +44,7 @@ export const AuthLayout = () => {
                 onClick={leave}
             >
                 <Logo />
-                <span className="auth-word"><b>CLEAN</b><span>FLOW</span></span>
+                <Wordmark className="auth-word" />
             </Link>
 
             <Outlet />

@@ -148,21 +148,9 @@ section[id] {
   text-decoration: none;
 }
 
+/* El logotipo (Wordmark.jsx, estilos en index.css): aquí solo su tamaño. */
 .cf-brand__name {
-  /* El logotipo del kit de marca, igual que en el login (.auth-word) y
-       en el pie. Lo único que usa Montserrat. */
-  font-family: var(--cf-font-brand);
   font-size: var(--cf-text-xl);
-  line-height: 1;
-  letter-spacing: 0.02em;
-}
-
-.cf-brand__name b {
-  font-weight: 700;
-}
-.cf-brand__name span {
-  font-weight: 400;
-  margin-left: 0.22em;
 }
 
 .cf-nav {
@@ -1335,18 +1323,9 @@ main > section:nth-of-type(even) {
   text-decoration: none;
 }
 
-/* CLEAN en negrita y FLOW en fino: el logotipo del kit de marca, el
-   mismo que usa la pantalla de login. */
+/* El logotipo (Wordmark.jsx, estilos en index.css): aquí solo su tamaño. */
 .cf-footer__word {
   font-size: var(--cf-text-lg);
-  line-height: 1;
-}
-.cf-footer__word b {
-  font-weight: 700;
-}
-.cf-footer__word span {
-  font-weight: 400;
-  margin-left: 0.22em;
 }
 
 .cf-footer__pitch {

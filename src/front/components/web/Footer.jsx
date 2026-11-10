@@ -14,6 +14,7 @@ import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 import { Logo } from "../Logo";
+import { Wordmark } from "../Wordmark";
 import { COMPANY, SOCIAL_NETWORKS } from "../../data/company";
 
 
@@ -63,9 +64,7 @@ export const Footer = () => {
                                     aria-label="CleanFlow, volver al inicio"
                                 >
                                     <Logo size={34} />
-                                    <span className="cf-footer__word">
-                                        <b>CLEAN</b><span>FLOW</span>
-                                    </span>
+                                    <Wordmark className="cf-footer__word" dark />
                                 </Link>
 
                                 <p className="cf-footer__pitch">{COMPANY.tagline}</p>

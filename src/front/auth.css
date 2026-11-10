@@ -47,12 +47,10 @@
     color: var(--auth-primary);
 }
 
+/* El logotipo (Wordmark.jsx, estilos en index.css): aquí solo su tamaño. */
 .auth-word {
     font-size: 28px;
 }
-
-.auth-word b { font-weight: 700; }
-.auth-word span { font-weight: 400; margin-left: 0.22em; }
 
 /* ---- Tarjeta ---- */
 

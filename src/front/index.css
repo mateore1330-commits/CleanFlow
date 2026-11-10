@@ -208,6 +208,30 @@ img {
   outline-offset: 2px;
 }
 
+/* El logotipo «CleanFlow» (Wordmark.jsx), como en el manual de marca:
+   una sola palabra en Plus Jakarta Sans 800, «Flow» en el color de marca.
+   El tamaño lo pone la clase de cada sitio. */
+.cf-wordmark {
+  font-family: var(--cf-font-brand);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--cf-brand-900);
+}
+
+.cf-wordmark__flow {
+  color: var(--cf-brand-500);
+}
+
+/* Sobre fondo oscuro: «Clean» en blanco y «Flow» en menta. */
+.cf-wordmark--neg {
+  color: var(--cf-white);
+}
+
+.cf-wordmark--neg .cf-wordmark__flow {
+  color: var(--cf-accent);
+}
+
 /* Solo para lectores de pantalla: se saca de la vista sin ocultarlo,
    porque display:none también lo escondería de ellos. */
 .sr-only {

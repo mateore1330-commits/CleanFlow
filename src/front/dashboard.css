@@ -913,19 +913,10 @@ textarea.cf-dash-input {
   height: 34px;
 }
 
-/* El logotipo, igual que en la web: Montserrat, CLEAN en negrita. */
+/* El logotipo (Wordmark.jsx, versión oscura; estilos en index.css). */
 .cf-side__name {
   font-size: 1.05rem;
   white-space: nowrap;
-}
-
-.cf-side__name b {
-  font-weight: 700;
-}
-
-.cf-side__name span {
-  font-weight: 400;
-  margin-left: 0.22em;
 }
 
 /* ---------- BOTÓN DE PLEGAR ----------
