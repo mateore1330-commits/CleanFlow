@@ -15,9 +15,10 @@ import { Hero } from "./home/Hero"
 import { PartnersSection } from "./home/PartnersSection"
 import { ServicesSection } from "./home/ServicesSection"
 import { HowItWorksSection } from "./home/HowItWorksSection"
-import { ReviewsSection } from "./home/ReviewsSection"
 import { AboutSection } from "./home/AboutSection"
 import { WhyCleanFlowSection } from "./home/WhyCleanFlowSection"
+import { ReviewsSection } from "./home/ReviewsSection"
+import { FaqSection } from "./home/FaqSection"
 import { ContactSection } from "./home/ContactSection"
 import { LocationSection } from "./home/LocationSection"
 
@@ -28,9 +29,10 @@ export const Home = () => {
             <PartnersSection />
             <ServicesSection />
             <HowItWorksSection />
-            <ReviewsSection />
             <AboutSection />
             <WhyCleanFlowSection />
+            <ReviewsSection />
+            <FaqSection />
             <ContactSection />
             <LocationSection />
         </main>

@@ -596,6 +596,203 @@
 }
 
 /* ======================================================================
+   8. OPINIONES (ReviewsSection.jsx) · banda oscura
+   ====================================================================== */
+
+.cf-home .cf-home-reviews {
+  background-color: var(--cf-band);
+  color: var(--cf-white);
+}
+
+.cf-home-reviews .cf-eyebrow {
+  color: var(--cf-accent);
+}
+
+.cf-home-reviews .cf-home-title {
+  color: var(--cf-white);
+}
+
+/* El título, a dos líneas: así la nota cabe a su derecha, como en la
+   maqueta, en vez de caer debajo. */
+.cf-home-reviews .cf-home-head > div {
+  max-width: 640px;
+}
+
+.cf-home-reviews__score {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cf-home-reviews__score b {
+  font-family: var(--cf-font-heading);
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.cf-home-reviews__score small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(var(--cf-white-rgb), 0.72);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-home-reviews__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cf-review-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.1);
+  border-radius: var(--cf-radius-lg);
+  background-color: rgba(var(--cf-white-rgb), 0.06);
+}
+
+/* Las estrellas apagadas, visibles sobre lo oscuro. */
+.cf-home-reviews .cf-stars__mark {
+  color: rgba(var(--cf-white-rgb), 0.25);
+}
+
+.cf-home-reviews .cf-stars__mark--on {
+  color: var(--cf-sun);
+}
+
+.cf-review-card__comment {
+  flex: 1;
+  margin: var(--cf-space-4) 0 var(--cf-space-6);
+  color: rgba(var(--cf-white-rgb), 0.9);
+  font-size: var(--cf-text-base);
+  line-height: 1.65;
+}
+
+.cf-review-card__who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cf-space-3);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-review-card__name {
+  display: block;
+  color: var(--cf-white);
+  font-weight: 600;
+}
+
+.cf-review-card__who small {
+  display: block;
+  white-space: nowrap;
+  color: rgba(var(--cf-white-rgb), 0.65);
+}
+
+.cf-review-card__service {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: rgba(var(--cf-accent-rgb), 0.14);
+  color: var(--cf-accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* El avatar (Avatar.jsx) a 40px: entre la talla sm y la md. */
+.cf-review-card__face {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  font-size: 0.8125rem;
+}
+
+/* ======================================================================
+   9. PREGUNTAS FRECUENTES (FaqSection.jsx)
+   ====================================================================== */
+
+.cf-home-faq__grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  align-items: start;
+  gap: 64px;
+}
+
+.cf-home-faq__help {
+  margin-top: 32px;
+  padding: var(--cf-space-6);
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-bg);
+}
+
+.cf-home-faq__help b {
+  font-family: var(--cf-font-heading);
+}
+
+.cf-home-faq__help p {
+  margin: 4px 0 var(--cf-space-4);
+  color: var(--cf-muted);
+  font-size: 0.9375rem;
+}
+
+.cf-home-faq__list details {
+  border-bottom: 1px solid var(--cf-border);
+}
+
+.cf-home-faq__list summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-4);
+  padding: 22px 0;
+  color: var(--cf-text);
+  font-family: var(--cf-font-heading);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.cf-home-faq__list summary::-webkit-details-marker {
+  display: none;
+}
+
+/* El «+» que gira a «×» al abrir. */
+.cf-home-faq__list summary::after {
+  content: "+";
+  flex: none;
+  color: var(--cf-primary);
+  font-family: var(--cf-font-body);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1;
+  transition: transform var(--cf-transition);
+}
+
+.cf-home-faq__list details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.cf-home-faq__list summary:focus-visible {
+  outline: 3px solid var(--cf-ring);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.cf-home-faq__list details p {
+  margin: 0;
+  padding: 0 40px 22px 0;
+  color: var(--cf-muted);
+}
+
+/* ======================================================================
    RESPONSIVE
    ====================================================================== */
 
@@ -627,6 +824,8 @@
   }
 
   .cf-home-about__grid,
+  .cf-home-faq__grid,
+  .cf-home-reviews__grid,
   .cf-home-how__steps {
     grid-template-columns: 1fr;
   }
@@ -637,6 +836,10 @@
 
   .cf-home-about__badge {
     right: 12px;
+  }
+
+  .cf-home-faq__grid {
+    gap: var(--cf-space-6);
   }
 }
 
@@ -696,7 +899,8 @@
 @media (prefers-reduced-motion: reduce) {
   .cf-service-card,
   .cf-service-card__image,
-  .cf-partners__row img {
+  .cf-partners__row img,
+  .cf-home-faq__list summary::after {
     transition: none;
   }
 

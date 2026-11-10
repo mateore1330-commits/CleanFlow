@@ -438,6 +438,30 @@ img {
   box-shadow: var(--cf-shadow-sm);
 }
 
+/* ---------- ESTRELLAS (Stars.jsx, solo lectura) ----------
+   Las usan el panel y la web (opiniones de la landing). Las de elegir
+   nota (cf-stars__btn) siguen en dashboard.css. */
+
+.cf-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cf-stars--read {
+  gap: 2px;
+}
+
+.cf-stars__mark {
+  display: grid;
+  place-items: center;
+  color: var(--cf-border);
+}
+
+.cf-stars__mark--on {
+  color: var(--cf-sun);
+}
+
 /* ---------- AVATAR (Avatar.jsx) ----------
    Foto si la hay; si no, las iniciales sobre el degradado de marca.
    --accent: el degradado menta (el propio usuario, el trabajador de una
