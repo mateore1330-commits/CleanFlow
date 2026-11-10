@@ -1,0 +1,394 @@
+/* ======================================================================
+   LANDING (Home.jsx y home/*.jsx) · maqueta 02, WEB-01
+
+   Solo lo de la portada: se importa desde Home.jsx. La cabecera, el pie y
+   la tarjeta de servicio están en web.css, porque los usan también otras
+   páginas públicas. Las piezas comunes (botones, avisos, tarjeta, campos,
+   avatar, estrellas) están en index.css.
+
+   Fondos por sección, como en la maqueta: blanco y gris claro alternos,
+   con la banda oscura de opiniones en medio.
+
+   Índice:
+     1. Armazón (secciones, antetítulo, títulos)
+     2. Portada
+     3. Franja de marcas
+     4. Servicios
+     5. Cómo funciona
+     6. Sobre CleanFlow
+     7. Por qué CleanFlow
+     8. Opiniones
+     9. Preguntas frecuentes
+    10. Contacto y mapa
+    11. Banda final
+    12. Movimiento reducido
+   ====================================================================== */
+
+/* ======================================================================
+   1. ARMAZÓN
+   ====================================================================== */
+
+.cf-home {
+  background-color: var(--cf-surface);
+}
+
+.cf-home-section {
+  padding: 104px 0;
+  /* Al llegar por un enlace del menú, que la cabecera fija no tape el
+     título de la sección. */
+  scroll-margin-top: 72px;
+}
+
+/* El antetítulo, en mayúsculas pequeñas. */
+.cf-eyebrow {
+  margin: 0 0 14px;
+  color: var(--cf-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cf-home-title {
+  margin: 0;
+  color: var(--cf-text);
+  font-size: clamp(1.875rem, 3.6vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.cf-home-lede {
+  max-width: 620px;
+  margin: 14px 0 0;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-lg);
+}
+
+/* Cabecera de sección: título a la izquierda y, si hay, algo a la derecha
+   (una frase, la nota media). */
+.cf-home-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--cf-space-6);
+  margin-bottom: 48px;
+}
+
+.cf-home-head--center {
+  justify-content: center;
+  text-align: center;
+}
+
+.cf-home-head__aside {
+  max-width: 440px;
+  margin: 0;
+}
+
+.cf-home-message {
+  color: var(--cf-muted);
+}
+
+/* ======================================================================
+   2. PORTADA (Hero.jsx) · hero B: degradado oscuro sobre la foto
+   ====================================================================== */
+
+.cf-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 112px 0 120px;
+  background-color: var(--cf-band);
+  color: var(--cf-white);
+  scroll-margin-top: 72px;
+}
+
+.cf-hero__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 50%;
+}
+
+/* El velo: oscuro de marca a la izquierda, donde va el texto, y casi
+   transparente a la derecha, donde se ve la foto. */
+.cf-hero__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    var(--cf-brand-900) 0%,
+    rgba(var(--cf-brand-900-rgb), 0.94) 38%,
+    rgba(var(--cf-brand-900-rgb), 0.45) 72%,
+    rgba(var(--cf-brand-900-rgb), 0.15) 100%
+  );
+}
+
+/* El brillo menta de abajo a la izquierda. */
+.cf-hero__veil::before {
+  content: "";
+  position: absolute;
+  left: -200px;
+  bottom: -260px;
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--cf-accent-rgb), 0.28), transparent 65%);
+}
+
+.cf-hero__inner {
+  position: relative;
+}
+
+.cf-hero__content {
+  max-width: 720px;
+}
+
+.cf-hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-space-2);
+  margin: 0;
+  padding: 6px 14px 6px 6px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.22);
+  border-radius: 999px;
+  background-color: rgba(var(--cf-white-rgb), 0.1);
+  backdrop-filter: blur(6px);
+  font-size: var(--cf-text-sm);
+  font-weight: 500;
+}
+
+.cf-hero__chip b {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background-color: var(--cf-accent);
+  color: var(--cf-on-accent);
+  font-size: 0.75rem;
+}
+
+.cf-hero__title {
+  margin: 22px 0 0;
+  color: var(--cf-white);
+  font-size: clamp(2.625rem, 5.8vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.cf-hero__nowrap {
+  white-space: nowrap;
+}
+
+.cf-hero__title em {
+  color: var(--cf-accent);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.cf-hero__lede {
+  max-width: 540px;
+  margin: 22px 0 32px;
+  color: rgba(var(--cf-white-rgb), 0.82);
+  font-size: 1.1875rem;
+}
+
+.cf-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-3);
+}
+
+/* El secundario sobre fondo oscuro: transparente, con borde claro. */
+.cf-hero .cf-hero__ghost {
+  border-color: rgba(var(--cf-white-rgb), 0.35);
+  background: transparent;
+  color: var(--cf-white);
+}
+
+.cf-hero .cf-hero__ghost:hover {
+  border-color: rgba(var(--cf-white-rgb), 0.6);
+  background: rgba(var(--cf-white-rgb), 0.08);
+  color: var(--cf-white);
+}
+
+.cf-hero__trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-3) var(--cf-space-6);
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  color: rgba(var(--cf-white-rgb), 0.85);
+  font-size: var(--cf-text-sm);
+  font-weight: 500;
+}
+
+.cf-hero__trust i {
+  margin-right: 6px;
+  color: var(--cf-accent);
+}
+
+/* La nota media, en cristal oscuro: va sobre la parte clara de la foto y
+   con un cristal claro el texto blanco no se leería bien. */
+.cf-hero__rating {
+  position: absolute;
+  right: var(--cf-gutter);
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid rgba(var(--cf-white-rgb), 0.22);
+  border-radius: var(--cf-radius-lg);
+  background-color: rgba(var(--cf-brand-900-rgb), 0.6);
+  backdrop-filter: blur(14px);
+}
+
+.cf-hero__rating b {
+  font-family: var(--cf-font-heading);
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cf-hero__stars {
+  display: flex;
+  gap: 2px;
+  color: var(--cf-sun);
+  font-size: 0.8125rem;
+}
+
+.cf-hero__rating small {
+  display: block;
+  color: rgba(var(--cf-white-rgb), 0.82);
+  font-size: 0.8125rem;
+}
+
+/* ======================================================================
+   3. FRANJA DE MARCAS (PartnersSection.jsx)
+   ====================================================================== */
+
+.cf-partners {
+  padding: 36px 0;
+  border-bottom: 1px solid var(--cf-border);
+  background-color: var(--cf-surface);
+}
+
+.cf-partners__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-6) 48px;
+}
+
+.cf-partners__text {
+  max-width: 220px;
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  font-weight: 500;
+}
+
+.cf-partners__row {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-6) 44px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* En gris y apagados: acompañan, no compiten. Sus colores, al pasar. */
+.cf-partners__row img {
+  display: block;
+  width: auto;
+  height: 46px;
+  filter: grayscale(1);
+  opacity: 0.6;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.cf-partners__row img:hover {
+  filter: none;
+  opacity: 1;
+}
+
+/* ======================================================================
+   RESPONSIVE
+   ====================================================================== */
+
+@media (max-width: 860px) {
+  .cf-home-section {
+    padding: 72px 0;
+  }
+
+  .cf-hero {
+    padding: 72px 0 80px;
+  }
+
+  /* En vertical el texto ocupa todo el ancho: velo oscuro entero. */
+  .cf-hero__veil {
+    background: linear-gradient(180deg, rgba(var(--cf-brand-900-rgb), 0.96), rgba(var(--cf-brand-900-rgb), 0.84));
+  }
+
+  .cf-hero__rating {
+    position: static;
+    display: inline-flex;
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* El texto arriba y los logos debajo, en fila: al lado del texto se
+     apilaban en una columna estrecha. */
+  .cf-partners__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--cf-space-4);
+  }
+
+  .cf-partners__text {
+    max-width: none;
+  }
+
+  /* Los cinco en una sola fila de columnas iguales: con flex se partían
+     en 3 + 2 y quedaba desigual. */
+  .cf-partners__row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    gap: var(--cf-space-3);
+  }
+
+  .cf-partners__row img {
+    max-width: 100%;
+    height: 30px;
+  }
+
+  /* Dos botones apilados, a lo ancho y del mismo tamaño. */
+  .cf-hero__actions .cf-btn {
+    width: 100%;
+  }
+}
+
+/* ======================================================================
+   12. MOVIMIENTO REDUCIDO
+   Quien lo pide en su sistema no ve tarjetas que suben ni imágenes que
+   crecen al pasar el ratón.
+   ====================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-partners__row img {
+    transition: none;
+  }
+}
