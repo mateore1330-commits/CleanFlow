@@ -1,11 +1,11 @@
 {
-	"name": "react-hello-webapp",
+	"name": "cleanflow",
+	"private": true,
 	"engines": {
 		"node": ">=20.0.0"
 	},
 	"version": "1.0.1",
-	"description": "",
-	"main": "index.js",
+	"description": "CleanFlow: reservas de limpieza a domicilio, con paneles para clientes, trabajadores y encargados.",
 	"scripts": {
 		"dev": "vite",
         "start": "vite",
@@ -13,21 +13,6 @@
         "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview"
 	},
-	"author": {
-		"name": "Alejandro Sanchez",
-		"url": "http://alesanchezr.com/"
-	},
-	"contributors": [
-		{
-			"name": "Alejandro Sanchez",
-			"url": "http://alesanchezr.com/"
-		},
-		{
-			"name": "Ignacio Cordoba",
-			"url": "http://github.com/nachovz"
-		}
-	],
-	"license": "ISC",
 	"devDependencies": {
 		"@types/react": "18.3.18",
         "@types/react-dom": "18.3.5",
@@ -37,21 +22,6 @@
         "eslint-plugin-react-hooks": "4.6.2",
         "eslint-plugin-react-refresh": "0.4.18",
         "vite": "4.5.14"
-	},
-	"babel": {
-		"presets": [
-			"@babel/preset-env",
-			"@babel/preset-react"
-		],
-		"plugins": [
-			"@babel/plugin-proposal-class-properties",
-			[
-				"@babel/plugin-transform-runtime",
-				{
-					"regenerator": true
-				}
-			]
-		]
 	},
 	"dependencies": {
 		"prop-types": "15.8.1",

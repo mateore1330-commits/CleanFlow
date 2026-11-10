@@ -70,8 +70,8 @@ def handle_invalid_usage(error):
 # También se escucha Exception y no solo el 500: una excepción que sube
 # sin capturar no pasa por el manejador del 500.
 #
-# exc_info=True deja la traza entera en el log —en Render, en su
-# pestaña—, que es donde hay que mirarla. Al usuario no se le cuenta
+# exc_info=True deja la traza entera en el log del servidor, que es
+# donde hay que mirarla. Al usuario no se le cuenta
 # nada del fallo: no le sirve y diría de más.
 @app.errorhandler(500)
 @app.errorhandler(Exception)
