@@ -446,6 +446,33 @@ img {
   border-color: var(--cf-danger);
 }
 
+/* Debajo del campo: la pista en gris o, si algo está mal, el error en
+   rojo con su icono (WEB-02). El campo lo apunta con aria-describedby. */
+.cf-field__hint,
+.cf-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.cf-field__hint {
+  color: var(--cf-muted);
+  text-wrap: pretty;
+}
+
+.cf-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--cf-danger);
+}
+
+.cf-field__error i {
+  flex: none;
+  margin-top: 2px;
+  font-size: 0.75rem;
+}
+
 textarea.cf-input {
   min-height: 120px;
   resize: vertical;
