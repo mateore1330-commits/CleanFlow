@@ -79,9 +79,9 @@ export const Hero = () => {
                     </p>
 
                     <div className="cf-hero__actions">
-                        {/* A la ruta protegida del catálogo: sin sesión,
+                        {/* A Reservar, que es ruta protegida: sin sesión,
                             ProtectedRoutes manda al login y vuelve aquí. */}
-                        <Link to="/dashboard/service-catalog" className="cf-btn cf-btn--accent">
+                        <Link to="/dashboard/book" className="cf-btn cf-btn--accent">
                             Reservar limpieza
                             <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
                         </Link>
