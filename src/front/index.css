@@ -5,7 +5,7 @@
    espacios. Lo carga main.jsx: vale para toda la aplicación.
 
    NORMAS DEL EQUIPO
-   1. Nada de valores a pelo: `var(--cf-primary)` ✅, `#2E3B26` ❌. Así,
+   1. Nada de valores a pelo: `var(--cf-primary)` ✅, `#0C6B76` ❌. Así,
       cambiar la marca es cambiar una línea aquí. ¿Falta uno? Añádelo y
       dilo en el grupo.
    2. En la web pública, nada de componentes de Bootstrap (.btn, .card,
@@ -43,6 +43,7 @@
   --cf-primary: var(--cf-brand-600); /* color de marca: botones, enlaces */
   --cf-primary-dark: var(--cf-brand-700); /* el mismo, al pasar el ratón */
   --cf-primary-soft: var(--cf-brand-100); /* fondo suave del color de marca */
+  --cf-band: var(--cf-brand-900); /* bandas y bloques oscuros (pie, bienvenida del panel) */
   --cf-accent: #5fd3a6; /* menta: detalles, iconos y fondos. NUNCA texto sobre claro */
   --cf-accent-dark: #0b6648; /* la menta para texto: se lee sobre fondos claros */
   --cf-accent-soft: #dcf6ea; /* fondo suave de la menta */
@@ -338,7 +339,7 @@ img {
   margin-bottom: var(--cf-space-8);
   padding: var(--cf-space-8);
   border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-primary);
+  background-color: var(--cf-band);
   color: var(--cf-on-primary);
 }
 

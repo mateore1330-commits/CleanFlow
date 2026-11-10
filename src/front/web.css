@@ -72,7 +72,7 @@ section[id] {
 }
 
 /* Los dos accesos son botones, no letra pequeña: con borde y fondo
-   blanco destacan sobre el crema de la barra. Comparten ancho mínimo,
+   blanco destacan sobre el fondo claro de la barra. Comparten ancho mínimo,
    alto y redondeo con "Reservar ahora", así que los tres caen alineados
    a la derecha, uno debajo de otro. */
 .cf-access {
@@ -200,7 +200,7 @@ section[id] {
 }
 
 /* El resaltado de la sección visible, que hasta ahora era un subrayado
-   provisional. Aquí es donde el terracota tiene su primer uso real. */
+   provisional. Aquí es donde la menta tiene su primer uso real. */
 .cf-nav__link.is-active {
   color: var(--cf-primary);
   border-bottom-color: var(--cf-accent);
@@ -566,7 +566,7 @@ main > section:nth-of-type(even) {
   object-position: center 60%;
 }
 
-/* EL VELO: crema sólido a la izquierda que se disuelve hacia la derecha,
+/* EL VELO: fondo claro sólido a la izquierda que se disuelve hacia la derecha,
    más una bajada suave por el pie para asentar las valoraciones.
    El ángulo de 96deg lo inclina un pelín, para que no parezca una banda
    pegada encima. Si el titular no se lee, se suben estos números. */
@@ -603,7 +603,7 @@ main > section:nth-of-type(even) {
   gap: var(--cf-space-3);
   margin: 0 0 var(--cf-space-4);
 
-  color: var(--cf-accent);
+  color: var(--cf-accent-dark);
   font-size: var(--cf-text-sm);
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -698,7 +698,7 @@ main > section:nth-of-type(even) {
 .cf-hero__stars {
   display: flex;
   gap: 2px;
-  color: var(--cf-accent);
+  color: var(--cf-sun);
   font-size: 0.9rem;
 }
 
@@ -718,13 +718,13 @@ main > section:nth-of-type(even) {
    El texto y la foto ya no caben uno al lado del otro, así que se
    reparten de arriba abajo:
 
-       texto           arriba, sobre crema
+       texto           arriba, sobre fondo claro
        FRANJA DE FOTO  en medio, sin nada encima
-       valoraciones    abajo, sobre crema otra vez
+       valoraciones    abajo, sobre fondo claro otra vez
 
-   El velo de una pieza desaparece: aquí el crema va pegado a cada bloque
+   El velo de una pieza desaparece: aquí el fondo claro va pegado a cada bloque
    de texto y se desvanece en sus propios bordes. Así no hay ningún número
-   que cuadrar con el alto: si el titular gana una línea, el crema crece
+   que cuadrar con el alto: si el titular gana una línea, el fondo claro crece
    con él. */
 
 @media (max-width: 768px) {
@@ -737,7 +737,7 @@ main > section:nth-of-type(even) {
     background: none;
   }
 
-  /* El crema se apaga en el último tramo, que cae dentro del relleno
+  /* El fondo claro se apaga en el último tramo, que cae dentro del relleno
        de abajo: por eso el degradado no llega a los botones. */
   .cf-hero__content {
     margin-block: 0;
@@ -808,7 +808,7 @@ main > section:nth-of-type(even) {
 
 .cf-reviews__eyebrow {
   margin: 0 0 var(--cf-space-2);
-  color: var(--cf-accent);
+  color: var(--cf-accent-dark);
   font-size: var(--cf-text-sm);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -989,7 +989,7 @@ main > section:nth-of-type(even) {
 
 .cf-partners__eyebrow {
   margin: 0 0 var(--cf-space-2);
-  color: var(--cf-accent);
+  color: var(--cf-accent-dark);
   font-size: var(--cf-text-sm);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -1141,7 +1141,7 @@ main > section:nth-of-type(even) {
 
 .cf-location__eyebrow {
   margin: 0 0 var(--cf-space-2);
-  color: var(--cf-accent);
+  color: var(--cf-accent-dark);
   font-size: var(--cf-text-sm);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -1184,7 +1184,7 @@ main > section:nth-of-type(even) {
   gap: var(--cf-space-8);
   padding: var(--cf-space-8);
   border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-primary);
+  background-color: var(--cf-band);
   color: var(--cf-on-primary);
   box-shadow: var(--cf-shadow-md);
 }
@@ -1204,7 +1204,7 @@ main > section:nth-of-type(even) {
   height: 42px;
   border-radius: 50%;
   background-color: var(--cf-accent);
-  color: var(--cf-on-primary);
+  color: var(--cf-on-accent);
 }
 
 .cf-location__block h3 {
@@ -1272,7 +1272,7 @@ main > section:nth-of-type(even) {
 }
 
 .cf-footer__panel {
-  background-color: var(--cf-primary);
+  background-color: var(--cf-band);
   color: var(--cf-on-primary);
   border-radius: var(--cf-radius-lg);
 
@@ -1339,7 +1339,6 @@ main > section:nth-of-type(even) {
 /* CLEAN en negrita y FLOW en fino: el logotipo del kit de marca, el
    mismo que usa la pantalla de login. */
 .cf-footer__word {
-  font-family: var(--cf-font-brand);
   font-size: var(--cf-text-lg);
   line-height: 1;
 }
@@ -1479,7 +1478,7 @@ main > section:nth-of-type(even) {
 .cf-footer__social a:hover {
   background-color: var(--cf-accent);
   border-color: var(--cf-accent);
-  color: var(--cf-on-primary);
+  color: var(--cf-on-accent);
 }
 
 /* ---------- LA MARCA GRANDE ---------- */
@@ -1526,7 +1525,7 @@ main > section:nth-of-type(even) {
 }
 
 .cf-footer__legal a:hover {
-  color: var(--cf-accent);
+  color: var(--cf-accent-dark);
 }
 
 /* En --cf-border no se veía (contraste 1.26) y los enlaces legales
@@ -1557,7 +1556,7 @@ main > section:nth-of-type(even) {
 
 .cf-work__intro {
   padding: var(--cf-space-16) 0;
-  background-color: var(--cf-primary);
+  background-color: var(--cf-band);
   color: var(--cf-on-primary);
   text-align: center;
 }
@@ -1695,7 +1694,7 @@ main > section:nth-of-type(even) {
 }
 
 .cf-work__alert--error {
-  border-color: var(--cf-accent);
+  border-color: var(--cf-danger-line);
   background-color: var(--cf-bg);
   color: var(--cf-text);
 }
@@ -1844,7 +1843,7 @@ main > section:nth-of-type(even) {
   justify-content: center;
   gap: var(--cf-space-8);
   padding: var(--cf-space-12);
-  background-color: var(--cf-primary);
+  background-color: var(--cf-band);
   color: var(--cf-on-primary);
 }
 
@@ -1863,7 +1862,7 @@ main > section:nth-of-type(even) {
   height: 42px;
   border-radius: 50%;
   background-color: var(--cf-accent);
-  color: var(--cf-on-primary);
+  color: var(--cf-on-accent);
 }
 
 .cf-contact__block h3 {
@@ -1958,7 +1957,7 @@ main > section:nth-of-type(even) {
 }
 
 .cf-contact__alert--error {
-  border-color: var(--cf-accent);
+  border-color: var(--cf-danger-line);
   background-color: var(--cf-bg);
   color: var(--cf-text);
 }
@@ -2032,7 +2031,7 @@ main > section:nth-of-type(even) {
 }
 
 .cf-services-section__message--error {
-  color: var(--cf-accent-dark);
+  color: var(--cf-danger-dark);
 }
 
 /* Carrusel */
@@ -2213,7 +2212,7 @@ main > section:nth-of-type(even) {
 
 /* La portada alterna bandas blancas con `main > section:nth-of-type(2n)`,
    y aquí esa regla también alcanza: pintaba de blanco las tareas y "Otros
-   servicios" y dejaba el cierre en crema, partiendo la página en trozos
+   servicios" y dejaba el cierre en fondo claro, partiendo la página en trozos
    sin sentido. El único contraste que queremos es la banda verde. */
 .cf-service-detail > section:not(.cf-service-detail__how) {
   background-color: transparent;
@@ -2243,7 +2242,7 @@ main > section:nth-of-type(even) {
 }
 
 /* Una raya corta de color antes del título: basta para que la portada no
-   arranque en frío, que era verde sobre crema y nada más. */
+   arranque en frío, que era color sobre fondo claro y nada más. */
 .cf-service-detail__rule {
   width: 56px;
   height: 5px;
@@ -2315,7 +2314,7 @@ main > section:nth-of-type(even) {
   top: var(--cf-space-8);
 }
 
-/* El precio en terracota y el botón en verde. Es lo primero que se busca
+/* El precio en el acento y el botón en el color de marca. Es lo primero que se busca
    al entrar, y con los dos del mismo color no destacaría ninguno. */
 .cf-service-detail__price {
   display: flex;
@@ -2409,7 +2408,7 @@ main > section:nth-of-type(even) {
 }
 
 /* ---------- LA BANDA OSCURA ----------
-   Crema, verde, crema. Ese cambio de aire es lo que hace que una página
+   Claro, oscuro, claro. Ese cambio de aire es lo que hace que una página
    larga no se lea del tirón, y es el mismo recurso que usan los inicios
    del panel. */
 
@@ -2418,7 +2417,7 @@ main > section:nth-of-type(even) {
   overflow: hidden;
   margin-top: 112px;
   padding: 88px 0;
-  background-color: var(--cf-primary);
+  background-color: var(--cf-band);
   color: var(--cf-on-primary);
 }
 
@@ -2437,7 +2436,7 @@ main > section:nth-of-type(even) {
   height: 560px;
   top: -300px;
   right: -120px;
-  background: radial-gradient(circle, rgba(201, 123, 74, 0.34), transparent 68%);
+  background: radial-gradient(circle, rgba(var(--cf-accent-rgb), 0.34), transparent 68%);
 }
 
 .cf-service-detail__how::after {
@@ -2445,7 +2444,7 @@ main > section:nth-of-type(even) {
   height: 400px;
   bottom: -250px;
   left: 4%;
-  background: radial-gradient(circle, rgba(231, 237, 223, 0.15), transparent 70%);
+  background: radial-gradient(circle, rgba(var(--cf-white-rgb), 0.15), transparent 70%);
 }
 
 .cf-service-detail__how .cf-service-detail__w {
@@ -2469,7 +2468,7 @@ main > section:nth-of-type(even) {
   gap: var(--cf-space-12);
 }
 
-/* La línea de arriba marca dónde empieza cada paso. En crema apagado no
+/* La línea de arriba marca dónde empieza cada paso. En tono apagado no
    se veía y los tres se leían como un solo párrafo. */
 .cf-service-detail__step {
   padding-top: var(--cf-space-6);
@@ -2497,9 +2496,8 @@ main > section:nth-of-type(even) {
 
 .cf-service-detail__step p {
   margin: 0;
-  /* ⚠️ Crema translúcido a mano: no hay token para el texto secundario
-     sobre fondo oscuro. */
-  color: rgba(247, 243, 232, 0.72);
+  /* Blanco translúcido: el texto secundario sobre fondo oscuro. */
+  color: rgba(var(--cf-white-rgb), 0.72);
   font-size: 0.9375rem;
   line-height: 1.65;
 }
@@ -2550,7 +2548,7 @@ main > section:nth-of-type(even) {
 .cf-service-detail__task i {
   flex: none;
   margin-top: 4px;
-  color: var(--cf-accent);
+  color: var(--cf-accent-dark);
 }
 
 .cf-service-detail__task strong {
