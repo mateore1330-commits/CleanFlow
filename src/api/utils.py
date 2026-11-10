@@ -2,12 +2,13 @@
 Utilidades compartidas del backend.
 
   - APIException:     errores controlados que se devuelven como JSON.
-  - generate_sitemap: página de bienvenida de la API (plantilla de 4Geeks).
+  - generate_sitemap: página de la raíz del servidor en desarrollo (lista de rutas).
   - role_required:    decorador que protege endpoints por rol.
   - slugify:          convierte un nombre en un trozo de URL.
 """
 
 import re
+from html import escape
 import unicodedata
 from functools import wraps
 from flask import jsonify, url_for
@@ -42,8 +43,8 @@ class APIException(Exception):
 # ------------------------------------------------------------------
 # PÁGINA DE BIENVENIDA DE LA API
 # ------------------------------------------------------------------
-# Código de la plantilla de 4Geeks: lista los endpoints en la raíz del
-# backend. app.py solo la muestra en desarrollo.
+# Lista las rutas en la raíz del servidor. app.py solo la muestra en
+# desarrollo; en producción la raíz sirve el front.
 
 def has_no_empty_params(rule):
     """True si la ruta no pide parámetros en la URL (como /single/<id>) y
@@ -63,15 +64,19 @@ def generate_sitemap(app):
             if "/admin/" not in url:
                 links.append(url)
 
-    links_html = "".join(["<li><a href='" + y + "'>" + y + "</a></li>" for y in links])
-    return """
-        <div style="text-align: center;">
-        <img style="max-height: 80px" src='https://storage.googleapis.com/breathecode/boilerplates/rigo-baby.jpeg' />
-        <h1>Rigo welcomes you to your API!!</h1>
-        <p>API HOST: <script>document.write('<input style="padding: 5px; width: 300px" type="text" value="'+window.location.href+'" />');</script></p>
-        <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
-        <p>Remember to specify a real endpoint path like: </p>
-        <ul style="text-align: left;">"""+links_html+"</ul></div>"
+    # escape(): las rutas salen del propio Flask, pero así ningún carácter
+    # raro puede romper el HTML.
+    links_html = "".join(f"<li><a href='{escape(y)}'>{escape(y)}</a></li>" for y in links)
+    return f"""<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>API de CleanFlow</title></head>
+<body style="font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px;">
+  <h1>API de CleanFlow</h1>
+  <p>El servidor está en marcha. Estas son las rutas que se pueden abrir en el navegador
+  (las de la API van con el prefijo <code>/api</code>):</p>
+  <ul>{links_html}</ul>
+</body>
+</html>"""
 
 
 # ------------------------------------------------------------------
