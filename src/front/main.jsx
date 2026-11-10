@@ -1,5 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+// Tipografías de la marca, alojadas en la propia web (DISENO-01): el
+// navegador no se conecta a Google. Van antes de index.css, que las usa.
+import '@fontsource-variable/plus-jakarta-sans'
+import '@fontsource-variable/inter'
 import './index.css'  // Global styles for your application
 import { RouterProvider } from "react-router-dom";  // Import RouterProvider to use the router
 import { router } from "./routes";  // Import the router configuration

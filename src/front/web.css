@@ -617,11 +617,10 @@ main > section:nth-of-type(even) {
   background-color: currentColor;
 }
 
-/* En la letra de la marca: el hero hace de portada y es el único sitio
-   donde se permite (ver --cf-font-brand en index.css).
+/* En la letra de la marca (Plus Jakarta Sans): el hero hace de portada.
 
-   El letter-spacing negativo es obligatorio aquí: Montserrat es ancha, y
-   sin apretarla un titular grande se ve blando.
+   El letter-spacing negativo es obligatorio aquí: en tamaños grandes,
+   sin apretarla un poco, un titular se ve blando.
 
    clamp crece con la pantalla sin salirse de la escala de index.css. */
 .cf-hero__title {
@@ -685,7 +684,7 @@ main > section:nth-of-type(even) {
   border-top: 1px solid var(--cf-ring);
 }
 
-/* En la letra del titular: una Fraunces suelta aquí abajo cantaría. */
+/* En la letra del titular, para que la cifra y el título casen. */
 .cf-hero__score {
   font-family: var(--cf-font-brand);
   font-size: var(--cf-text-2xl);
