@@ -34,6 +34,18 @@ export const COMPANY = {
 }
 
 
+// Quien ha hecho la web (WEB-04, A1). Sale en el aviso legal y en la
+// privacidad: aunque la empresa sea ficticia, quien se registra deja datos
+// de verdad, y tiene que saber a quién pedir que se borren. Su portfolio
+// y no GitHub, que no tiene mensajes privados. Ni correo, ni teléfono ni
+// dirección: solo lo que ya es público.
+export const OWNER = {
+    name: "Mateo Rodríguez",
+    // Directo a la sección de contacto de su portfolio, con su formulario.
+    contactUrl: "https://mateorodriguez.solutions/#contacto",
+}
+
+
 // Perfiles de redes. Con url en null, el icono no se pinta: uno que no
 // lleva a ninguna parte queda peor que no tenerlo.
 // Los icon son clases de Font Awesome, que se carga en index.html.
