@@ -3,9 +3,14 @@
  *
  * Un único sitio del que salen.
  *
- * ⚠️ SON PROVISIONALES. Hay que sustituirlos por los reales antes de la
- * entrega, incluidas las URL de redes, que apuntan a las portadas de las
- * plataformas y no a perfiles de CleanFlow.
+ * CleanFlow es una empresa ficticia (proyecto de portfolio), así que su
+ * dirección, teléfono y correo son inventados A PROPÓSITO, y de forma que
+ * no puedan ser de nadie (WEB-04, C1): un número que se ve falso y un
+ * dominio .example, reservado para ejemplos. Las redes apuntan a las
+ * portadas de las plataformas, no a perfiles de CleanFlow.
+ *
+ * Lo único real es OWNER: quien ha hecho la web, que es quien responde
+ * del aviso legal y de la privacidad.
  */
 
 export const COMPANY = {
@@ -20,10 +25,10 @@ export const COMPANY = {
     city: "28001 Madrid",
 
     // Dos formas del mismo número: el enlace tel: no admite espacios.
-    phone: "+34 693 428 725",
-    phoneLink: "+34693428725",
+    phone: "+34 600 000 000",
+    phoneLink: "+34600000000",
 
-    email: "prueba@cleanflow.es",
+    email: "hola@cleanflow.example",
 
     // Un tramo por línea: quien lo pinta recorre el array.
     schedule: [

@@ -906,19 +906,91 @@
 }
 
 /* El mapa real, debajo de los datos. */
+/* El plano dibujado y su botón (OfficeMap.jsx, WEB-04). Sustituye al
+   mapa de Google, que ponía cookies al cargar. Los colores del dibujo
+   salen de la marca: suelo y río en verde agua, manzanas casi blancas,
+   el parque en menta. */
 .cf-office-map {
+  position: relative;
   overflow: hidden;
+  height: 200px;
   margin-top: 20px;
   border: 1px solid var(--cf-border);
   border-radius: var(--cf-radius-md);
   background-color: var(--cf-brand-50);
 }
 
-.cf-office-map__iframe {
+.cf-office-map__plan {
   display: block;
   width: 100%;
-  height: 220px;
-  border: 0;
+  height: 100%;
+}
+
+.cf-office-map__ground {
+  fill: var(--cf-brand-50);
+}
+
+.cf-office-map__river {
+  fill: var(--cf-brand-100);
+}
+
+.cf-office-map__blocks rect {
+  fill: var(--cf-surface);
+  opacity: 0.8;
+}
+
+.cf-office-map__park {
+  fill: var(--cf-accent-soft);
+}
+
+.cf-office-map__trees circle {
+  fill: var(--cf-accent);
+  opacity: 0.55;
+}
+
+.cf-office-map__avenue {
+  stroke: var(--cf-surface);
+  stroke-width: 10;
+}
+
+.cf-office-map__avenue-line {
+  stroke: var(--cf-border);
+  stroke-width: 1;
+  stroke-dasharray: 6 6;
+}
+
+/* La chincheta, en la oficina, con su sombra en el suelo. */
+.cf-office-map__pin {
+  position: absolute;
+  left: 58%;
+  top: 40%;
+  transform: translate(-50%, -100%);
+  color: var(--cf-primary);
+  font-size: 2.125rem;
+  filter: drop-shadow(0 4px 6px rgba(var(--cf-brand-900-rgb), 0.28));
+}
+
+.cf-office-map__pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 16px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgba(var(--cf-brand-900-rgb), 0.22);
+  transform: translateX(-50%);
+}
+
+.cf-office-map__go {
+  position: absolute;
+  left: var(--cf-space-3);
+  bottom: var(--cf-space-3);
+  box-shadow: var(--cf-shadow-sm);
+}
+
+.cf-office-map__go i {
+  font-size: 0.75rem;
 }
 
 /* ======================================================================
