@@ -1,0 +1,384 @@
+/* ======================================================================
+   PÁGINAS LEGALES (LegalPage.jsx, maqueta 07, WEB-04)
+
+   Aviso legal, privacidad y cookies. Texto largo para leer con calma:
+   una columna estrecha (unos 68 caracteres por línea), el índice a la
+   izquierda y un resumen antes de empezar. Se importa desde LegalPage.
+
+   Normas (ver index.css): todo desde un token y prefijo cf-.
+   ====================================================================== */
+
+/* Fondo blanco, como el resto de páginas de la web: el gris es solo de
+   la cabecera. */
+.cf-legal {
+  background-color: var(--cf-surface);
+}
+
+/* ---------- CABECERA ---------- */
+
+.cf-legal__hero {
+  padding: var(--cf-space-16) 0 44px;
+  border-bottom: 1px solid var(--cf-border);
+  background-color: var(--cf-bg);
+}
+
+.cf-legal__eyebrow {
+  margin: 0 0 14px;
+  color: var(--cf-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cf-legal__title {
+  margin: 0;
+  color: var(--cf-text);
+  font-size: clamp(2rem, 4vw, 2.875rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+.cf-legal__lede {
+  max-width: 620px;
+  margin: 14px 0 0;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-lg);
+  text-wrap: pretty;
+}
+
+.cf-legal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cf-space-2) 20px;
+  margin: 14px 0 0;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-legal__meta i {
+  margin-right: 6px;
+  color: var(--cf-primary);
+}
+
+/* ---------- ÍNDICE Y TEXTO ---------- */
+
+.cf-legal__grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--cf-space-16);
+  align-items: start;
+  padding-top: var(--cf-space-12);
+  padding-bottom: 96px;
+}
+
+/* Fijo al bajar, justo debajo de la cabecera (72px). */
+.cf-legal__toc {
+  position: sticky;
+  top: 92px;
+}
+
+.cf-legal__toc-title {
+  margin: 0;
+  color: var(--cf-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cf-legal__toc ol {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  border-left: 2px solid var(--cf-border);
+}
+
+.cf-legal__toc a {
+  display: block;
+  margin-left: -2px;
+  padding: 6px 0 6px 14px;
+  border-left: 2px solid transparent;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color var(--cf-transition), border-color var(--cf-transition);
+}
+
+.cf-legal__toc a:hover {
+  color: var(--cf-text);
+}
+
+.cf-legal__toc a.is-active {
+  border-left-color: var(--cf-primary);
+  color: var(--cf-primary-dark);
+  font-weight: 600;
+}
+
+.cf-legal__toc-m {
+  display: none;
+}
+
+.cf-legal__body {
+  max-width: 68ch;
+  color: var(--cf-text);
+  line-height: 1.7;
+}
+
+/* ---------- RESUMEN ---------- */
+
+.cf-legal__summary {
+  margin-bottom: 44px;
+  padding: var(--cf-space-6) 28px;
+  border: 1px solid var(--cf-brand-100);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-brand-50);
+}
+
+.cf-legal__summary h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--cf-text);
+  font-size: var(--cf-text-lg);
+  font-weight: 700;
+}
+
+.cf-legal__summary h2 i {
+  color: var(--cf-primary);
+}
+
+.cf-legal__summary ul {
+  margin: var(--cf-space-3) 0 0;
+  padding-left: 20px;
+}
+
+.cf-legal__summary li {
+  margin: 6px 0;
+}
+
+/* ---------- APARTADOS ---------- */
+
+.cf-legal__section + .cf-legal__section {
+  margin-top: var(--cf-space-12);
+}
+
+.cf-legal__section h2 {
+  margin: 0 0 var(--cf-space-3);
+  color: var(--cf-text);
+  font-size: var(--cf-text-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  /* Al llegar desde el índice, que la cabecera fija no tape el título. */
+  scroll-margin-top: 92px;
+}
+
+.cf-legal__section p,
+.cf-legal__section ul {
+  margin: 0 0 14px;
+}
+
+.cf-legal__section ul {
+  padding-left: 22px;
+}
+
+.cf-legal__section li {
+  margin: 6px 0;
+}
+
+/* Solo los enlaces dentro del texto: el índice y las tarjetas del final
+   llevan su propio estilo. */
+.cf-legal__section a,
+.cf-legal__summary a {
+  color: var(--cf-primary-dark);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cf-legal__body code {
+  padding: 1px 6px;
+  border: 1px solid var(--cf-border);
+  border-radius: 6px;
+  background-color: var(--cf-bg);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- TABLAS ---------- */
+
+.cf-legal-table {
+  width: 100%;
+  margin: var(--cf-space-4) 0 var(--cf-space-6);
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.cf-legal-table th {
+  padding: 10px 14px;
+  background-color: var(--cf-bg);
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.cf-legal-table td {
+  padding: var(--cf-space-3) 14px;
+  border-bottom: 1px solid var(--cf-border);
+  line-height: 1.55;
+  vertical-align: top;
+}
+
+.cf-legal-table td:first-child {
+  font-weight: 500;
+}
+
+/* ---------- LAS OTRAS PÁGINAS ---------- */
+
+.cf-legal__related {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cf-space-4);
+  margin-top: 56px;
+  padding-top: var(--cf-space-8);
+  border-top: 1px solid var(--cf-border);
+}
+
+.cf-legal__related a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cf-space-3);
+  padding: 18px 20px;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-md);
+  color: var(--cf-text);
+  font-weight: 400;
+  text-decoration: none;
+  transition: border-color var(--cf-transition);
+}
+
+.cf-legal__related a:hover {
+  border-color: var(--cf-brand-500);
+}
+
+.cf-legal__related small {
+  display: block;
+  color: var(--cf-muted);
+  font-size: 0.8125rem;
+}
+
+.cf-legal__related b {
+  font-family: var(--cf-font-heading);
+  font-weight: 600;
+}
+
+.cf-legal__related i {
+  color: var(--cf-primary);
+}
+
+/* ---------- MÓVIL ---------- */
+
+@media (max-width: 900px) {
+  .cf-legal__grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .cf-legal__toc {
+    display: none;
+  }
+
+  .cf-legal__toc-m {
+    display: block;
+    margin-bottom: 28px;
+    border: 1px solid var(--cf-border);
+    border-radius: var(--cf-radius-md);
+  }
+
+  .cf-legal__toc-m summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px var(--cf-space-4);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .cf-legal__toc-m summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .cf-legal__toc-m summary i {
+    transition: transform var(--cf-transition);
+  }
+
+  .cf-legal__toc-m[open] summary i {
+    transform: rotate(180deg);
+  }
+
+  .cf-legal__toc-m ol {
+    margin: 0;
+    padding: 0 var(--cf-space-4) var(--cf-space-3) 34px;
+  }
+
+  .cf-legal__toc-m li {
+    padding: 5px 0;
+  }
+
+  .cf-legal__toc-m a {
+    color: var(--cf-text);
+    font-weight: 400;
+    text-decoration: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .cf-legal__hero {
+    padding: 40px 0 var(--cf-space-8);
+  }
+
+  .cf-legal__summary {
+    padding: 20px;
+  }
+
+  .cf-legal__related {
+    grid-template-columns: 1fr;
+  }
+
+  /* La tabla, como tarjetas: cada fila un bloque y cada dato con su
+     cabecera delante (data-label). */
+  .cf-legal-table thead {
+    display: none;
+  }
+
+  .cf-legal-table,
+  .cf-legal-table tbody,
+  .cf-legal-table tr,
+  .cf-legal-table td {
+    display: block;
+  }
+
+  .cf-legal-table tr {
+    padding: var(--cf-space-3) 0;
+    border-bottom: 1px solid var(--cf-border);
+  }
+
+  .cf-legal-table td {
+    padding: 2px 0;
+    border: 0;
+  }
+
+  .cf-legal-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--cf-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
