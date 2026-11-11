@@ -62,4 +62,6 @@ database.database
 database.db
 diagram.png
 __pycache__/
-migrations 
+# migrations/ NO se ignora (DATOS-01): las migraciones son el plano de la
+# base de datos y tienen que estar en el repo para que cualquiera pueda
+# montarla igual con `pipenv run upgrade`.
