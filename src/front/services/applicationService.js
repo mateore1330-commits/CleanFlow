@@ -1,11 +1,11 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+import { BACKEND_URL, apiFetch } from "./backend";
 
 // Endpoint provisional hasta confirmar la ruta definitiva con el equipo.
 const JOB_APPLICATION_ENDPOINT = "/api/job-applications";
 
 export const sendJobApplication = async (formData) => {
   try {
-    const response = await fetch(`${BACKEND_URL}${JOB_APPLICATION_ENDPOINT}`, {
+    const response = await apiFetch(`${BACKEND_URL}${JOB_APPLICATION_ENDPOINT}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export const sendJobApplication = async (formData) => {
 };
 export const getJobApplications = async (token) => {
   try {
-    const response = await fetch(`${BACKEND_URL}${JOB_APPLICATION_ENDPOINT}`, {
+    const response = await apiFetch(`${BACKEND_URL}${JOB_APPLICATION_ENDPOINT}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ export const getJobApplications = async (token) => {
 
 export const updateApplicationStatus = async (id, status, token) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${BACKEND_URL}${JOB_APPLICATION_ENDPOINT}/${id}/status`,
       {
         method: "PATCH",
