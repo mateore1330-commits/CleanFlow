@@ -7,8 +7,8 @@
  * elegido. Sin destino guardado, /dashboard.
  *
  * Antes de enviar se comprueba lo básico y se dice junto al campo. La
- * contraseña sigue con la regla de hoy (mínimo 6); la nueva y su lista de
- * requisitos son FIX-04 (decidido el 10/11/2026, A1).
+ * contraseña lleva debajo su lista de requisitos, que se va marcando al
+ * escribir (FIX-04).
  *
  * Estilos: auth.css y las piezas comunes de index.css.
  */
@@ -23,10 +23,8 @@ import { GoogleButton } from "../../components/web/GoogleButton.jsx";
 import { AuthField } from "../../components/web/AuthField.jsx";
 import { AuthTabs, GooglePrivacy } from "../../components/web/AuthTabs.jsx";
 import { AuthMessage } from "../../components/web/AuthMessage.jsx";
-
-
-// El mismo mínimo que pide el servidor en /register.
-const PASSWORD_MIN_LENGTH = 6;
+import { PasswordRules } from "../../components/PasswordRules.jsx";
+import { passwordProblem } from "../../utils/passwordRule.js";
 
 // El orden es el del formulario: el cursor va al primero que falle.
 const FIELDS = ["name", "last_name", "email", "phone", "password", "privacy"];
@@ -39,7 +37,9 @@ const check = (data) => {
     else if (!isEmail(data.email)) errors.email = "Revisa el correo: tiene que ser como nombre@correo.com.";
     if (!data.phone.trim()) errors.phone = "Escribe tu teléfono.";
     else if (!isSpanishPhone(data.phone)) errors.phone = "Escribe un teléfono español de 9 cifras, como 600 123 456.";
-    if (data.password.length < PASSWORD_MIN_LENGTH) errors.password = `La contraseña necesita al menos ${PASSWORD_MIN_LENGTH} caracteres.`;
+    // La misma regla y la misma frase que el servidor (FIX-04).
+    const password = passwordProblem(data.password);
+    if (password) errors.password = password;
     if (!data.privacy) errors.privacy = "Para crear la cuenta tienes que aceptar la política de privacidad.";
     return errors;
 };
@@ -257,8 +257,10 @@ export const Register = () => {
                     value={formData.password}
                     onChange={handleChange}
                     error={fieldErrors.password}
-                    hint={`Al menos ${PASSWORD_MIN_LENGTH} caracteres.`}
-                />
+                    childrenId="password-rules"
+                >
+                    <PasswordRules id="password-rules" value={formData.password} />
+                </AuthField>
 
                 {/* Obligatoria (RGPD). Abre en otra pestaña para no perder
                     lo escrito. La página llega con WEB-04. */}
