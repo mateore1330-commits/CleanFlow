@@ -113,7 +113,7 @@ export const NextBooking = ({ booking, day }) => {
             <div className="cf-client-next__grid">
                 <div className="cf-client-next__item">
                     {booking.worker_name
-                        ? <Avatar name={booking.worker_name} size="sm" tone="accent" />
+                        ? <Avatar name={booking.worker_name} src={booking.worker_avatar_url} size="sm" tone="accent" />
                         : <i className="fa-solid fa-user" aria-hidden="true"></i>}
                     <div>
                         <small>Quién viene</small>
