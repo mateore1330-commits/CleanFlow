@@ -31,9 +31,8 @@ import { useEffect, useState } from "react"
 import useGlobalReducer from "../../../hooks/useGlobalReducer"
 import { getAccount, changePassword, createPassword, connectGoogle } from "../../../services/accountService"
 import { GoogleButton } from "../../../components/web/GoogleButton"
-
-// El mismo mínimo que pide el backend en /register y en /account/password.
-const PASSWORD_MIN_LENGTH = 6
+import { PasswordRules } from "../../../components/PasswordRules"
+import { passwordProblem } from "../../../utils/passwordRule"
 
 const EMPTY_FORM = { current_password: "", new_password: "", repeat_password: "" }
 
@@ -46,8 +45,9 @@ const validate = (form, hasPassword) => {
         errors.current_password = "La contraseña actual es obligatoria"
 
     if (!form.new_password) errors.new_password = "La contraseña nueva es obligatoria"
-    else if (form.new_password.length < PASSWORD_MIN_LENGTH)
-        errors.new_password = `La contraseña nueva debe tener mínimo ${PASSWORD_MIN_LENGTH} caracteres`
+    // La regla de toda la app, con la misma frase que el servidor (FIX-04).
+    else if (passwordProblem(form.new_password))
+        errors.new_password = passwordProblem(form.new_password, hasPassword ? "La contraseña nueva" : "La contraseña")
     else if (hasPassword && form.new_password === form.current_password)
         errors.new_password = "La contraseña nueva tiene que ser distinta de la actual"
 
@@ -214,9 +214,12 @@ export const AccountSecurity = () => {
     // Los tres campos son iguales: mismo marcado con el ojo dentro. Es una
     // función que devuelve JSX, no un componente: así no se vuelve a montar
     // en cada tecla y el campo no pierde el cursor.
-    const passwordField = (name, label, autoComplete, hint) => {
+    // withRules: la lista de requisitos debajo (FIX-04), solo en la nueva.
+    const passwordField = (name, label, autoComplete, hint, withRules = false) => {
         const visible = Boolean(shown[name])
         const error = errors[name]
+        const rulesId = withRules ? `${name}-rules` : null
+        const noteId = error ? `${name}-error` : hint ? `${name}-hint` : null
 
         return (
             <div className="cf-dash-field">
@@ -236,7 +239,7 @@ export const AccountSecurity = () => {
                         value={form[name]}
                         onChange={handleChange}
                         aria-invalid={Boolean(error)}
-                        aria-describedby={error ? `${name}-error` : hint ? `${name}-hint` : undefined}
+                        aria-describedby={[noteId, rulesId].filter(Boolean).join(" ") || undefined}
                     />
 
                     {/* aria-pressed dice si está activado; el aria-label
@@ -263,6 +266,8 @@ export const AccountSecurity = () => {
                         </p>
                     )
                 )}
+
+                {withRules && <PasswordRules id={rulesId} value={form[name]} />}
             </div>
         )
     }
@@ -403,7 +408,8 @@ export const AccountSecurity = () => {
                         "new_password",
                         hasPassword ? "Contraseña nueva" : "Contraseña",
                         "new-password",
-                        `Mínimo ${PASSWORD_MIN_LENGTH} caracteres.`
+                        undefined,
+                        true
                     )}
                     {passwordField(
                         "repeat_password",
