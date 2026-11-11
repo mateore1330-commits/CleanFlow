@@ -325,11 +325,11 @@ def create_worker():
             "message": "El correo electrónico no es válido"
         }), 400
 
-    # Validar contraseña
-    if len(password) < 6:
-        return jsonify({
-            "message": "La contraseña debe tener mínimo 6 caracteres"
-        }), 400
+    # La regla de toda la aplicación (FIX-04).
+    problem = password_problem(password)
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     # Solo se pueden crear trabajadores o managers
     if role not in ["worker", "manager"]:
@@ -1343,8 +1343,11 @@ def register():
 
         return jsonify({"message": "El correo electrónico ya está registrado"}), 409
 
-    if len(password) < 6:
-        return jsonify({"message": "La contraseña debe tener mínimo 6 caracteres"}), 400
+    # La regla de toda la aplicación (FIX-04).
+    problem = password_problem(password)
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     # Rol forzado a "client": workers y managers solo los crea el manager
     # desde el dashboard, nunca un alta desde fuera.
@@ -1695,8 +1698,46 @@ def get_profile():
 ACCOUNT_NAME_MAX_LENGTH = 100
 ACCOUNT_LAST_NAME_MAX_LENGTH = 150
 
-# El mismo mínimo que pide /register: una sola regla en toda la aplicación.
-PASSWORD_MIN_LENGTH = 6
+# ---------- LA REGLA DE CONTRASEÑA (FIX-04) ----------
+# Una sola para toda la aplicación: registro, alta de trabajador, crear y
+# cambiar la contraseña. La pantalla tiene su copia en
+# front/utils/passwordRule.js, para ir marcando la lista al escribir; la
+# que manda es esta. Entrar NO la comprueba: las cuentas de antes siguen
+# entrando con la contraseña que tenían.
+PASSWORD_MIN_LENGTH = 8
+
+# Lo que pide cada requisito, en el orden de la lista de la pantalla.
+# Especial es todo lo que no es letra, número ni espacio. La ñ y las
+# vocales con tilde son letras: «Ñ» cuenta como mayúscula.
+PASSWORD_RULES = (
+    (f"al menos {PASSWORD_MIN_LENGTH} caracteres", lambda pw: len(pw) >= PASSWORD_MIN_LENGTH),
+    ("una mayúscula", lambda pw: any(c.isupper() for c in pw)),
+    ("una minúscula", lambda pw: any(c.islower() for c in pw)),
+    ("un número", lambda pw: any(c.isdecimal() for c in pw)),
+    ("un carácter especial", lambda pw: any(not c.isalnum() and not c.isspace() for c in pw)),
+)
+
+
+def password_problem(password, label="La contraseña"):
+    """Qué le falta a una contraseña, o None si cumple la regla.
+
+        password_problem("limpia24")
+        -> "La contraseña necesita una mayúscula y un carácter especial."
+
+    Dice todo lo que falta de una vez: ir descubriéndolo de uno en uno,
+    enviando cada vez, desespera.
+    """
+    if not isinstance(password, str) or not password:
+        return f"{label} es obligatoria."
+
+    missing = [text for text, ok in PASSWORD_RULES if not ok(password)]
+
+    if not missing:
+        return None
+
+    listed = missing[0] if len(missing) == 1 else ", ".join(missing[:-1]) + " y " + missing[-1]
+
+    return f"{label} necesita {listed}."
 
 # Fotos. Los mismos tipos en todas partes; el tamaño cambia según para qué:
 # un avatar se ve pequeño, y la prueba de una tarea o de una incidencia
@@ -1922,10 +1963,10 @@ def create_account_password():
     if not isinstance(new_password, str) or not new_password:
         return jsonify({"message": "La contraseña es obligatoria"}), 400
 
-    if len(new_password) < PASSWORD_MIN_LENGTH:
-        return jsonify({
-            "message": f"La contraseña debe tener mínimo {PASSWORD_MIN_LENGTH} caracteres"
-        }), 400
+    problem = password_problem(new_password)
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     # set_password hashea; nunca se asigna password_hash a mano.
     user.set_password(new_password)
@@ -2043,8 +2084,10 @@ def update_account_password():
     if not user.check_password(current_password):
         return jsonify({"message": "La contraseña actual no es correcta"}), 400
 
-    if len(new_password) < PASSWORD_MIN_LENGTH:
-        return jsonify({"message": f"La contraseña nueva debe tener mínimo {PASSWORD_MIN_LENGTH} caracteres"}), 400
+    problem = password_problem(new_password, "La contraseña nueva")
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     if new_password == current_password:
         return jsonify({"message": "La contraseña nueva tiene que ser distinta de la actual"}), 400

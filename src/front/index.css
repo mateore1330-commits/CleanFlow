@@ -474,6 +474,48 @@ textarea.cf-input {
   resize: vertical;
 }
 
+/* ---------- REQUISITOS DE LA CONTRASEÑA (PasswordRules.jsx, FIX-04) ----------
+   Dos columnas bajo el campo, como en la maqueta 03, si caben; si el
+   campo es estrecho (en el móvil, o en la columna de Nuevo trabajador),
+   una. Lo decide el ancho de la lista, no el de la pantalla: auto-fill
+   con un mínimo por columna. Pendiente: círculo y texto gris. Cumplido:
+   ✓ y verde. El icono cambia de forma, no solo de color. */
+
+.cf-pwrules {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--cf-muted);
+}
+
+.cf-pwrules__item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.cf-pwrules__item i {
+  flex: none;
+  width: 0.75rem;
+  font-size: 0.6875rem;
+  text-align: center;
+}
+
+.cf-pwrules__item--ok {
+  color: var(--cf-success);
+}
+
+/* El quinto, el más largo, va solo en su fila y a todo el ancho: en
+   media columna se partía en tres líneas. */
+.cf-pwrules__item:nth-child(odd):last-child {
+  grid-column: 1 / -1;
+}
+
 /* ---------- AVISO DE PROYECTO DE PORTFOLIO (DemoNotice.jsx) ----------
    Barra fina encima del menú en las páginas públicas y el acceso. */
 
