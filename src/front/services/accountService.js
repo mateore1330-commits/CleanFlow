@@ -9,6 +9,7 @@
  * está en data.message.
  */
 
+import { shrinkPhoto } from "../utils/photo";
 import { apiRequest } from "./apiClient";
 
 /** Datos de la pantalla de ajustes. data: { name, last_name, phone, email, role, avatar_url }. */
@@ -42,8 +43,9 @@ export const changePassword = async (currentPassword, newPassword, token) => {
  */
 export const uploadAvatar = async (file, token) => {
   const body = new FormData();
-  // "avatar": el nombre del campo que espera el backend.
-  body.append("avatar", file);
+  // "avatar": el nombre del campo que espera el backend. A 800 px basta:
+  // se ve como mucho a 96 px.
+  body.append("avatar", await shrinkPhoto(file, 800));
 
   return await apiRequest("/api/account/avatar", { method: "POST", token, body });
 };

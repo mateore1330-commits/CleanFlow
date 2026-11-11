@@ -7509,8 +7509,8 @@ textarea.cf-dash-input {
   font-weight: 400;
 }
 
-/* Una foto que pesa más de 5 MB: se dice al momento, sin subirla
-   (PANEL-03). */
+/* Una foto demasiado grande (PHOTO_MAX_MB, en utils/photo.js): se dice
+   al momento, sin subirla (PANEL-03). */
 .cf-inc-field__error {
   margin: var(--cf-space-2) 0 0;
   color: var(--cf-danger-dark);

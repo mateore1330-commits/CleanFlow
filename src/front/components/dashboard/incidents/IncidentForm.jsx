@@ -49,7 +49,7 @@ export const IncidentForm = ({ open, tasks = [], notDone = false, saving, onSubm
     const [taskId, setTaskId] = useState("");
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState(null);
-    // La foto que no se acepta por pesar más de 5 MB (PANEL-03).
+    // La foto que no se acepta por pesar más de PHOTO_MAX_MB (PANEL-03).
     const [photoError, setPhotoError] = useState("");
 
     // Abrir y cerrar lo decide la prop: el dialog solo obedece.
