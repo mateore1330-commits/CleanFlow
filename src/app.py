@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 import os
 from datetime import timedelta
-from flask import Flask, request, jsonify, url_for, send_from_directory
+from flask import Flask, request, jsonify, url_for, send_from_directory, abort
 from werkzeug.exceptions import HTTPException
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -11,7 +11,6 @@ from api.utils import APIException, generate_sitemap
 from api.models import db
 from api.routes import api
 from api.absence_routes import absence_api
-from api.admin import setup_admin
 from flask_jwt_extended import JWTManager
 
 # from models import Person
@@ -81,8 +80,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
 
-# add the admin
-setup_admin(app)
+# /admin, solo en local (FIX-05): enseña y deja borrar todas las tablas
+# sin contraseña. En producción ni se carga, y su dirección da 404: sin
+# esta ruta, la comodín de abajo contestaría con la página de la web.
+if ENV == "development":
+    from api.admin import setup_admin
+    setup_admin(app)
+else:
+    @app.route("/admin", defaults={"path": ""}, methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+    @app.route("/admin/<path:path>", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+    def admin_closed(path):
+        abort(404)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
