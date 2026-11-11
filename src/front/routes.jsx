@@ -48,6 +48,7 @@ export const router = createBrowserRouter(
         {/* Las páginas legales (WEB-04). Las enlazan el pie, el registro y
             el aviso de Google. */}
         <Route path="legal" lazy={page(() => import("./pages/web/legal/LegalNotice"), "LegalNotice")} />
+        <Route path="privacy" lazy={page(() => import("./pages/web/legal/Privacy"), "Privacy")} />
       </Route>
 
       {/* ---------- ACCESO Y REGISTRO: layout propio, sin navbar ni footer ----------
