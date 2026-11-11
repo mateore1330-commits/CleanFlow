@@ -1079,8 +1079,9 @@ class Booking(db.Model):
                 else None
             ),
 
-            # La foto del trabajador, solo aquí: el listado se apaña con
-            # las iniciales y no tiene por qué cargar con ella.
+            # La foto del trabajador: sin ella, la tarjeta pinta sus
+            # iniciales. El listado del encargado la añade por su cuenta
+            # (serializar_reserva, en routes.py), con la del cliente.
             "worker_avatar_url": (
                 self.worker.user.avatar_url
                 if self.worker and self.worker.user

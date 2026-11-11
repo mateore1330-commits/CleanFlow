@@ -1085,6 +1085,17 @@ def serializar_reserva(booking, motivos, abiertas):
         if booking.client else "Cliente"
     )
     data["service_name"] = booking.service.name if booking.service else "Servicio"
+
+    # Las dos fotos, para reconocer a cada uno en su fila (FIX-03). Sin
+    # foto, la tarjeta pinta las iniciales. El cliente y el trabajador ya
+    # vienen cargados para el nombre: no cuesta ninguna consulta más.
+    data["client_avatar_url"] = booking.client.avatar_url if booking.client else None
+    data["worker_avatar_url"] = (
+        booking.worker.user.avatar_url
+        if booking.worker and booking.worker.user
+        else None
+    )
+
     data["affected_reasons"] = motivos
     data["open_incidents"] = abiertas
 
