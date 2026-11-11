@@ -46,12 +46,14 @@ jobs:
       - run: pip install pipenv==2026.7.1
       - run: pipenv sync
       # Arranca la aplicación sin servirla: falla si algo no importa o falta config.
-      # Los valores son de prueba, no secretos. Sin DATABASE_URL usa un SQLite temporal.
+      # Los valores son de prueba, no secretos (32 caracteres o más, el mínimo
+      # que pide app.py). Sin DATABASE_URL usa un SQLite temporal. Sin
+      # FLASK_DEBUG arranca en modo producción, con /admin cerrado.
       - run: pipenv run flask --app app routes
         working-directory: src
         env:
-          JWT_SECRET_KEY: solo-para-ci
-          FLASK_APP_KEY: solo-para-ci
+          JWT_SECRET_KEY: solo-para-ci-no-es-un-secreto-jwt-0001
+          FLASK_APP_KEY: solo-para-ci-no-es-un-secreto-flask-0001
 
   pr:
     name: PR enlazado a su issue

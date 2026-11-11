@@ -16,14 +16,48 @@ from flask_jwt_extended import JWTManager
 
 # from models import Person
 
+# Local solo con FLASK_DEBUG=1. Sin esa variable cuenta como producción:
+# si alguien la olvida al desplegar, /admin queda cerrado y no abierto.
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
+
+# ---------- LAS CLAVES SECRETAS (FIX-05) ----------
+# Obligatorias al arrancar, en local y en producción, y sin valor por
+# defecto: con una inventada, cualquiera que lea el código podría
+# fabricarse una sesión. Mejor que la app no arranque y diga cuál falta
+# que descubrirlo cuando nadie puede entrar.
+#
+#   JWT_SECRET_KEY  firma las sesiones (el token de cada usuario)
+#   FLASK_APP_KEY   la clave de Flask; hoy solo la usa /admin, en local
+SECRET_MIN_LENGTH = 32
+
+
+def required_secret(name):
+    """El valor de la variable, o un error que dice qué hacer.
+
+    El mensaje nombra la variable y, si es corta, cuántos caracteres
+    tiene: nunca el valor.
+    """
+    value = os.getenv(name, "")
+
+    if len(value) >= SECRET_MIN_LENGTH:
+        return value
+
+    problem = "no está puesta" if not value else f"es demasiado corta ({len(value)} caracteres)"
+
+    raise RuntimeError(
+        f"{name} {problem}: necesita {SECRET_MIN_LENGTH} caracteres o más. "
+        f'Crea una con  python3 -c "import secrets; print(secrets.token_hex(32))"  '
+        f"y ponla en el .env (en local) o en las variables del servidor (en producción)."
+    )
+
+
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-# Setup the Flask-JWT-Extended extension
-app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')  # Change this!
+app.secret_key = required_secret("FLASK_APP_KEY")
+app.config["JWT_SECRET_KEY"] = required_secret("JWT_SECRET_KEY")
 
 # Caducidad del token de sesión. Se define de forma explícita: sin esta
 # línea la librería aplica su valor por defecto, 15 minutos, que es muy
