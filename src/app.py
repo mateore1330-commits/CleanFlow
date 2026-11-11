@@ -68,13 +68,26 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 jwt = JWTManager(app)
 
-# database condiguration
+# ---------- LA BASE DE DATOS ----------
+# En producción, obligatoria (DEPLOY-01): sin ella la app arrancaba con un
+# SQLite temporal y guardaba datos que se perdían al reiniciar. En local,
+# si falta, se sigue usando ese SQLite para poder probar sin PostgreSQL.
 db_url = os.getenv("DATABASE_URL")
-if db_url is not None:
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace(
-        "postgres://", "postgresql://")
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
+
+if not db_url and ENV == "production":
+    raise RuntimeError(
+        "DATABASE_URL no está puesta: en producción hace falta la conexión a la base de datos "
+        "(en Vercel, la agrupada de Neon). Ponla en las variables del servidor."
+    )
+
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    db_url.replace("postgres://", "postgresql://") if db_url else "sqlite:////tmp/test.db"
+)
+
+# Neon se duerme a los 5 minutos sin uso y cierra las conexiones abiertas.
+# pool_pre_ping comprueba cada una antes de usarla (y la renueva si está
+# muerta), y pool_recycle no deja ninguna viva más de 5 minutos.
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True, "pool_recycle": 300}
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
