@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 import {
@@ -11,6 +11,8 @@ import { getShifts } from "../../services/shiftService";
 import { summarizeDays } from "./ListadoTurnos";
 import { WorkerSummary } from "../../components/dashboard/workers/WorkerSummary";
 import { PageHead } from "../../components/dashboard/PageHead";
+import { PasswordRules } from "../../components/PasswordRules";
+import { passwordProblem } from "../../utils/passwordRule";
 import "../../dashboard.css";
 
 // Los dos roles del equipo, en chips.
@@ -44,6 +46,11 @@ export const EditarTrabajador = () => {
 
     // El ojo de la contraseña (solo al crear).
     const [showPassword, setShowPassword] = useState(false);
+
+    // Lo que le falta a la contraseña inicial, junto al campo (FIX-04), y
+    // el campo, para llevar el cursor a él si falla.
+    const [passwordError, setPasswordError] = useState("");
+    const passwordRef = useRef(null);
 
     useEffect(() => {
         let active = true;
@@ -139,6 +146,7 @@ export const EditarTrabajador = () => {
         }));
 
         setFormError("");
+        if (name === "password") setPasswordError("");
     };
 
     const handleSubmit = async (event) => {
@@ -155,6 +163,15 @@ export const EditarTrabajador = () => {
 
         if (!isEditing && !formData.phone.trim()) {
             setFormError("El teléfono es obligatorio.");
+            return;
+        }
+
+        // La regla de toda la app, con la misma frase que el servidor.
+        const problem = isEditing ? "" : passwordProblem(formData.password);
+
+        if (problem) {
+            setPasswordError(problem);
+            passwordRef.current?.focus();
             return;
         }
 
@@ -380,10 +397,12 @@ export const EditarTrabajador = () => {
                                     </label>
                                     <div className="cf-account__password">
                                         <input id="worker-password" className="cf-dash-input"
+                                            ref={passwordRef}
                                             type={showPassword ? "text" : "password"} name="password"
                                             value={formData.password} onChange={handleChange}
-                                            minLength={6} autoComplete="new-password" required
-                                            aria-describedby="worker-password-note" />
+                                            autoComplete="new-password" required
+                                            aria-invalid={Boolean(passwordError) || undefined}
+                                            aria-describedby={`${passwordError ? "worker-password-error " : ""}worker-password-rules worker-password-note`} />
                                         <button type="button" className="cf-account__eye"
                                             onClick={() => setShowPassword((shown) => !shown)}
                                             aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
@@ -391,8 +410,14 @@ export const EditarTrabajador = () => {
                                             <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true" />
                                         </button>
                                     </div>
+                                    {passwordError && (
+                                        <p className="cf-dash-field__error" id="worker-password-error">
+                                            {passwordError}
+                                        </p>
+                                    )}
+                                    <PasswordRules id="worker-password-rules" value={formData.password} />
                                     <p className="cf-dash-field__note" id="worker-password-note">
-                                        Mínimo 6 caracteres. Compártela con la persona: podrá cambiarla en Ajustes.
+                                        Compártela con la persona: podrá cambiarla en Ajustes.
                                     </p>
                                 </div>
                             )}
