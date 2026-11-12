@@ -10,13 +10,13 @@
  * respuesta. Manténla al añadir funciones nuevas.
  */
 
-// La URL del backend cambia entre desarrollo y producción, así que se
-// lee del .env (VITE_BACKEND_URL) en vez de escribirla a mano.
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+// La URL del backend cambia entre desarrollo y producción: la decide
+// backend.js (VITE_BACKEND_URL en local, el mismo dominio en Vercel).
+import { BACKEND_URL, apiFetch } from "./backend";
 
 export const login = async (email, password) => {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/login`, {
+        const response = await apiFetch(`${BACKEND_URL}/api/login`, {
             method: "POST",
             // El cuerpo viaja como texto: JSON.stringify convierte el objeto.
             body: JSON.stringify({
@@ -62,7 +62,7 @@ export const login = async (email, password) => {
  */
 export const register = async (formData) => {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/register`, {
+        const response = await apiFetch(`${BACKEND_URL}/api/register`, {
             method: "POST",
             // Sin esta cabecera, Flask no lee el cuerpo como JSON.
             headers: {
@@ -109,7 +109,7 @@ export const register = async (formData) => {
  */
 export const loginWithGoogle = async (credential) => {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/auth/google`, {
+        const response = await apiFetch(`${BACKEND_URL}/api/auth/google`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -144,7 +144,7 @@ export const loginWithGoogle = async (credential) => {
  */
 export const setAccountPhone = async (phone, token) => {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/account/phone`, {
+        const response = await apiFetch(`${BACKEND_URL}/api/account/phone`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

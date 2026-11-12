@@ -9,6 +9,7 @@
  * se repinte con la respuesta sin volver a pedirla.
  */
 
+import { shrinkPhoto } from "../utils/photo";
 import { apiRequest } from "./apiClient";
 
 /**
@@ -20,12 +21,13 @@ import { apiRequest } from "./apiClient";
  * Los campos vacíos no se envían: el backend distingue "no me lo has
  * dicho" de "me lo has dicho vacío".
  */
-const incidentBody = ({ incidentType, description, taskId, photo }) => {
+const incidentBody = async ({ incidentType, description, taskId, photo }) => {
     const body = new FormData();
 
     if (incidentType) body.append("incident_type", incidentType);
     if (taskId) body.append("booking_task_id", taskId);
-    if (photo) body.append("photo", photo);
+    // Reducida antes de enviarla: Vercel corta los envíos de más de 4,5 MB.
+    if (photo) body.append("photo", await shrinkPhoto(photo));
 
     body.append("description", description);
 
@@ -37,11 +39,11 @@ const incidentBody = ({ incidentType, description, taskId, photo }) => {
  *
  * data: { incidentType: "client" | "company", description, taskId?, photo? }
  */
-export const createIncident = (bookingId, data, token) =>
+export const createIncident = async (bookingId, data, token) =>
     apiRequest(`/api/bookings/${bookingId}/incidents`, {
         method: "POST",
         token,
-        body: incidentBody(data),
+        body: await incidentBody(data),
     });
 
 /**
@@ -50,11 +52,11 @@ export const createIncident = (bookingId, data, token) =>
  * No se envía el tipo: siempre es de cliente y lo pone el backend.
  * data: { description, photo? }
  */
-export const markNotDone = (bookingId, data, token) =>
+export const markNotDone = async (bookingId, data, token) =>
     apiRequest(`/api/bookings/${bookingId}/not-done`, {
         method: "POST",
         token,
-        body: incidentBody(data),
+        body: await incidentBody(data),
     });
 
 

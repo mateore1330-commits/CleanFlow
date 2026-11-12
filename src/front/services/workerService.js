@@ -1,10 +1,10 @@
 import { apiRequest } from "./apiClient";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+import { BACKEND_URL, apiFetch } from "./backend";
 
 export const getWorkers = async (token) => {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/workers`, {
+    const response = await apiFetch(`${BACKEND_URL}/api/workers`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -33,7 +33,7 @@ export const getWorkers = async (token) => {
 
 export const updateWorker = async (token, workerId, workerData) => {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/workers/${workerId}`, {
+    const response = await apiFetch(`${BACKEND_URL}/api/workers/${workerId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ export const updateWorker = async (token, workerId, workerData) => {
 };
 export const createWorker = async (token, workerData) => {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/workers`, {
+    const response = await apiFetch(`${BACKEND_URL}/api/workers`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ export const createWorker = async (token, workerData) => {
 };
 export const getWorker = async (token, workerId) => {
     try {
-        const response = await fetch(
+        const response = await apiFetch(
             `${BACKEND_URL}/api/workers/${workerId}`,
             {
                 method: "GET",

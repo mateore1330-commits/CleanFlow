@@ -11,10 +11,13 @@ import { StoreProvider } from './hooks/useGlobalReducer';  // Import the StorePr
 import { BackendURL } from './components/BackendURL';
 import { ServicesLoader } from './components/web/ServicesLoader';
 import { ReviewsLoader } from './components/web/ReviewsLoader';
+import { WakeNotice } from './components/WakeNotice';
 
 const Main = () => {
-    
-    if(! import.meta.env.VITE_BACKEND_URL ||  import.meta.env.VITE_BACKEND_URL == "") return (
+
+    // Solo en local: publicada, la web llama a /api de su propio dominio y
+    // la variable va vacía a propósito (services/backend.js, DEPLOY-01).
+    if (import.meta.env.DEV && !import.meta.env.VITE_BACKEND_URL) return (
         <React.StrictMode>
               <BackendURL/ >
         </React.StrictMode>
@@ -26,6 +29,8 @@ const Main = () => {
                 {/* Set up routing for the application */} 
                 <ServicesLoader />
                 <ReviewsLoader />
+                {/* Fuera del router: también avisa en la primera carga. */}
+                <WakeNotice />
                 <RouterProvider router={router}>
                 </RouterProvider>
             </StoreProvider>

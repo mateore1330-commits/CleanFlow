@@ -10,6 +10,7 @@
  * un servicio.
  */
 
+import { shrinkPhotos } from "../utils/photo";
 import { apiRequest } from "./apiClient";
 
 /**
@@ -20,7 +21,7 @@ import { apiRequest } from "./apiClient";
  * Devuelve la reserva entera, igual que confirmar y reclamar: así la
  * pantalla se repinta con la respuesta sin volver a pedirla.
  */
-export const createReview = (bookingId, { rating, comment, photos = [] }, token) => {
+export const createReview = async (bookingId, { rating, comment, photos = [] }, token) => {
   const body = new FormData();
 
   body.append("rating", rating);
@@ -32,7 +33,8 @@ export const createReview = (bookingId, { rating, comment, photos = [] }, token)
   }
 
   // Siempre "photo", repetido: es lo que lee request.files.getlist().
-  photos.forEach((photo) => body.append("photo", photo));
+  // Reducidas: todas tienen que caber en un envío de menos de 4,5 MB.
+  (await shrinkPhotos(photos)).forEach((photo) => body.append("photo", photo));
 
   return apiRequest(`/api/bookings/${bookingId}/reviews`, {
     method: "POST",

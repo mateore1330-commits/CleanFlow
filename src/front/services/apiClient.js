@@ -8,7 +8,7 @@
  * Si algo va mal, el texto para el usuario está en data.message.
  */
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+import { BACKEND_URL, apiFetch } from "./backend";
 
 const NETWORK_ERROR = "No se ha podido conectar con el servidor. Inténtalo de nuevo en unos segundos.";
 const UNEXPECTED_RESPONSE = "El servidor ha respondido algo inesperado. Revisa la dirección y el método de la petición.";
@@ -37,7 +37,7 @@ export const apiRequest = async (path, { method = "GET", token, body } = {}) => 
   let response;
 
   try {
-    response = await fetch(`${BACKEND_URL}${path}`, {
+    response = await apiFetch(`${BACKEND_URL}${path}`, {
       method,
       headers,
       body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
