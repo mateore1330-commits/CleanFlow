@@ -325,11 +325,11 @@ def create_worker():
             "message": "El correo electrónico no es válido"
         }), 400
 
-    # Validar contraseña
-    if len(password) < 6:
-        return jsonify({
-            "message": "La contraseña debe tener mínimo 6 caracteres"
-        }), 400
+    # La regla de toda la aplicación (FIX-04).
+    problem = password_problem(password)
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     # Solo se pueden crear trabajadores o managers
     if role not in ["worker", "manager"]:
@@ -415,16 +415,8 @@ def get_workers():
         .order_by(User.name, User.last_name)
     ).scalars().all()
 
-    # La valoración de cada trabajador es la media de las reseñas de sus
-    # reservas. UNA consulta agrupada para todos, no una por trabajador.
-    ratings = {
-        worker_id: (average, total)
-        for worker_id, average, total in db.session.execute(
-            db.select(Booking.worker_id, func.avg(Review.rating), func.count(Review.review_id))
-            .join(Review, Review.booking_id == Booking.booking_id)
-            .group_by(Booking.worker_id)
-        ).all()
-    }
+    # La valoración de cada trabajador: una sola consulta para todos.
+    ratings = worker_ratings()
 
     today = madrid_now().date()
 
@@ -437,7 +429,7 @@ def get_workers():
             "avatar_url": worker.user.avatar_url if worker.user else None,
             "shift_start": shift.start_time.strftime("%H:%M") if shift else None,
             "shift_end": shift.end_time.strftime("%H:%M") if shift else None,
-            "rating": round(float(average), 1) if average is not None else None,
+            "rating": rating_value(average),
             "reviews_count": total,
             # Una ausencia que incluye hoy. Sin fecha de fin, sigue abierta.
             "on_leave_today": any(
@@ -495,6 +487,12 @@ def update_worker(worker_id):
         return jsonify({
             "message": "No se han enviado datos"
         }), 400
+
+    # Nadie puede desactivarse a sí mismo: se quedaría fuera de la
+    # aplicación. Lo mismo que comprueba PATCH /workers/<id>/status, y
+    # antes de tocar nada, para no dejar un cambio a medias (PANEL-04).
+    if worker.user_id == current_user().user_id and data.get("is_active") is False:
+        return jsonify({"message": "No puedes desactivar tu propia cuenta"}), 403
 
     # --------------------------------------------------------------
     # DATOS DEL USUARIO
@@ -688,8 +686,8 @@ CLIENTS_PAGE_SIZE = 25
 # en ello ahora mismo.
 CANCEL_AL_DAR_DE_BAJA = (BookingStatus.PENDING, BookingStatus.CONFIRMED)
 
-# El motivo que queda guardado. Lo leería el cliente en Mis reservas si
-# algún día se le vuelve a dar de alta.
+# El motivo que queda guardado. Lo leería el cliente en Servicios
+# contratados si algún día se le vuelve a dar de alta.
 MOTIVO_BAJA = "Este servicio se canceló al desactivar tu cuenta."
 
 
@@ -958,10 +956,12 @@ BOOKINGS_PAGE_SIZE = 25
 
 # A qué grupo va cada estado. "En curso" es un pendiente: el servicio se
 # está haciendo ahora mismo, así que no está ni realizado ni cancelado.
-# Es el mismo reparto que hace la pantalla del cliente.
+# "No realizada" va aparte y no con las realizadas: no se hizo, y meterla
+# en "Realizadas" decía lo contrario de lo que pasó (FIX-02).
 GRUPOS_DE_ESTADO = {
     "pending": (BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS),
-    "done": (BookingStatus.COMPLETED, BookingStatus.NOT_DONE),
+    "done": (BookingStatus.COMPLETED,),
+    "not_done": (BookingStatus.NOT_DONE,),
     "cancelled": (BookingStatus.CANCELLED,),
 }
 
@@ -1085,6 +1085,17 @@ def serializar_reserva(booking, motivos, abiertas):
         if booking.client else "Cliente"
     )
     data["service_name"] = booking.service.name if booking.service else "Servicio"
+
+    # Las dos fotos, para reconocer a cada uno en su fila (FIX-03). Sin
+    # foto, la tarjeta pinta las iniciales. El cliente y el trabajador ya
+    # vienen cargados para el nombre: no cuesta ninguna consulta más.
+    data["client_avatar_url"] = booking.client.avatar_url if booking.client else None
+    data["worker_avatar_url"] = (
+        booking.worker.user.avatar_url
+        if booking.worker and booking.worker.user
+        else None
+    )
+
     data["affected_reasons"] = motivos
     data["open_incidents"] = abiertas
 
@@ -1332,8 +1343,11 @@ def register():
 
         return jsonify({"message": "El correo electrónico ya está registrado"}), 409
 
-    if len(password) < 6:
-        return jsonify({"message": "La contraseña debe tener mínimo 6 caracteres"}), 400
+    # La regla de toda la aplicación (FIX-04).
+    problem = password_problem(password)
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     # Rol forzado a "client": workers y managers solo los crea el manager
     # desde el dashboard, nunca un alta desde fuera.
@@ -1684,8 +1698,46 @@ def get_profile():
 ACCOUNT_NAME_MAX_LENGTH = 100
 ACCOUNT_LAST_NAME_MAX_LENGTH = 150
 
-# El mismo mínimo que pide /register: una sola regla en toda la aplicación.
-PASSWORD_MIN_LENGTH = 6
+# ---------- LA REGLA DE CONTRASEÑA (FIX-04) ----------
+# Una sola para toda la aplicación: registro, alta de trabajador, crear y
+# cambiar la contraseña. La pantalla tiene su copia en
+# front/utils/passwordRule.js, para ir marcando la lista al escribir; la
+# que manda es esta. Entrar NO la comprueba: las cuentas de antes siguen
+# entrando con la contraseña que tenían.
+PASSWORD_MIN_LENGTH = 8
+
+# Lo que pide cada requisito, en el orden de la lista de la pantalla.
+# Especial es todo lo que no es letra, número ni espacio. La ñ y las
+# vocales con tilde son letras: «Ñ» cuenta como mayúscula.
+PASSWORD_RULES = (
+    (f"al menos {PASSWORD_MIN_LENGTH} caracteres", lambda pw: len(pw) >= PASSWORD_MIN_LENGTH),
+    ("una mayúscula", lambda pw: any(c.isupper() for c in pw)),
+    ("una minúscula", lambda pw: any(c.islower() for c in pw)),
+    ("un número", lambda pw: any(c.isdecimal() for c in pw)),
+    ("un carácter especial", lambda pw: any(not c.isalnum() and not c.isspace() for c in pw)),
+)
+
+
+def password_problem(password, label="La contraseña"):
+    """Qué le falta a una contraseña, o None si cumple la regla.
+
+        password_problem("limpia24")
+        -> "La contraseña necesita una mayúscula y un carácter especial."
+
+    Dice todo lo que falta de una vez: ir descubriéndolo de uno en uno,
+    enviando cada vez, desespera.
+    """
+    if not isinstance(password, str) or not password:
+        return f"{label} es obligatoria."
+
+    missing = [text for text, ok in PASSWORD_RULES if not ok(password)]
+
+    if not missing:
+        return None
+
+    listed = missing[0] if len(missing) == 1 else ", ".join(missing[:-1]) + " y " + missing[-1]
+
+    return f"{label} necesita {listed}."
 
 # Fotos. Los mismos tipos en todas partes; el tamaño cambia según para qué:
 # un avatar se ve pequeño, y la prueba de una tarea o de una incidencia
@@ -1911,10 +1963,10 @@ def create_account_password():
     if not isinstance(new_password, str) or not new_password:
         return jsonify({"message": "La contraseña es obligatoria"}), 400
 
-    if len(new_password) < PASSWORD_MIN_LENGTH:
-        return jsonify({
-            "message": f"La contraseña debe tener mínimo {PASSWORD_MIN_LENGTH} caracteres"
-        }), 400
+    problem = password_problem(new_password)
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     # set_password hashea; nunca se asigna password_hash a mano.
     user.set_password(new_password)
@@ -2032,8 +2084,10 @@ def update_account_password():
     if not user.check_password(current_password):
         return jsonify({"message": "La contraseña actual no es correcta"}), 400
 
-    if len(new_password) < PASSWORD_MIN_LENGTH:
-        return jsonify({"message": f"La contraseña nueva debe tener mínimo {PASSWORD_MIN_LENGTH} caracteres"}), 400
+    problem = password_problem(new_password, "La contraseña nueva")
+
+    if problem:
+        return jsonify({"message": problem}), 400
 
     if new_password == current_password:
         return jsonify({"message": "La contraseña nueva tiene que ser distinta de la actual"}), 400
@@ -2853,22 +2907,46 @@ def update_service_status(service_id):
 # El cálculo está en api/availability.py; aquí solo se lee la petición
 # y se devuelve la respuesta.
 
-def public_worker(worker):
+def worker_ratings():
+    """La valoración de cada trabajador: {worker_id: (media, total)}.
+
+    La media de las reseñas de sus reservas. UNA consulta agrupada para
+    todos, no una por trabajador. La usan la lista del encargado, los
+    trabajadores que el cliente puede reservar y sus reservas (PANEL-02)."""
+    return {
+        worker_id: (average, total)
+        for worker_id, average, total in db.session.execute(
+            db.select(Booking.worker_id, func.avg(Review.rating), func.count(Review.review_id))
+            .join(Review, Review.booking_id == Booking.booking_id)
+            .group_by(Booking.worker_id)
+        ).all()
+    }
+
+
+def rating_value(average):
+    """La media con un decimal (4.9), o None si no tiene ninguna reseña."""
+    return round(float(average), 1) if average is not None else None
+
+
+def public_worker(worker, ratings=None):
     """Lo que ve un cliente de un trabajador: nombre con inicial, foto y
-    valoración. Sin correo ni teléfono (Worker.serialize() es del encargado)."""
+    valoración. Sin correo ni teléfono (Worker.serialize() es del encargado).
+
+    ratings: lo que devuelve worker_ratings(), pedido una vez para todos.
+    Sin él (al crear o mover una reserva, que no la enseñan), la valoración
+    va vacía y no se hace la consulta."""
+    ratings = ratings or {}
     user = worker.user
     last_name = (user.last_name or "").strip()
     initial = f" {last_name[0]}." if last_name else ""
+    average, total = ratings.get(worker.worker_id, (None, 0))
 
     return {
         "worker_id": worker.worker_id,
         "name": f"{user.name}{initial}",
         "avatar_url": user.avatar_url,
-        # La #20 ya calcula la media de cada trabajador, pero solo la
-        # trae GET /api/workers, con una consulta agrupada. Aquí sigue
-        # vacía: traerla pediría repetir esa consulta y el panel de
-        # contratación todavía no la enseña.
-        "rating": None,
+        "rating": rating_value(average),
+        "reviews_count": total,
     }
 
 
@@ -2891,7 +2969,8 @@ def bookable_workers():
 def get_availability_workers():
     """Los trabajadores que el cliente puede elegir al reservar. La opción
     "Cualquiera" no es un trabajador: la añade el panel."""
-    return jsonify({"workers": [public_worker(worker) for worker in bookable_workers()]}), 200
+    ratings = worker_ratings()
+    return jsonify({"workers": [public_worker(worker, ratings) for worker in bookable_workers()]}), 200
 
 
 # Tope de horas al pedir huecos. Ningún servicio llega, y evita que
@@ -3739,12 +3818,17 @@ def my_bookings():
         )
     ).scalars().all()
 
-    return jsonify({
-        "bookings": [
-            booking.serialize_detail(with_review=is_client)
-            for booking in bookings
-        ]
-    })
+    # El cliente ve la nota de quien va a su casa (Inicio, PANEL-02): una
+    # sola consulta para todas sus reservas. Al trabajador no le hace falta.
+    ratings = worker_ratings() if is_client else {}
+
+    def list_item(booking):
+        item = booking.serialize_detail(with_review=is_client)
+        if is_client:
+            item["worker_rating"] = rating_value(ratings.get(booking.worker_id, (None, 0))[0])
+        return item
+
+    return jsonify({"bookings": [list_item(booking) for booking in bookings]})
 
 
 @api.route("/bookings/<int:booking_id>/complete", methods=["PATCH"])

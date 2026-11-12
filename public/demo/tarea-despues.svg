@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-label="Después: foto de demostración">
+  <!-- Foto de demostración de CleanFlow (DATOS-02). La usan las tareas de la
+       demo, que en la app real siempre llevan su foto del después. Cuadrada:
+       las miniaturas de la app recortan en cuadrado. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#edf7f6"/>
+      <stop offset="1" stop-color="#dcf6ea"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#g)"/>
+  <g fill="#5fd3a6">
+    <path d="M300 120 l22 64 l64 22 l-64 22 l-22 64 l-22 -64 l-64 -22 l64 -22 z"/>
+    <path d="M430 110 l10 28 l28 10 l-28 10 l-10 28 l-10 -28 l-28 -10 l28 -10 z" opacity=".8"/>
+    <path d="M178 250 l8 22 l22 8 l-22 8 l-8 22 l-8 -22 l-22 -8 l22 -8 z" opacity=".7"/>
+  </g>
+  <text x="300" y="360" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="30" font-weight="600" fill="#0a5560">Foto de demostración</text>
+</svg>

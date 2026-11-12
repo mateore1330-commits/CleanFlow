@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 import {
@@ -10,6 +10,9 @@ import {
 import { getShifts } from "../../services/shiftService";
 import { summarizeDays } from "./ListadoTurnos";
 import { WorkerSummary } from "../../components/dashboard/workers/WorkerSummary";
+import { PageHead } from "../../components/dashboard/PageHead";
+import { PasswordRules } from "../../components/PasswordRules";
+import { passwordProblem } from "../../utils/passwordRule";
 import "../../dashboard.css";
 
 // Los dos roles del equipo, en chips.
@@ -31,6 +34,8 @@ export const EditarTrabajador = () => {
 
     // El trabajador tal y como sale en el listado: foto, valoración y el
     // nombre del título. null al crear, o si no se ha podido cargar.
+    // Si la ficha es la de quien mira: su interruptor va bloqueado.
+    const [isSelf, setIsSelf] = useState(false);
     const [profile, setProfile] = useState(null);
 
     const [shifts, setShifts] = useState([]);
@@ -41,6 +46,11 @@ export const EditarTrabajador = () => {
 
     // El ojo de la contraseña (solo al crear).
     const [showPassword, setShowPassword] = useState(false);
+
+    // Lo que le falta a la contraseña inicial, junto al campo (FIX-04), y
+    // el campo, para llevar el cursor a él si falla.
+    const [passwordError, setPasswordError] = useState("");
+    const passwordRef = useRef(null);
 
     useEffect(() => {
         let active = true;
@@ -85,6 +95,9 @@ export const EditarTrabajador = () => {
             }
 
             const worker = workerResult.data;
+
+            // Tu propia ficha: no puedes desactivarte, te quedarías fuera.
+            setIsSelf(Boolean(worker) && String(worker.user_id) === String(store.user?.user_id));
 
             setFormData({
                 name: worker?.name || "",
@@ -133,6 +146,7 @@ export const EditarTrabajador = () => {
         }));
 
         setFormError("");
+        if (name === "password") setPasswordError("");
     };
 
     const handleSubmit = async (event) => {
@@ -149,6 +163,15 @@ export const EditarTrabajador = () => {
 
         if (!isEditing && !formData.phone.trim()) {
             setFormError("El teléfono es obligatorio.");
+            return;
+        }
+
+        // La regla de toda la app, con la misma frase que el servidor.
+        const problem = isEditing ? "" : passwordProblem(formData.password);
+
+        if (problem) {
+            setPasswordError(problem);
+            passwordRef.current?.focus();
             return;
         }
 
@@ -219,14 +242,8 @@ export const EditarTrabajador = () => {
     if (loading) {
         return (
             <section className="cf-worker-form" aria-busy="true">
-                <div className="cf-worker-form__header">
-                    {backLink}
-                    <p className="cf-dash-eyebrow">Equipo</p>
-                    <h1 className="cf-worker-form__title">
-                        {isEditing ? "Editar trabajador" : "Nuevo trabajador"}
-                    </h1>
-                    <p className="cf-worker-form__lede">{lede}</p>
-                </div>
+                {backLink}
+                <PageHead title={isEditing ? "Editar trabajador" : "Nuevo trabajador"} subtitle={lede} />
 
                 <p className="sr-only">Cargando datos del trabajador...</p>
 
@@ -276,7 +293,7 @@ export const EditarTrabajador = () => {
     if (loadError) {
         return (
             <section className="cf-worker-form">
-                <div className="cf-worker-form__header">{backLink}</div>
+                {backLink}
 
                 <div className="cf-dash-state cf-dash-state--error" role="alert">
                     <span className="cf-dash-state__icon">
@@ -311,20 +328,17 @@ export const EditarTrabajador = () => {
 
     return (
         <section className="cf-worker-form">
-            <div className="cf-worker-form__header">
-                {backLink}
-                <p className="cf-dash-eyebrow">Equipo</p>
-                {/* El nombre de la carga, no el del formulario: así el título
-                    no cambia mientras se escribe. */}
-                <h1 className="cf-worker-form__title">
-                    {!isEditing
-                        ? "Nuevo trabajador"
-                        : profile
-                            ? `Editar a ${profile.name} ${profile.last_name}`
-                            : "Editar trabajador"}
-                </h1>
-                <p className="cf-worker-form__lede">{lede}</p>
-            </div>
+            {backLink}
+            {/* El nombre de la carga, no el del formulario: así el título
+                no cambia mientras se escribe. */}
+            <PageHead
+                title={!isEditing
+                    ? "Nuevo trabajador"
+                    : profile
+                        ? `Editar a ${profile.name} ${profile.last_name}`
+                        : "Editar trabajador"}
+                subtitle={lede}
+            />
 
             <div className="cf-worker-form__editor">
                 <form onSubmit={handleSubmit} className="cf-worker-form__form">
@@ -383,10 +397,12 @@ export const EditarTrabajador = () => {
                                     </label>
                                     <div className="cf-account__password">
                                         <input id="worker-password" className="cf-dash-input"
+                                            ref={passwordRef}
                                             type={showPassword ? "text" : "password"} name="password"
                                             value={formData.password} onChange={handleChange}
-                                            minLength={6} autoComplete="new-password" required
-                                            aria-describedby="worker-password-note" />
+                                            autoComplete="new-password" required
+                                            aria-invalid={Boolean(passwordError) || undefined}
+                                            aria-describedby={`${passwordError ? "worker-password-error " : ""}worker-password-rules worker-password-note`} />
                                         <button type="button" className="cf-account__eye"
                                             onClick={() => setShowPassword((shown) => !shown)}
                                             aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
@@ -394,8 +410,14 @@ export const EditarTrabajador = () => {
                                             <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true" />
                                         </button>
                                     </div>
+                                    {passwordError && (
+                                        <p className="cf-dash-field__error" id="worker-password-error">
+                                            {passwordError}
+                                        </p>
+                                    )}
+                                    <PasswordRules id="worker-password-rules" value={formData.password} />
                                     <p className="cf-dash-field__note" id="worker-password-note">
-                                        Mínimo 6 caracteres. Compártela con la persona: podrá cambiarla en Ajustes.
+                                        Compártela con la persona: podrá cambiarla en Ajustes.
                                     </p>
                                 </div>
                             )}
@@ -477,15 +499,20 @@ export const EditarTrabajador = () => {
                         <fieldset className="cf-worker-form__section" disabled={saving}>
                             <legend className="cf-worker-form__legend">Estado</legend>
                             <div className="cf-worker-form__status">
-                                <p>
+                                <p id="worker-status-why">
                                     <strong>{formData.is_active ? "Activo" : "Desactivado"}</strong>
-                                    {formData.is_active
-                                        ? "Si lo desactivas, no podrá entrar ni recibir reservas, y sus reservas pendientes pasarán a Reservas afectadas."
-                                        : "No puede entrar ni recibir reservas. Actívalo para que vuelva a salir libre."}
+                                    {isSelf
+                                        ? "Es tu cuenta: no puedes desactivarte, porque te quedarías sin acceso. Pídeselo a otro encargado."
+                                        : formData.is_active
+                                            ? "Si lo desactivas, no podrá entrar ni recibir reservas, y sus reservas pendientes aparecerán en Reservas, en la vista Afectadas."
+                                            : "No puede entrar ni recibir reservas. Actívalo para que vuelva a salir libre."}
                                 </p>
                                 <label className="cf-dash-switch" htmlFor="worker-status">
+                                    {/* Bloqueado en tu propia ficha: el servidor tampoco
+                                        lo deja (PUT y PATCH), esto solo evita el viaje. */}
                                     <input id="worker-status" type="checkbox" role="switch" name="is_active"
-                                        checked={formData.is_active} onChange={handleChange} />
+                                        checked={formData.is_active} onChange={handleChange}
+                                        disabled={isSelf} aria-describedby={isSelf ? "worker-status-why" : undefined} />
                                     <span className="cf-dash-switch__text">
                                         {formData.is_active ? "Activo" : "Desactivado"}
                                     </span>

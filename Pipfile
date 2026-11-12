@@ -6,34 +6,33 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-flask = "*"
-flask-sqlalchemy = "*"
-flask-migrate = "*"
-flask-swagger = "*"
-psycopg2-binary = "*"
-python-dotenv = "*"
-flask-cors = "*"
-gunicorn = "*"
-cloudinary = "*"
+flask = "==3.1.3"
+flask-sqlalchemy = "==3.1.1"
+flask-migrate = "==4.1.0"
+flask-swagger = "==0.2.14"
+psycopg2-binary = "==2.9.11"
+python-dotenv = "==1.2.4"
+flask-cors = "==6.0.1"
+gunicorn = "==23.0.0"
+cloudinary = "==1.44.1"
 flask-admin = "==2.0.0"
-typing-extensions = "*"
+typing-extensions = "==4.15.0"
 wtforms = "==3.1.2"
-sqlalchemy = "*"
-flask-bcrypt = "*"
-flask-jwt-extended = "*"
-google-auth = "*"
-requests = "*"
-tomli = "*"
+sqlalchemy = "==2.0.44"
+flask-bcrypt = "==1.0.1"
+flask-jwt-extended = "==4.7.4"
+google-auth = "==2.58.1"
+requests = "==2.34.2"
+# SQLAlchemy lo pide en Linux (CI y Vercel) pero no en un Mac con chip M:
+# fijado aquí para que el lock lo incluya aunque se genere en el Mac.
+greenlet = "==3.2.4"
 
 [requires]
-python_version = "3.10"
+python_version = "3.13"
 
 [scripts]
 start="flask run -p 3001 -h 0.0.0.0"
 init="flask db init"
 migrate="flask db migrate"
-local="heroku local"
 upgrade="flask db upgrade"
 downgrade="flask db downgrade"
-reset_db="bash ./docs/assets/reset_migrations.bash"
-deploy="echo 'Please follow this 3 steps to deploy: https://github.com/4GeeksAcademy/flask-rest-hello/blob/master/README.md#deploy-your-website-to-heroku' "

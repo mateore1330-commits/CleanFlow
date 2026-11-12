@@ -1,13 +1,10 @@
 /**
  * CONTADOR DE INCIDENCIAS ABIERTAS (#19).
  *
- * El componente YA NO SE PINTA: "Incidencias" salió del menú y ahora el
- * aviso lo da BookingsCount sobre "Reservas", sumado con las afectadas.
+ * El número junto a «Incidencias» en el menú del encargado (PANEL-01).
  *
- * Lo que sí se sigue usando de este archivo es INCIDENTS_CHANGED, el
- * nombre del evento con el que la pantalla avisa al resolver una. Lo
- * escuchan BookingsCount y la propia pantalla, así que el archivo no se
- * puede borrar aunque el componente esté parado.
+ * INCIDENTS_CHANGED es el evento con el que la pantalla de Incidencias
+ * avisa al resolver una, para que el número baje sin esperar.
  *
  * Pide solo el número (count_only) y lo mantiene al día sin recargar:
  *

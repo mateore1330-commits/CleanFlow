@@ -1,15 +1,28 @@
 /**
- * Primera pantalla de la landing.
+ * PORTADA DE LA LANDING (maqueta 02, hero B).
  *
- * Tres capas, y el orden del JSX es el orden de apilado: la foto, el velo
- * que la aclara y el contenido encima. Estilos en web.css.
+ * Tres capas, y el orden del JSX es el orden de apilado: la foto, el
+ * degradado oscuro de marca que la tapa a la izquierda y el contenido
+ * encima, en blanco. Estilos: landing.css (cf-hero*).
  *
- * Aquí va el único <h1> de la página; las ocho secciones usan <h2>.
+ * Aquí va el único <h1> de la página; las secciones usan <h2>.
+ *
+ * El mini buscador (servicio + fecha) de la maqueta no está: aprobado,
+ * pero queda por definir a fondo (Recursos/PENDIENTES.md).
  */
 
 import { Link } from "react-router-dom";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
-import heroImage from "../../../assets/img/hero-salon.jpg";
+import hero1920 from "../../../assets/img/hero-salon-1920.webp";
+import hero960 from "../../../assets/img/hero-salon-960.webp";
+
+
+// Lo que da confianza antes de reservar, en una línea.
+const TRUST = [
+    { icon: "fa-user-check", text: "Personal propio" },
+    { icon: "fa-shield-halved", text: "Seguro de responsabilidad civil" },
+    { icon: "fa-rotate-left", text: "Sin permanencia" },
+];
 
 
 // Convierte una nota (4.8) en las cinco clases de icono a pintar.
@@ -18,102 +31,96 @@ const starIcons = (average) =>
         if (average >= position) return "fa-solid fa-star";
         if (average >= position - 0.5) return "fa-solid fa-star-half-stroke";
         return "fa-regular fa-star";
-    })
+    });
 
 
 export const Hero = () => {
-
-    // La nota real, la misma que enseña la sección de opiniones más abajo:
-    // dos números distintos para lo mismo en la misma página no se
-    // sostienen. Del store y no con su propia llamada, que las dos están
-    // en esta pantalla y sería pedir lo mismo dos veces. En null mientras
-    // llega, y también si todavía no hay ninguna valoración.
-    const { store } = useGlobalReducer()
-
-    const average = store.reviewsAverage
+    // La nota real, la misma que la sección de opiniones: dos números
+    // distintos para lo mismo en la misma página no se sostienen. En null
+    // mientras llega, y también si todavía no hay ninguna valoración.
+    const { store } = useGlobalReducer();
+    const average = store.reviewsAverage;
+    const total = store.reviewsTotal;
 
     return (
         <section id="hero" className="cf-hero">
-
-            {/* alt vacío: es decorativa. Lo que cuenta ya lo dice el
-                titular, y con texto el lector de pantalla lo repetiría. */}
+            {/* alt vacío: es decorativa. srcSet: el móvil descarga la de
+                960px (27 kB) y la pantalla grande la de 1920px (98 kB).
+                fetchpriority alta: es lo primero que se ve. */}
             <img
                 className="cf-hero__photo"
-                src={heroImage}
+                src={hero1920}
+                srcSet={`${hero960} 960w, ${hero1920} 1920w`}
+                sizes="100vw"
                 alt=""
-                loading="eager"
+                width="1920"
+                height="1080"
+                // En minúsculas: React 18 todavía no conoce fetchPriority.
+                fetchpriority="high"
             />
-
             <div className="cf-hero__veil" aria-hidden="true"></div>
 
-            <div className="cf-hero__content">
-                <div className="cf-container">
-
-                    <p className="cf-hero__label">Limpieza para tu hogar</p>
+            <div className="cf-container cf-hero__inner">
+                <div className="cf-hero__content">
+                    <p className="cf-hero__chip">
+                        <b>Madrid</b> Limpieza de hogares y oficinas
+                    </p>
 
                     <h1 className="cf-hero__title">
-                        Tu casa en calma. Tu mente en paz.
+                        {/* «de nada» siempre junta: una palabra sola en la última
+                            línea de un titular lo descompensa. */}
+                        Tu casa limpia, <em>sin preocuparte</em>{" "}
+                        <span className="cf-hero__nowrap">de nada</span>
                     </h1>
 
                     <p className="cf-hero__lede">
-                        Transformamos tu espacio en un refugio impecable, para que
-                        cada regreso a casa sea tu mejor momento del día.
+                        Personal propio y verificado, productos incluidos. Reserva en dos minutos
+                        y cancela gratis hasta 24 h antes.
                     </p>
 
                     <div className="cf-hero__actions">
-
-                        {/* A la ruta protegida del catálogo, no al login: si no
-                            hay sesión, ProtectedRoutes manda al login y después
-                            vuelve aquí (WEB-15). Mismo destino que el navbar. */}
-                        <Link to="/dashboard/service-catalog" className="cf-btn">
-                            Reservar ahora
+                        {/* A Reservar, que es ruta protegida: sin sesión,
+                            ProtectedRoutes manda al login y vuelve aquí. */}
+                        <Link to="/dashboard/book" className="cf-btn cf-btn--accent">
+                            Reservar limpieza
+                            <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
                         </Link>
-
-                        {/* <Link> y no <a href="#services">: así lo gestionan
-                            React Router y ScrollToTop, igual que el navbar. */}
-                        <Link to="/#services" className="cf-btn cf-btn--ghost">
+                        <Link to="/#services" className="cf-btn cf-btn--ghost cf-hero__ghost">
                             Ver servicios
                         </Link>
-
                     </div>
 
+                    <ul className="cf-hero__trust">
+                        {TRUST.map((item) => (
+                            <li key={item.text}>
+                                <i className={`fa-solid ${item.icon}`} aria-hidden="true"></i>
+                                {item.text}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-            </div>
 
-            {/* ---------- VALORACIONES ----------
-                Sin ninguna todavía, la banda no se pinta: una nota inventada
-                vende más, pero deja de ser verdad en cuanto alguien la mira. */}
-            {average !== null && (
-                <div className="cf-hero__rating">
-                    <div className="cf-container">
-                        <div className="cf-hero__rating-in">
-
-                            {/* toLocaleString: 4.5 se escribe "4,5" en español. */}
-                            <span className="cf-hero__score">
-                                {average.toLocaleString("es-ES", {
-                                    minimumFractionDigits: 1,
-                                })}
-                            </span>
-
-                            {/* aria-hidden: la nota ya se lee en el número de al
-                                lado; si no, se cantarían cinco iconos sin sentido. */}
+                {/* ---------- LA NOTA ----------
+                    Sin ninguna valoración todavía, no se pinta: una nota
+                    inventada deja de ser verdad en cuanto alguien la mira. */}
+                {average !== null && (
+                    <div className="cf-hero__rating">
+                        {/* toLocaleString: 4.5 se escribe "4,5" en español. */}
+                        <b>{average.toLocaleString("es-ES", { minimumFractionDigits: 1 })}</b>
+                        <div>
+                            {/* aria-hidden: la nota ya se lee en el número. */}
                             <span className="cf-hero__stars" aria-hidden="true">
                                 {starIcons(average).map((icon, index) => (
                                     <i key={index} className={icon}></i>
                                 ))}
                             </span>
-
-                            <span className="cf-hero__reviews">
-                                <b>Valoración media</b>
-                                sobre {store.reviewsTotal}{" "}
-                                {store.reviewsTotal === 1 ? "opinión" : "opiniones"} de clientes
-                            </span>
-
+                            <small>
+                                {total} {total === 1 ? "opinión" : "opiniones"} de clientes
+                            </small>
                         </div>
                     </div>
-                </div>
-            )}
-
+                )}
+            </div>
         </section>
-    )
-}
+    );
+};

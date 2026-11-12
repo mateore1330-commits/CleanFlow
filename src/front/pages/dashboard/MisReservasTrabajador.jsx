@@ -1,5 +1,5 @@
 /**
- * MIS TAREAS · el listado del trabajador.
+ * MIS SERVICIOS · el listado del trabajador (maqueta 05, PANEL-03).
  *
  * Lo que tiene asignado, empezando por lo de hoy. Al pulsar un servicio
  * se abre su detalle, que es donde se trabaja: empezar, cerrar tareas
@@ -8,15 +8,18 @@
  * Aquí solo se mira. Marcar tareas y finalizar vivían antes en esta
  * misma pantalla; ahora están en el detalle, con su línea de tiempo.
  *
+ * Antes se llamaba «Mis tareas»: dentro de cada servicio ya hay tareas, y
+ * el nombre confundía.
+ *
  * Estilos: dashboard.css, sección 10 (cf-mytasks y cf-wcard).
  */
 
 import "../../dashboard.css";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../../hooks/useGlobalReducer";
 import { getWorkerBookings } from "../../services/bookingService";
 import { WorkerBookingCard } from "../../components/dashboard/worker/WorkerBookingCard";
+import { PageHead } from "../../components/dashboard/PageHead";
 import { madridToday } from "../../utils/madridDate";
 
 // Las dos pestañas, en el orden en que se enseñan, con lo que dice cada
@@ -37,7 +40,6 @@ const tabOf = (status) =>
 
 export const MisReservasTrabajador = () => {
     const { store, dispatch } = useGlobalReducer();
-    const navigate = useNavigate();
 
     const [bookings, setBookings] = useState([]);
     const [tab, setTab] = useState("upcoming");
@@ -93,19 +95,10 @@ export const MisReservasTrabajador = () => {
     return (
         <div className="cf-mytasks">
 
-            {/* ---------- CABECERA ---------- */}
-
-            <div className="cf-mytasks__header">
-                <div>
-                    {/* El grupo del sidebar al que pertenece la página. */}
-                    <p className="cf-dash-eyebrow">Mi trabajo</p>
-                    <h1 className="cf-mytasks__title">Mis tareas</h1>
-                    <p className="cf-mytasks__lede">
-                        Lo que tienes asignado, empezando por lo de hoy.
-                    </p>
-                </div>
-
-            </div>
+            <PageHead
+                title="Mis servicios"
+                subtitle="Lo que tienes asignado, empezando por lo de hoy."
+            />
 
             {error && <p className="cf-dash-alert" role="alert">{error}</p>}
 
@@ -113,7 +106,7 @@ export const MisReservasTrabajador = () => {
                 Las mismas del catálogo. aria-pressed y no role="tab":
                 son filtros de una sola lista. */}
 
-            <div className="cf-services__tabs">
+            <div className="cf-services__tabs cf-services__tabs--pill cf-mytasks__tabs">
                 {TABS.map((option) => (
                     <button
                         key={option.value}
@@ -140,7 +133,7 @@ export const MisReservasTrabajador = () => {
                                     <div className="cf-dash-skel cf-wcard__skel-title"></div>
                                     <div className="cf-dash-skel cf-wcard__skel-meta"></div>
                                 </div>
-                                <div className="cf-dash-skel cf-wcard__skel-foot"></div>
+                                <div className="cf-dash-skel cf-wcard__skel-state"></div>
                             </div>
                         </li>
                     ))}
@@ -162,7 +155,7 @@ export const MisReservasTrabajador = () => {
                             key={booking.booking_id}
                             booking={booking}
                             today={today}
-                            onOpen={() => navigate(`/dashboard/tasks/${booking.booking_id}`)}
+                            to={`/dashboard/tasks/${booking.booking_id}`}
                         />
                     ))}
                 </ul>

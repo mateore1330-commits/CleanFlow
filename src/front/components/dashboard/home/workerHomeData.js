@@ -1,3 +1,5 @@
+import { longDate } from "../bookings/bookingFormat";
+
 const unavailable = new Set(["cancelled", "not_done"]);
 const editable = new Set(["pending", "confirmed", "in_progress"]);
 
@@ -34,8 +36,8 @@ export const workerHomeData = (bookings, today, now) => {
         const days = booking.days || [];
         days.filter((day) => day.started_at && !day.finished_at && day.ends_at.slice(0, 10) < today)
             .forEach((day) => unfinished.push({
-                key: `day-${day.booking_day_id}`, booking,
-                text: `Día sin cerrar · ${day.starts_at.slice(0, 10).split("-").reverse().join("/")}`,
+                key: `day-${day.booking_day_id}`, booking, kind: "day",
+                text: `Día sin cerrar · ${longDate(day.starts_at).toLowerCase()}`,
                 to: taskPath(booking, `#day-${day.booking_day_id}`),
             }));
         // Las tareas pertenecen a la reserva, no a un tramo: vencen al terminar el último.
@@ -44,8 +46,8 @@ export const workerHomeData = (bookings, today, now) => {
             const pending = ended && ["pending", "in_progress"].includes(task.status);
             const missingPhoto = task.status === "completed" && !["before", "after"].every((kind) => task.photos?.some((photo) => photo.kind === kind));
             if (pending || missingPhoto) unfinished.push({
-                key: `task-${task.booking_task_id}`, booking,
-                text: `${task.task_name || "Tarea"} · ${missingPhoto ? "falta la foto" : "sin completar"}`,
+                key: `task-${task.booking_task_id}`, booking, kind: missingPhoto ? "photo" : "task",
+                text: `${task.task_name || "Tarea"} · ${missingPhoto ? "falta una foto" : "sin completar"}`,
                 to: taskPath(booking, `#task-${task.booking_task_id}`),
             });
         });

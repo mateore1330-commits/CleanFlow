@@ -1,88 +1,68 @@
 /**
- * Tarjeta reutilizable para mostrar un servicio de CleanFlow.
+ * Tarjeta de un servicio de CleanFlow (maqueta 02, WEB-01).
  *
  * La usan la portada y el bloque "Otros servicios" de la ficha.
  *
- * Lleva dos salidas: contratar, que es a lo que viene el cliente, y ver
- * la ficha, para el que todavía duda. Cuál es la principal lo dice el
- * relleno del botón, no dónde esté colocado.
+ * Dos salidas: el título lleva a la ficha, para quien todavía duda, y
+ * «Reservar» va directo a contratarlo, que es a lo que viene el cliente.
+ * Precio por hora y horas mínimas, de la base de datos.
  *
- * Prioriza la imagen configurada en el backend.
- * Si no existe, utiliza una imagen local de demostración según el servicio.
+ * Prioriza la imagen configurada en el backend; si no hay, una local de
+ * demostración según el servicio.
  */
 
 import { Link } from "react-router-dom";
+import { getServiceImage, servicePlaceholder } from "../../data/serviceImages";
+import { formatPrice } from "../../utils/price";
 
-import {
-    getServiceImage,
-    servicePlaceholder,
-} from "../../data/serviceImages";
-
-const formatPrice = (price) => {
-    const value = Number(price);
-
-    if (!Number.isFinite(value)) return "—";
-
-    return new Intl.NumberFormat("es-ES", {
-        style: "currency",
-        currency: "EUR",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(value);
-};
 
 export const ServiceCard = ({ service }) => {
     const imageSrc = getServiceImage(service);
+    const minHours = Number(service.min_hours) || 1;
+
     return (
         <article className="cf-service-card">
-            <img
-                className="cf-service-card__image"
-                src={imageSrc}
-                alt=""
-                onError={(event) => {
-                    event.currentTarget.onerror = null;
-                    event.currentTarget.src = servicePlaceholder;
-                }}
-            />
+            <div className="cf-service-card__media">
+                {/* alt vacío: el nombre del servicio va justo debajo. */}
+                <img
+                    className="cf-service-card__image"
+                    src={imageSrc}
+                    alt=""
+                    loading="lazy"
+                    width="600"
+                    height="400"
+                    onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = servicePlaceholder;
+                    }}
+                />
+            </div>
 
             <div className="cf-service-card__body">
                 <h3 className="cf-service-card__title">
-                    {service.name}
+                    <Link to={`/services/${service.slug}`}>{service.name}</Link>
                 </h3>
 
-                <p className="cf-service-card__description">
-                    {service.description}
+                <p className="cf-service-card__description">{service.description}</p>
+
+                <p className="cf-service-card__meta">
+                    <i className="fa-regular fa-clock" aria-hidden="true"></i>
+                    desde {minHours} {minHours === 1 ? "hora" : "horas"}
                 </p>
 
                 <div className="cf-service-card__footer">
                     <p className="cf-service-card__price">
-                        Desde{" "}
-                        <strong>
-                            {formatPrice(service.base_hourly_rate)}
-                        </strong>
-                        /h
+                        Desde <strong>{formatPrice(service.base_hourly_rate)}</strong>/h
                     </p>
 
-                    {/* Contratar va el último: a la derecha si los dos
-                        caben en la fila, y debajo si la tarjeta es
-                        estrecha. En los dos casos cierra la lectura. */}
-                    <div className="cf-service-card__actions">
-                        <Link
-                            to={`/services/${service.slug}`}
-                            className="cf-btn cf-btn--ghost"
-                            aria-label={`Ver más información sobre ${service.name}`}
-                        >
-                            Ver más información
-                        </Link>
-
-                        <Link
-                            to={`/dashboard/book?servicio=${service.slug}`}
-                            className="cf-btn"
-                            aria-label={`Contratar ${service.name}`}
-                        >
-                            Contratar
-                        </Link>
-                    </div>
+                    <Link
+                        to={`/dashboard/book?servicio=${service.slug}`}
+                        className="cf-service-card__book"
+                        aria-label={`Reservar ${service.name}`}
+                    >
+                        Reservar
+                        <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </Link>
                 </div>
             </div>
         </article>

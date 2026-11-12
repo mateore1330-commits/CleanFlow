@@ -5,14 +5,15 @@
    espacios. Lo carga main.jsx: vale para toda la aplicación.
 
    NORMAS DEL EQUIPO
-   1. Nada de valores a pelo: `var(--cf-primary)` ✅, `#2E3B26` ❌. Así,
+   1. Nada de valores a pelo: `var(--cf-primary)` ✅, `#0C6B76` ❌. Así,
       cambiar la marca es cambiar una línea aquí. ¿Falta uno? Añádelo y
       dilo en el grupo.
    2. En la web pública, nada de componentes de Bootstrap (.btn, .card,
       .navbar...); sus utilidades (container, d-flex, gap) sí.
    3. Clases propias con prefijo `cf-`, o chocan con Bootstrap sin avisar.
 
-   Paleta (07/09/2026): la de DESIGN_SYSTEM.md; Montserrat solo en el logo.
+   Marca (10/11/2026, DISENO-01): paleta A · Agua y Plus Jakarta Sans + Inter,
+   las del manual de marca (Recursos/Maquetas/01-manual-de-marca.html).
    ====================================================================== */
 
 /* ======================================================================
@@ -20,36 +21,106 @@
    ====================================================================== */
 
 :root {
-  /* ---------- COLOR ----------
+  /* ---------- MARCA (paleta A · Agua, manual de marca del 10/11/2026) ----------
+     La escala completa: 900 es el más oscuro (fondos de menú y bandas),
+     600 el color principal y 50 el fondo más suave. */
+
+  --cf-brand-900: #07343b;
+  --cf-brand-700: #0a5560;
+  --cf-brand-600: #0c6b76;
+  --cf-brand-500: #12909a;
+  --cf-brand-100: #d5efee;
+  --cf-brand-50: #edf7f6;
+  --cf-sun: #ffc94d; /* amarillo: estrellas y detalles puntuales */
+
+  /* ---------- COLOR POR FUNCIÓN ----------
      Nombres por función y no por aspecto (--cf-primary, no --cf-verde):
      siguen valiendo si la marca cambia de color. */
 
-  --cf-bg: #f7f3e8; /* fondo general, crema */
+  --cf-bg: #f5f8f8; /* fondo general, blanco frío */
   --cf-surface: #ffffff; /* tarjetas y bloques sobre el fondo */
-  --cf-primary: #2e3b26; /* color de marca: botones, enlaces */
-  --cf-primary-dark: #222d1c; /* el mismo, al pasar el ratón */
-  --cf-primary-soft: #e7eddf; /* fondo suave del color de marca */
-  --cf-accent: #c97b4a; /* terracota: destacados puntuales */
-  --cf-accent-dark: #9a5227; /* terracota para texto: el claro no se lee en pequeño */
-  --cf-accent-soft: #f6e6da; /* fondo suave del terracota */
-  --cf-text: #26261f; /* texto normal */
-  --cf-muted: #6e6b5e; /* texto secundario, pies de foto */
-  --cf-border: #e1dac5; /* líneas y bordes */
-  --cf-ring: rgba(46, 59, 38, 0.22); /* halo del foco del teclado */
-  --cf-on-primary: #f7f3e8; /* texto sobre fondo --cf-primary */
-  --cf-on-primary-muted: #b0b3a4; /* el mismo, apagado: textos secundarios */
-  /* Fondo y superficie en R, G, B, para usarlos con rgba(). */
-  --cf-bg-rgb: 247, 243, 232;
+  --cf-white: #ffffff; /* blanco puro: texto y bordes sobre fondos oscuros */
+  --cf-primary: var(--cf-brand-600); /* color de marca: botones, enlaces */
+  --cf-primary-dark: var(--cf-brand-700); /* el mismo, al pasar el ratón */
+  --cf-primary-soft: var(--cf-brand-100); /* fondo suave del color de marca */
+  --cf-band: var(--cf-brand-900); /* bandas y bloques oscuros (pie, bienvenida del panel) */
+  --cf-accent: #5fd3a6; /* menta: detalles, iconos y fondos. NUNCA texto sobre claro */
+  --cf-accent-dark: #0b6648; /* la menta para texto: se lee sobre fondos claros */
+  --cf-accent-soft: #dcf6ea; /* fondo suave de la menta */
+  --cf-on-accent: var(--cf-brand-900); /* texto sobre fondo menta (el blanco no se lee) */
+  --cf-text: #0e1d21; /* texto normal */
+  --cf-muted: #56676c; /* texto secundario, pies de foto */
+  --cf-placeholder: #65767a; /* texto de ejemplo dentro de los campos */
+  --cf-border: #dce5e6; /* líneas y bordes */
+  --cf-border-strong: #c3d0d2; /* borde al pasar el ratón */
+  --cf-ring: rgba(12, 107, 118, 0.25); /* halo del foco del teclado */
+  --cf-on-primary: #ffffff; /* texto sobre fondo --cf-primary */
+  --cf-on-primary-muted: #cfe6e8; /* el mismo, apagado: textos secundarios */
+
+  /* ---------- ESTADOS ----------
+     Siempre con su fondo suave (-soft) y su borde (-line). Todos pasan
+     el contraste AA (4,5:1) como texto sobre blanco y sobre su -soft. */
+
+  --cf-success: #157548;
+  --cf-success-soft: #dff3e8;
+  --cf-warning: #9a6200; /* aviso: algo pide atención (afectada, a medias, urgente) */
+  --cf-warning-dark: #7a4d00;
+  --cf-warning-soft: #fdf0d2;
+  --cf-warning-line: #f1d79c;
+  --cf-danger: #b02f2f; /* peligro: borrar, cancelar, fallos, incidencias, errores */
+  --cf-danger-dark: #8c2424;
+  --cf-danger-soft: #fbe3e3;
+  --cf-danger-line: #f0bcbc;
+  --cf-info: #2a63c9;
+  --cf-info-soft: #e1ebfb;
+  --cf-neutral: #4d5b5f; /* lo que ya no está en juego (no realizada) */
+  --cf-neutral-soft: #eceff0;
+  /* Desactivado: no tiene que pasar el contraste (no se puede usar),
+     pero tiene que verse claramente apagado. */
+  --cf-disabled-bg: #e7eced;
+  --cf-disabled-text: #7b8a8e;
+
+  /* Los mismos colores en R, G, B, para usarlos con rgba() (sombras,
+     velos y brillos con transparencia). */
+  --cf-bg-rgb: 245, 248, 248;
   --cf-surface-rgb: 255, 255, 255;
+  --cf-white-rgb: 255, 255, 255;
+  --cf-text-rgb: 14, 29, 33;
+  --cf-primary-rgb: 12, 107, 118;
+  --cf-brand-900-rgb: 7, 52, 59;
+  --cf-accent-rgb: 95, 211, 166;
+  --cf-danger-rgb: 176, 47, 47;
+
+  /* ---------- DEGRADADOS (los de las maquetas aprobadas) ---------- */
+
+  --cf-grad-brand: linear-gradient(135deg, var(--cf-brand-600), var(--cf-brand-500));
+  /* Para fondos con texto blanco encima (botones, avatares): el de marca
+     acaba en 500, que con blanco se queda en 3,8:1. Este acaba algo más
+     oscuro y no baja de 4,7:1 en ningún punto. */
+  --cf-grad-button: linear-gradient(135deg, var(--cf-brand-600), #0f8089);
+  --cf-grad-brand-hover: linear-gradient(135deg, var(--cf-brand-700), var(--cf-brand-600));
+  --cf-grad-soft: linear-gradient(135deg, var(--cf-brand-50), var(--cf-accent-soft));
+  --cf-grad-accent: linear-gradient(135deg, #7fe0bb, var(--cf-accent));
+  --cf-grad-avatar-accent: linear-gradient(135deg, #7fe0bb, var(--cf-accent));
+  --cf-grad-side: linear-gradient(180deg, var(--cf-brand-900) 0%, #08414a 55%, var(--cf-brand-700) 100%);
+  /* Velo oscuro sobre una foto, para que se lea el texto blanco encima. */
+  --cf-grad-overlay: linear-gradient(
+    160deg,
+    rgba(var(--cf-brand-900-rgb), 0.97) 0%,
+    rgba(var(--cf-brand-900-rgb), 0.88) 50%,
+    rgba(var(--cf-brand-900-rgb), 0.6) 100%
+  );
 
   /* ---------- TIPOGRAFÍA ----------
-     Las alternativas del final se usan mientras la fuente carga. */
+     Las alternativas del final se usan mientras la fuente carga. Las dos
+     van alojadas en la propia web (@fontsource, ver main.jsx): el
+     navegador no se conecta a Google. */
 
-  --cf-font-heading: "Fraunces", Georgia, "Times New Roman", serif;
-  --cf-font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --cf-font-heading: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui, sans-serif;
+  --cf-font-body: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
 
-  /* Solo para el logotipo. Si aparece en un titular o un botón, es un error. */
-  --cf-font-brand: "Montserrat", system-ui, sans-serif;
+  /* Solo para el logotipo (Wordmark.jsx). */
+  --cf-font-brand: var(--cf-font-heading);
 
   /* Escala cerrada, para que nadie invente su "un poco más grande". En rem:
      crece si el usuario agranda la letra del navegador. */
@@ -77,15 +148,16 @@
   --cf-radius-sm: 8px; /* campos, botones */
   --cf-radius-md: 12px; /* tarjetas */
   --cf-radius-lg: 20px; /* bloques grandes */
+  --cf-radius-xl: 28px; /* bandas y tarjetas destacadas */
 
-  --cf-shadow-sm: 0 1px 3px rgba(38, 38, 31, 0.06);
-  --cf-shadow-md: 0 4px 16px rgba(38, 38, 31, 0.08);
+  --cf-shadow-sm: 0 1px 2px rgba(var(--cf-text-rgb), 0.06), 0 1px 3px rgba(var(--cf-text-rgb), 0.04);
+  --cf-shadow-md: 0 6px 24px -6px rgba(var(--cf-text-rgb), 0.12), 0 2px 6px rgba(var(--cf-text-rgb), 0.05);
 
   /* ---------- DISPOSICIÓN ---------- */
 
   /* Ancho máximo del contenido: sin él, en pantallas anchas las líneas
      de texto se alargan tanto que cuesta leerlas. */
-  --cf-container: 1440px;
+  --cf-container: 1280px; /* el de la maqueta 02: unos 1200px de contenido */
   /* Margen lateral de la página: crece con la ventana, entre un mínimo y
      un máximo. Por encima de 769px sube de escalón (ver @media). */
   --cf-gutter: clamp(var(--cf-space-8), 3.5vw, var(--cf-space-12));
@@ -127,6 +199,8 @@ h4 {
   font-family: var(--cf-font-heading);
   color: var(--cf-primary);
   line-height: 1.2;
+  /* Plus Jakarta Sans pide apretar un poco las letras en tamaños grandes. */
+  letter-spacing: -0.02em;
 }
 
 a {
@@ -147,6 +221,30 @@ img {
   outline-offset: 2px;
 }
 
+/* El logotipo «CleanFlow» (Wordmark.jsx), como en el manual de marca:
+   una sola palabra en Plus Jakarta Sans 800, «Flow» en el color de marca.
+   El tamaño lo pone la clase de cada sitio. */
+.cf-wordmark {
+  font-family: var(--cf-font-brand);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--cf-brand-900);
+}
+
+.cf-wordmark__flow {
+  color: var(--cf-brand-500);
+}
+
+/* Sobre fondo oscuro: «Clean» en blanco y «Flow» en menta. */
+.cf-wordmark--neg {
+  color: var(--cf-white);
+}
+
+.cf-wordmark--neg .cf-wordmark__flow {
+  color: var(--cf-accent);
+}
+
 /* Solo para lectores de pantalla: se saca de la vista sin ocultarlo,
    porque display:none también lo escondería de ellos. */
 .sr-only {
@@ -159,274 +257,602 @@ img {
 }
 
 /* ======================================================================
-   3. SECCIÓN SOBRE CLEANFLOW (AboutSection.jsx, en la home)
+   PIEZAS COMUNES (DISENO-02)
+
+   Una sola definición para toda la app, con el aspecto de las maquetas
+   aprobadas. Sirven a los nombres de clase de cada zona (cf-btn en la
+   web y el acceso, cf-dash-btn en el panel), así que nada hay que
+   renombrar. Lo nuevo de WEB y PANEL usa los nombres comunes:
+   cf-btn, cf-btn--ghost, cf-alert, cf-card...
+   Cada zona solo ajusta lo suyo (tamaño, márgenes) en su archivo.
    ====================================================================== */
 
-.cf-about {
-  padding: var(--cf-space-16) var(--cf-space-6);
-  background-color: var(--cf-bg);
+/* ---------- BOTONES ----------
+   Píldora con el degradado de marca. Variantes: --ghost (blanco con
+   borde), --accent (menta), --danger (blanco con borde y texto rojos),
+   --sm (pequeño) y --block (ancho completo). */
+
+.cf-btn,
+.cf-dash-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cf-space-2);
+  padding: var(--cf-space-3) var(--cf-space-6);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--cf-grad-button);
+  color: var(--cf-on-primary);
+  font-family: var(--cf-font-body);
+  font-size: var(--cf-text-sm);
+  font-weight: 600;
+  /* El alto lo manda el padding, no la fuente: así dos botones con
+     distinta letra salen iguales. */
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(var(--cf-primary-rgb), 0.2);
+  transition:
+    background var(--cf-transition),
+    border-color var(--cf-transition),
+    color var(--cf-transition),
+    box-shadow var(--cf-transition);
+}
+
+.cf-btn:hover,
+.cf-dash-btn:hover {
+  background: var(--cf-grad-brand-hover);
+  color: var(--cf-on-primary);
+}
+
+.cf-btn:focus-visible,
+.cf-dash-btn:focus-visible {
+  outline: 3px solid var(--cf-ring);
+  outline-offset: 2px;
+}
+
+.cf-btn i,
+.cf-dash-btn i {
+  font-size: 0.8125rem;
+}
+
+/* Secundario: blanco con borde fino y el texto en negro. */
+.cf-btn--ghost,
+.cf-dash-btn--ghost {
+  background: var(--cf-surface);
+  border-color: var(--cf-border);
+  color: var(--cf-text);
+  box-shadow: none;
+}
+
+.cf-btn--ghost:hover,
+.cf-dash-btn--ghost:hover {
+  background: var(--cf-bg);
+  border-color: var(--cf-border-strong);
   color: var(--cf-text);
 }
 
-.cf-about .cf-container {
-  width: min(var(--cf-container), 100%);
-  margin: 0 auto;
+/* Menta: lo que invita a hacer algo (reservar, empezar). */
+.cf-btn--accent,
+.cf-dash-btn--accent {
+  background: var(--cf-grad-accent);
+  color: var(--cf-on-accent);
 }
 
-/* ---------- PRESENTACIÓN: TEXTO + FOTO ---------- */
+.cf-btn--accent:hover,
+.cf-dash-btn--accent:hover {
+  background: var(--cf-accent);
+  color: var(--cf-on-accent);
+}
 
-.cf-about__hero {
+/* Peligro (borrar, cancelar): no rellena, para no invitar a pulsarlo.
+   --danger-ghost es el nombre antiguo del panel: hoy son lo mismo. */
+.cf-btn--danger,
+.cf-dash-btn--danger,
+.cf-dash-btn--danger-ghost {
+  background: var(--cf-surface);
+  border-color: var(--cf-danger-line);
+  color: var(--cf-danger);
+  box-shadow: none;
+}
+
+.cf-btn--danger:hover,
+.cf-dash-btn--danger:hover,
+.cf-dash-btn--danger-ghost:hover {
+  background: var(--cf-danger-soft);
+  border-color: var(--cf-danger-line);
+  color: var(--cf-danger-dark);
+}
+
+.cf-btn--sm,
+.cf-dash-btn--sm {
+  padding: var(--cf-space-2) var(--cf-space-4);
+  font-size: 0.8125rem;
+}
+
+.cf-btn--block,
+.cf-dash-btn--block {
+  width: 100%;
+}
+
+/* Desactivado: gris, sin degradado ni sombra (va al final para ganar a
+   las variantes). */
+.cf-btn:disabled,
+.cf-dash-btn:disabled,
+.cf-btn[aria-disabled="true"] {
+  background: var(--cf-disabled-bg);
+  border-color: transparent;
+  color: var(--cf-disabled-text);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ---------- CAMPOS DE FORMULARIO (WEB-01) ----------
+   <div class="cf-field"><label>…</label><input class="cf-input"></div>.
+   La etiqueta siempre visible encima (no solo el texto de ejemplo, que
+   desaparece al escribir). Un <span> dentro de la etiqueta, en gris,
+   para «(opcional)». */
+
+.cf-field {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  align-items: center;
-  gap: var(--cf-space-16);
-  margin-bottom: var(--cf-space-12);
+  gap: 6px;
+  min-width: 0;
 }
 
-.cf-about__content {
-  max-width: 520px;
-}
-
-.cf-about__eyebrow {
-  margin: 0 0 var(--cf-space-3);
-  color: var(--cf-muted);
-  font-size: var(--cf-text-sm);
+.cf-field > label {
+  color: var(--cf-text);
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
-.cf-about__title {
-  margin: 0 0 var(--cf-space-6);
-  color: var(--cf-text);
-  font-size: var(--cf-text-3xl);
-}
-
-.cf-about__title span {
-  display: table;
-  margin-top: var(--cf-space-2);
-  padding: var(--cf-space-1) var(--cf-space-3);
-  border-radius: var(--cf-radius-sm);
-  background-color: var(--cf-primary-soft);
-  color: var(--cf-primary);
-}
-.cf-about__text {
-  margin: 0 0 var(--cf-space-4);
+.cf-field > label span {
   color: var(--cf-muted);
-  font-size: var(--cf-text-base);
+  font-weight: 400;
 }
 
-.cf-about__image {
-  min-height: 360px;
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-primary-soft);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--cf-space-4);
-  color: var(--cf-primary);
-  overflow: hidden;
-}
-
-/* Icono y texto de relleno para cuando no hay foto (ahora la hay). */
-.cf-about__image i {
-  font-size: var(--cf-text-3xl);
-}
-
-.cf-about__image span {
-  font-size: var(--cf-text-base);
-  font-weight: 700;
-}
-
-/* ---------- CIFRAS ---------- */
-
-.cf-about__stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  margin-bottom: var(--cf-space-8);
+.cf-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 14px;
   border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-lg);
+  border-radius: var(--cf-radius-sm);
   background-color: var(--cf-surface);
-  box-shadow: var(--cf-shadow-sm);
-  overflow: hidden;
+  color: var(--cf-text);
+  font-family: var(--cf-font-body);
+  font-size: 0.9375rem;
+  transition: border-color var(--cf-transition), box-shadow var(--cf-transition);
 }
 
-.cf-about__stat {
-  padding: var(--cf-space-6);
+.cf-input::placeholder {
+  color: var(--cf-placeholder);
+}
+
+.cf-input:hover {
+  border-color: var(--cf-border-strong);
+}
+
+.cf-input:focus {
+  outline: none;
+  border-color: var(--cf-brand-500);
+  box-shadow: 0 0 0 4px var(--cf-ring);
+}
+
+.cf-input[aria-invalid="true"] {
+  border-color: var(--cf-danger);
+}
+
+/* Debajo del campo: la pista en gris o, si algo está mal, el error en
+   rojo con su icono (WEB-02). El campo lo apunta con aria-describedby. */
+.cf-field__hint,
+.cf-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.cf-field__hint {
+  color: var(--cf-muted);
+  text-wrap: pretty;
+}
+
+.cf-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--cf-danger);
+}
+
+.cf-field__error i {
+  flex: none;
+  margin-top: 2px;
+  font-size: 0.75rem;
+}
+
+textarea.cf-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ---------- REQUISITOS DE LA CONTRASEÑA (PasswordRules.jsx, FIX-04) ----------
+   Dos columnas bajo el campo, como en la maqueta 03, si caben; si el
+   campo es estrecho (en el móvil, o en la columna de Nuevo trabajador),
+   una. Lo decide el ancho de la lista, no el de la pantalla: auto-fill
+   con un mínimo por columna. Pendiente: círculo y texto gris. Cumplido:
+   ✓ y verde. El icono cambia de forma, no solo de color. */
+
+.cf-pwrules {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--cf-muted);
+}
+
+.cf-pwrules__item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.cf-pwrules__item i {
+  flex: none;
+  width: 0.75rem;
+  font-size: 0.6875rem;
   text-align: center;
 }
 
-.cf-about__stat:not(:last-child) {
-  border-right: 1px solid var(--cf-border);
+.cf-pwrules__item--ok {
+  color: var(--cf-success);
 }
 
-.cf-about__stat strong {
-  display: block;
-  margin-bottom: var(--cf-space-2);
+/* El quinto, el más largo, va solo en su fila y a todo el ancho: en
+   media columna se partía en tres líneas. */
+.cf-pwrules__item:nth-child(odd):last-child {
+  grid-column: 1 / -1;
+}
+
+/* ---------- DESPERTANDO LA DEMO (WakeNotice.jsx, DEPLOY-01) ----------
+   Abajo y centrado, por encima de todo, sin tapar el contenido: sale solo
+   cuando una petición tarda (la base de datos se estaba durmiendo). */
+
+.cf-wake {
+  position: fixed;
+  left: 50%;
+  bottom: var(--cf-space-6);
+  z-index: 90;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 2 * var(--cf-space-4));
+  pointer-events: none;
+}
+
+.cf-wake__box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background-color: var(--cf-band);
+  color: var(--cf-white);
+  font-size: var(--cf-text-sm);
+  font-weight: 500;
+  box-shadow: var(--cf-shadow-md);
+  animation: cf-wake-in 0.2s ease-out;
+}
+
+.cf-wake__spinner {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(var(--cf-white-rgb), 0.3);
+  border-top-color: var(--cf-accent);
+  border-radius: 50%;
+  animation: cf-wake-spin 0.8s linear infinite;
+}
+
+@keyframes cf-wake-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes cf-wake-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-wake__box { animation: none; }
+  .cf-wake__spinner { animation-duration: 2.4s; }
+}
+
+/* ---------- AVISO DE PROYECTO DE PORTFOLIO (DemoNotice.jsx) ----------
+   Barra fina encima del menú en las páginas públicas y el acceso. */
+
+/* En línea y no flex: si el texto salta de línea, el icono sigue pegado
+   a la primera palabra en vez de quedarse solo en el borde. */
+.cf-demo-notice {
+  margin: 0;
+  padding: var(--cf-space-2) var(--cf-gutter);
+  background-color: var(--cf-accent-soft);
+  color: var(--cf-brand-900);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  text-align: center;
+  /* Si aun así salta de línea (móviles muy estrechos), dos líneas parejas. */
+  text-wrap: balance;
+}
+
+.cf-demo-notice i {
+  margin-right: var(--cf-space-2);
+  color: var(--cf-accent-dark);
+}
+
+.cf-demo-notice__short {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .cf-demo-notice {
+    padding-inline: var(--cf-space-3);
+  }
+
+  .cf-demo-notice__long {
+    display: none;
+  }
+
+  .cf-demo-notice__short {
+    display: inline;
+  }
+}
+
+/* ---------- CARGA DE PÁGINAS (PageLoading.jsx, WEB-03) ----------
+   La barra de arriba al cambiar de página, el logo al abrir directamente
+   una página que aún no está y el aviso si no se pudo descargar. */
+
+/* Encima de todo (también del aviso de portfolio y del menú fijo). */
+.cf-loading-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2000;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cf-loading-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  border-radius: 0 999px 999px 0;
+  background: linear-gradient(90deg, var(--cf-brand-500), var(--cf-accent));
+  box-shadow: 0 0 8px rgba(95, 211, 166, 0.7);
+  animation: cf-loading-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes cf-loading-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(260%); }
+}
+
+.cf-loading-splash {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--cf-bg);
   color: var(--cf-primary);
-  font-family: var(--cf-font-heading);
-  font-size: var(--cf-text-xl);
 }
 
-.cf-about__stat span {
+.cf-loading-splash svg {
+  animation: cf-loading-breathe 1.6s ease-in-out infinite;
+}
+
+.cf-loading-splash p {
+  margin: 0;
   color: var(--cf-muted);
   font-size: var(--cf-text-sm);
 }
 
-/* ---------- VALORES ---------- */
-
-.cf-about__values {
-  margin-bottom: var(--cf-space-8);
-  padding: var(--cf-space-8);
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-primary);
-  color: var(--cf-on-primary);
+@keyframes cf-loading-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1); }
 }
 
-.cf-about__values > h3 {
-  margin: 0 0 var(--cf-space-8);
-  color: var(--cf-on-primary);
-  font-size: var(--cf-text-xl);
-}
-
-.cf-about__values-grid {
+.cf-loading-error {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--cf-space-8);
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--cf-space-6) var(--cf-gutter);
+  background-color: var(--cf-bg);
 }
 
-.cf-about__value {
+.cf-loading-error__box {
+  width: 100%;
+  max-width: 400px;
+  padding: 28px;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
   text-align: center;
 }
 
-.cf-about__value i {
-  margin-bottom: var(--cf-space-3);
-  color: var(--cf-on-primary);
-  font-size: var(--cf-text-xl);
+.cf-loading-error__box > i {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  border-radius: 12px;
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
+  font-size: 1.125rem;
 }
 
-.cf-about__value h4 {
-  margin: 0 0 var(--cf-space-2);
+.cf-loading-error__box h1 {
+  margin: 0;
+  color: var(--cf-text);
+  font-size: 1.25rem;
+  text-wrap: balance;
+}
+
+.cf-loading-error__box p {
+  margin: 8px 0 20px;
+  color: var(--cf-muted);
+  font-size: var(--cf-text-sm);
+  text-wrap: pretty;
+}
+
+/* Los dos botones, uno encima de otro y del mismo ancho y alto. */
+.cf-loading-error__actions {
+  display: grid;
+  gap: 10px;
+}
+
+.cf-loading-error__actions .cf-btn {
+  min-height: 44px;
+}
+
+/* Quien pide menos movimiento ve la barra y el logo quietos. */
+@media (prefers-reduced-motion: reduce) {
+  .cf-loading-bar::before {
+    width: 100%;
+    animation: none;
+  }
+
+  .cf-loading-splash svg {
+    animation: none;
+  }
+}
+
+/* ---------- AVISOS ----------
+   Rojo por defecto (es para lo que se usan hoy: errores). Variantes:
+   --warning, --success e --info. */
+
+.cf-alert,
+.cf-dash-alert {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--cf-danger-line);
+  border-radius: var(--cf-radius-sm);
+  background-color: var(--cf-danger-soft);
+  color: var(--cf-danger);
+  font-size: var(--cf-text-sm);
+}
+
+.cf-alert--warning {
+  border-color: var(--cf-warning-line);
+  background-color: var(--cf-warning-soft);
+  color: var(--cf-warning-dark);
+}
+
+.cf-alert--success {
+  border-color: var(--cf-success-soft);
+  background-color: var(--cf-success-soft);
+  color: var(--cf-success);
+}
+
+.cf-alert--info {
+  border-color: var(--cf-info-soft);
+  background-color: var(--cf-info-soft);
+  color: var(--cf-info);
+}
+
+/* ---------- TARJETA ----------
+   Para lo nuevo de WEB y PANEL. Las cajas que ya existen se pasan a esta
+   cuando se rehaga su página (decidido en el plan de DISENO-02). */
+
+.cf-card {
+  padding: var(--cf-space-6);
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius-lg);
+  background-color: var(--cf-surface);
+  box-shadow: var(--cf-shadow-sm);
+}
+
+/* ---------- ESTRELLAS (Stars.jsx, solo lectura) ----------
+   Las usan el panel y la web (opiniones de la landing). Las de elegir
+   nota (cf-stars__btn) siguen en dashboard.css. */
+
+.cf-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cf-stars--read {
+  gap: 2px;
+}
+
+.cf-stars__mark {
+  display: grid;
+  place-items: center;
+  color: var(--cf-border);
+}
+
+.cf-stars__mark--on {
+  color: var(--cf-sun);
+}
+
+/* ---------- AVATAR (Avatar.jsx) ----------
+   Foto si la hay; si no, las iniciales sobre el degradado de marca.
+   --accent: el degradado menta (el propio usuario, el trabajador de una
+   reserva). Tallas: xs 22px, sm 32px, md 48px, lg 96px. */
+
+.cf-dash-avatar {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--cf-grad-button);
   color: var(--cf-on-primary);
   font-family: var(--cf-font-body);
-  font-size: var(--cf-text-base);
-}
-
-.cf-about__value p {
-  margin: 0;
-  color: var(--cf-on-primary-muted);
-  font-size: var(--cf-text-sm);
-}
-
-/* ---------- SATISFACCIÓN ---------- */
-
-.cf-about__satisfaction {
-  min-height: 190px;
-  padding: var(--cf-space-8) var(--cf-space-12);
-  border: 1px solid var(--cf-border);
-  border-radius: var(--cf-radius-lg);
-  background-color: var(--cf-surface);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--cf-shadow-sm);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  object-fit: cover;
   overflow: hidden;
 }
 
-.cf-about__satisfaction h3 {
-  max-width: 460px;
-  margin: 0 0 var(--cf-space-3);
-  color: var(--cf-text);
-  font-size: var(--cf-text-2xl);
+.cf-dash-avatar--accent {
+  background: var(--cf-grad-avatar-accent);
+  color: var(--cf-on-accent);
 }
 
-.cf-about__satisfaction h3 span {
-  display: block;
-  color: var(--cf-primary);
+.cf-dash-avatar--xs {
+  width: 22px;
+  height: 22px;
+  font-size: 0.625rem;
 }
 
-.cf-about__satisfaction p {
-  margin: 0;
-  color: var(--cf-muted);
+.cf-dash-avatar--sm {
+  width: 32px;
+  height: 32px;
+  font-size: 0.75rem;
 }
 
-.cf-about__satisfaction > i {
-  margin-right: var(--cf-space-16);
-  color: var(--cf-primary);
-  font-size: var(--cf-text-3xl);
+.cf-dash-avatar--md {
+  width: 48px;
+  height: 48px;
+  font-size: 0.9375rem;
 }
 
-/* ---------- TABLET (hasta 850px) ---------- */
-
-@media (max-width: 850px) {
-  .cf-about__hero {
-    grid-template-columns: 1fr;
-    gap: var(--cf-space-8);
-  }
-
-  .cf-about__content {
-    max-width: none;
-  }
-
-  .cf-about__stats,
-  .cf-about__values-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .cf-about__stat:nth-child(2) {
-    border-right: none;
-  }
-
-  .cf-about__stat:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--cf-border);
-  }
-}
-
-/* ---------- MÓVIL (hasta 520px) ---------- */
-
-@media (max-width: 520px) {
-  .cf-about {
-    padding: var(--cf-space-12) var(--cf-space-4);
-  }
-
-  .cf-about__title {
-    font-size: var(--cf-text-2xl);
-  }
-
-  .cf-about__image {
-    min-height: 250px;
-  }
-
-  .cf-about__stats,
-  .cf-about__values-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cf-about__stat:not(:last-child) {
-    border-right: none;
-    border-bottom: 1px solid var(--cf-border);
-  }
-
-  .cf-about__values {
-    padding: var(--cf-space-6);
-  }
-
-  .cf-about__value {
-    padding: var(--cf-space-2) 0;
-  }
-
-  .cf-about__satisfaction {
-    padding: var(--cf-space-6);
-  }
-
-  .cf-about__satisfaction > i {
-    margin-right: 0;
-    font-size: var(--cf-text-2xl);
-  }
-}
-/* La foto del equipo llena el hueco de .cf-about__image. */
-.cf-about__image img {
-  width: 100%;
-  height: 100%;
-  min-height: 360px;
-  object-fit: cover;
+.cf-dash-avatar--lg {
+  width: 96px;
+  height: 96px;
+  font-size: 1.75rem;
 }

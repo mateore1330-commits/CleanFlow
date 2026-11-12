@@ -1027,7 +1027,7 @@ class Booking(db.Model):
         """La reserva completa: servicio, dirección, tramos, tareas con sus
         fotos e incidencias.
 
-        La usan la confirmación del panel, "Mis reservas" del cliente (#16)
+        La usan la confirmación del panel, "Servicios contratados" del cliente (#16)
         y el seguimiento del trabajador (#82). Lo pesado (fotos e
         incidencias) va solo aquí: `serialize()` se queda ligera porque la
         usan las listas, como la de Reservas afectadas.
@@ -1079,8 +1079,9 @@ class Booking(db.Model):
                 else None
             ),
 
-            # La foto del trabajador, solo aquí: el listado se apaña con
-            # las iniciales y no tiene por qué cargar con ella.
+            # La foto del trabajador: sin ella, la tarjeta pinta sus
+            # iniciales. El listado del encargado la añade por su cuenta
+            # (serializar_reserva, en routes.py), con la del cliente.
             "worker_avatar_url": (
                 self.worker.user.avatar_url
                 if self.worker and self.worker.user

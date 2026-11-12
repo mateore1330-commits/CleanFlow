@@ -1,114 +1,78 @@
-import teamImage from "../../../assets/equipo-cleanflow.png";
-const STATS = [
-    { value: "5+", label: "Años de experiencia" },
-    { value: "500+", label: "Clientes satisfechos" },
-    { value: "100%", label: "Compromiso" },
-    { value: "24/7", label: "Atención al cliente" },
-];
+/**
+ * SOBRE CLEANFLOW (maqueta 02, WEB-01).
+ *
+ * La foto del equipo, la historia, los cuatro valores y dos salidas:
+ * hablar con nosotros o trabajar con nosotros.
+ *
+ * Sin cifras inventadas ("5+ años", "500+ clientes"...): si no se pueden
+ * demostrar, restan confianza en vez de sumarla.
+ *
+ * ⚠️ La foto lleva los uniformes de la marca antigua (oliva): hay que
+ * hacer otra con los nuevos.
+ */
+
+import { Link } from "react-router-dom";
+import team1536 from "../../../assets/img/equipo-cleanflow-1536.webp";
+import team768 from "../../../assets/img/equipo-cleanflow-768.webp";
+
 
 const VALUES = [
-    {
-        icon: "fa-shield-halved",
-        title: "Confianza",
-        text: "Profesionales de confianza y verificados.",
-    },
-    {
-        icon: "fa-award",
-        title: "Calidad",
-        text: "Productos y técnicas de primera.",
-    },
-    {
-        icon: "fa-heart",
-        title: "Compromiso",
-        text: "Cumplimos lo que prometemos.",
-    },
-    {
-        icon: "fa-handshake",
-        title: "Cercanía",
-        text: "Trato amable y atención personalizada.",
-    },
+    { icon: "fa-shield-halved", title: "Confianza", text: "Profesionales verificados." },
+    { icon: "fa-award", title: "Calidad", text: "Productos y técnicas de primera." },
+    { icon: "fa-handshake", title: "Compromiso", text: "Cumplimos lo que prometemos." },
+    { icon: "fa-heart", title: "Cercanía", text: "Trato amable y personal." },
 ];
 
-export const AboutSection = () => {
-    return (
-        <section id="about-us" className="cf-about">
-            <div className="cf-container">
-                <div className="cf-about__hero">
-                    <div className="cf-about__content">
-                        <p className="cf-about__eyebrow">
-                            Sobre CleanFlow
-                        </p>
 
-                        <h2 className="cf-about__title">
-                            Cuidado que
-                            <span> se nota</span>
-                        </h2>
+export const AboutSection = () => (
+    <section id="about-us" className="cf-home-section cf-home-about">
+        <div className="cf-container cf-home-about__grid">
+            <div className="cf-home-about__photo">
+                <img
+                    src={team1536}
+                    srcSet={`${team768} 768w, ${team1536} 1536w`}
+                    sizes="(max-width: 860px) 100vw, 50vw"
+                    alt="El equipo de CleanFlow"
+                    width="1536"
+                    height="1024"
+                    loading="lazy"
+                />
+                <p className="cf-home-about__badge">
+                    <i className="fa-solid fa-people-group" aria-hidden="true"></i>
+                    Un equipo propio, formado y con contrato.
+                </p>
+            </div>
 
-                        <p className="cf-about__text">
-                            En CleanFlow nos dedicamos a ofrecer servicios de
-                            limpieza de alta calidad para hogares y empresas.
-                        </p>
+            <div className="cf-home-about__text">
+                <p className="cf-eyebrow">Sobre CleanFlow</p>
+                <h2 className="cf-home-title">Limpiamos como si fuera nuestra casa</h2>
+                <p>
+                    CleanFlow nació en Madrid con una idea sencilla: que contratar una limpieza sea
+                    tan fácil como pedir comida a domicilio, pero con la confianza de saber quién
+                    entra en tu casa.
+                </p>
+                <p>
+                    Por eso todo nuestro equipo es propio. Lo seleccionamos, lo formamos y lo
+                    cuidamos, porque un equipo contento es el que mejor trabaja.
+                </p>
 
-                        <p className="cf-about__text">
-                            Nuestro equipo está formado por profesionales
-                            capacitados, comprometidos con la excelencia y la
-                            satisfacción de nuestros clientes.
-                        </p>
-                    </div>
-
-                    <div className="cf-about__image">
-                        <img
-                            src={teamImage}
-                            alt="Equipo profesional de CleanFlow"
-                        />
-                    </div>
-                </div>
-
-
-                <div className="cf-about__stats">
-                    {STATS.map((stat) => (
-                        <div className="cf-about__stat" key={stat.label}>
-                            <strong>{stat.value}</strong>
-                            <span>{stat.label}</span>
-                        </div>
+                <ul className="cf-home-about__values">
+                    {VALUES.map((value) => (
+                        <li key={value.title}>
+                            <i className={`fa-solid ${value.icon}`} aria-hidden="true"></i>
+                            <span>
+                                <b>{value.title}</b>
+                                <span>{value.text}</span>
+                            </span>
+                        </li>
                     ))}
-                </div>
+                </ul>
 
-                <div className="cf-about__values">
-                    <h3>Nuestros valores</h3>
-
-                    <div className="cf-about__values-grid">
-                        {VALUES.map((value) => (
-                            <article
-                                className="cf-about__value"
-                                key={value.title}
-                            >
-                                <i
-                                    className={`fa-solid ${value.icon}`}
-                                    aria-hidden="true"
-                                ></i>
-                                <h4>{value.title}</h4>
-                                <p>{value.text}</p>
-                            </article>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="cf-about__satisfaction">
-                    <div>
-                        <h3>
-                            Tu satisfacción,
-                            <span> nuestra prioridad.</span>
-                        </h3>
-                        <p>Gracias por confiar en nosotros.</p>
-                    </div>
-
-                    <i
-                        className="fa-solid fa-seedling"
-                        aria-hidden="true"
-                    ></i>
+                <div className="cf-home-about__actions">
+                    <Link to="/#contact" className="cf-btn">Habla con nosotros</Link>
+                    <Link to="/work-with-us" className="cf-btn cf-btn--ghost">Trabaja con nosotros</Link>
                 </div>
             </div>
-        </section>
-    );
-};
+        </div>
+    </section>
+);

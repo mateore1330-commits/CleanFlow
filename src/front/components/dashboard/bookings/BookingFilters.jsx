@@ -1,9 +1,9 @@
 /**
  * BARRA DE FILTROS DE MIS SERVICIOS.
  *
- * Una sola línea: el estado a la izquierda y, a la derecha, buscar y un
- * botón que despliega las fechas. Debajo, lo que se está filtrando, en
- * pastillas que se quitan una a una.
+ * Una sola línea: el estado a la izquierda y, a la derecha, un botón que
+ * despliega las fechas y el buscador (maqueta 04). Debajo, lo que se
+ * está filtrando, en pastillas que se quitan una a una.
  *
  * Solo pinta y avisa: quien filtra de verdad es la página.
  *
@@ -119,7 +119,7 @@ export const BookingFilters = ({ filters, counts, total, shown, onChange }) => {
             <div className="cf-myservices__toolbar">
 
                 {/* aria-pressed y no role="tab": son filtros de una lista. */}
-                <div className="cf-services__tabs">
+                <div className="cf-services__tabs cf-services__tabs--pill">
                     {TABS.map((option) => (
                         <button
                             key={option.value}
@@ -136,31 +136,7 @@ export const BookingFilters = ({ filters, counts, total, shown, onChange }) => {
 
                 <div className="cf-myservices__tools">
 
-                    {/* El buscador del panel, sin sugerencias: con pocas
-                        reservas, la propia lista ya es la respuesta. */}
-                    <div className="cf-dash-search">
-                        <i className="fa-solid fa-magnifying-glass cf-dash-search__icon" aria-hidden="true"></i>
-                        <input
-                            id="my-services-search"
-                            type="search"
-                            className="cf-dash-search__input"
-                            placeholder="Buscar servicio o trabajador"
-                            aria-label="Buscar entre mis servicios"
-                            value={filters.query}
-                            onChange={(event) => set({ query: event.target.value })}
-                        />
-                        {filters.query && (
-                            <button
-                                type="button"
-                                className="cf-dash-search__clear"
-                                aria-label="Borrar la búsqueda"
-                                onClick={() => set({ query: "" })}
-                            >
-                                <i className="fa-solid fa-xmark" aria-hidden="true"></i>
-                            </button>
-                        )}
-                    </div>
-
+                    {/* Fechas antes que el buscador, como en la maqueta 04. */}
                     <div className="cf-dates" ref={dates}>
                         <button
                             type="button"
@@ -209,6 +185,31 @@ export const BookingFilters = ({ filters, counts, total, shown, onChange }) => {
                                     </label>
                                 </div>
                             </div>
+                        )}
+                    </div>
+
+                    {/* El buscador del panel, sin sugerencias: con pocas
+                        reservas, la propia lista ya es la respuesta. */}
+                    <div className="cf-dash-search">
+                        <i className="fa-solid fa-magnifying-glass cf-dash-search__icon" aria-hidden="true"></i>
+                        <input
+                            id="my-services-search"
+                            type="search"
+                            className="cf-dash-search__input"
+                            placeholder="Servicio o trabajador"
+                            aria-label="Buscar entre mis servicios"
+                            value={filters.query}
+                            onChange={(event) => set({ query: event.target.value })}
+                        />
+                        {filters.query && (
+                            <button
+                                type="button"
+                                className="cf-dash-search__clear"
+                                aria-label="Borrar la búsqueda"
+                                onClick={() => set({ query: "" })}
+                            >
+                                <i className="fa-solid fa-xmark" aria-hidden="true"></i>
+                            </button>
                         )}
                     </div>
                 </div>

@@ -1,9 +1,10 @@
 /**
- * UNA INCIDENCIA, VISTA POR EL ENCARGADO.
+ * UNA INCIDENCIA, VISTA POR EL ENCARGADO (maqueta 06, PANEL-04).
  *
- * De qué servicio habla, quién la abrió, qué pasó y sus fotos. Con el
- * botón de resolver mientras siga abierta, y con la nota cuando ya se
- * cerró.
+ * Arriba, su estado, el motivo y quién la abrió y cuándo. Luego de qué
+ * servicio habla, qué pasó entre comillas y sus fotos. Con el botón de
+ * resolver mientras siga abierta, y con la nota cuando ya se cerró. El
+ * borde izquierdo dice el estado: rojo abierta, verde resuelta.
  *
  * Un "servicio no realizado" se distingue a simple vista: no es una
  * figura rota, es un cliente sin servicio y un hueco que decidir.
@@ -41,6 +42,18 @@ export const IncidentCard = ({ incident, busy, onResolve, onZoom }) => {
             <article className={classes}>
 
                 <div className="cf-incard__top">
+                    {incident.resolved ? (
+                        <span className="cf-bookstate cf-bookstate--done">
+                            <i className="fa-solid fa-check" aria-hidden="true"></i>
+                            Resuelta
+                        </span>
+                    ) : (
+                        <span className="cf-bookstate cf-bookstate--fail">
+                            <span className="cf-bookstate__dot"></span>
+                            Abierta
+                        </span>
+                    )}
+
                     {notDone && (
                         <span className="cf-incard__tag cf-incard__tag--notdone">
                             <i className="fa-solid fa-xmark" aria-hidden="true"></i>
@@ -53,40 +66,29 @@ export const IncidentCard = ({ incident, busy, onResolve, onZoom }) => {
                     </span>
 
                     <span className="cf-incard__who">
-                        <i className="fa-regular fa-user" aria-hidden="true"></i>
                         {incident.source === "client"
                             ? "La abrió el cliente"
                             : `La abrió ${booking.worker_name || "el trabajador"}`}
+                        {incident.created_at && ` · ${shortMoment(incident.created_at)}`}
                     </span>
-
-                    {incident.created_at && (
-                        <span className="cf-incard__when">
-                            {shortMoment(incident.created_at)}
-                        </span>
-                    )}
                 </div>
 
                 <div className="cf-incard__ref">
-                    <span className="cf-incard__service">
+                    <h2 className="cf-incard__service">
                         {booking.service || "Servicio no disponible"}
-                    </span>
+                    </h2>
 
-                    <span className="cf-incard__meta">
+                    {/* «Trabajador» y no «Trabajadora»: no sabemos quién es, y
+                        es la palabra de las columnas de Reservas. */}
+                    <p className="cf-incard__meta">
                         Reserva n.º {incident.booking_id}
-                        {booking.starts_at && (
-                            <> · {longDate(booking.starts_at)}, {timeOf(booking.starts_at)}</>
-                        )}
-                    </span>
-
-                    {booking.client_name && (
-                        <span className="cf-incard__meta">
-                            Cliente: {booking.client_name}
-                            {booking.worker_name && ` · Trabajadora: ${booking.worker_name}`}
-                        </span>
-                    )}
+                        {booking.starts_at && <> · {longDate(booking.starts_at)}, {timeOf(booking.starts_at)}</>}
+                        {booking.client_name && ` · Cliente: ${booking.client_name}`}
+                        {booking.worker_name && ` · Trabajador: ${booking.worker_name}`}
+                    </p>
                 </div>
 
-                <p className="cf-incard__text">{incident.description}</p>
+                <p className="cf-incard__text">«{incident.description}»</p>
 
                 {incident.media?.length > 0 && (
                     <div className="cf-incard__shots">
@@ -124,32 +126,25 @@ export const IncidentCard = ({ incident, busy, onResolve, onZoom }) => {
                     </p>
                 )}
 
-                <div className="cf-incard__foot">
-                    {incident.resolved ? (
-                        <span className="cf-bookstate cf-bookstate--done">
-                            <i className="fa-solid fa-check" aria-hidden="true"></i>
-                            Resuelta
-                        </span>
-                    ) : (
-                        <>
-                            <span className="cf-bookstate cf-bookstate--fail">
-                                <span className="cf-bookstate__dot"></span>
-                                Abierta
-                                {incident.source === "client" && " · la reserva está en revisión"}
-                            </span>
+                {!incident.resolved && (
+                    <div className="cf-incard__foot">
+                        {/* Lo que pasa mientras: si la abrió el cliente, su
+                            reserva espera a que se resuelva. */}
+                        {incident.source === "client" && (
+                            <span className="cf-incard__note">La reserva está en revisión hasta que la resuelvas.</span>
+                        )}
 
-                            <button
-                                type="button"
-                                className="cf-dash-btn cf-dash-btn--sm"
-                                disabled={busy}
-                                onClick={() => onResolve(incident)}
-                            >
-                                <i className="fa-solid fa-check" aria-hidden="true"></i>
-                                Resolver
-                            </button>
-                        </>
-                    )}
-                </div>
+                        <button
+                            type="button"
+                            className="cf-dash-btn cf-dash-btn--sm"
+                            disabled={busy}
+                            onClick={() => onResolve(incident)}
+                        >
+                            <i className="fa-solid fa-check" aria-hidden="true"></i>
+                            Resolver
+                        </button>
+                    </div>
+                )}
 
             </article>
         </li>

@@ -4,25 +4,8 @@
 # track this file .gitignore (i.e. do NOT ignore it)
 !.gitignore
 !.github
-php_errorlog
+!.npmrc
 .log
-
-# do not ignore gitpod and render files
-!.gitpod.Dockerfile
-!.welcome
-!.devcontainer
-!.devcontainer/*
-!Dockerfile.render
-!.gitpod.yml
-!render.yml
-!.render-buildpacks.json
-
-# track webpack configs (i.e. do NOT ignore it)
-!composer.json
-!webpack.config.js
-!package.json
-!webpack.production.js
-!webpack.development.js
 
 # track readme.md in the root (i.e. do NOT ignore it)
 !README.md
@@ -62,15 +45,14 @@ Thumbs.db
 # ignore node/grunt dependency directories
 node_modules/
 
-# webpack output
+# Vite build output
 dist/*
 !public/
 !public/*
 
-# ignore the dist directory were our bundle files are going to be
+# dotfiles that must be tracked
 !.gitkeep
 !.htaccess
-!.eslintrc
 !.env.example
 .now
 
@@ -79,4 +61,7 @@ dist/*
 database.database
 database.db
 diagram.png
-__pycache__/ 
+__pycache__/
+# migrations/ NO se ignora (DATOS-01): las migraciones son el plano de la
+# base de datos y tienen que estar en el repo para que cualquiera pueda
+# montarla igual con `pipenv run upgrade`.

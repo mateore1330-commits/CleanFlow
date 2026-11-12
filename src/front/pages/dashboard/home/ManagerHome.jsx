@@ -1,5 +1,5 @@
 /**
- * INICIO DEL ENCARGADO (#24).
+ * INICIO DEL ENCARGADO (#24, rediseño en PANEL-04 con la maqueta 06).
  *
  * El único de los tres inicios que es un panel de verdad: el cliente y
  * el trabajador entran a preguntar "¿qué hago ahora?"; él entra a
@@ -11,11 +11,16 @@
  * su propio error: con uno compartido, un refresco fallido borraría la
  * pantalla entera.
  *
+ * Los avisos de arriba (afectadas, incidencias) llevan a su vista de
+ * Reservas; las candidaturas, a su bandeja. La ficha de un servicio y la
+ * de cancelar se abren con showModal(): así su fondo oscuro tapa toda la
+ * pantalla, también la cabecera.
+ *
  * Estilos: dashboard.css, sección 15 (cf-home).
  */
 
 import "../../../dashboard.css";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useGlobalReducer from "../../../hooks/useGlobalReducer";
 import { getStats, getDayBookings, getManagedBooking } from "../../../services/statsService";
@@ -176,6 +181,22 @@ export const ManagerHome = () => {
     const [reason, setReason] = useState("");
     const [busy, setBusy] = useState(false);
 
+    // Las dos ventanas se abren como modales de verdad (showModal): van a
+    // la capa de encima de todo y su fondo tapa la pantalla entera. Con
+    // <dialog open> el fondo se quedaba por debajo de la cabecera.
+    const sheetRef = useRef(null);
+    const dropRef = useRef(null);
+    const isOpen = Boolean(opened);
+    const isDropping = Boolean(dropping);
+
+    useEffect(() => {
+        if (isOpen && !sheetRef.current?.open) sheetRef.current?.showModal();
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (isDropping && !dropRef.current?.open) dropRef.current?.showModal();
+    }, [isDropping]);
+
     // Las métricas no se piden cada minuto: no cambian tan deprisa y son
     // la consulta más cara de la pantalla. Solo al entrar y cuando algo
     // de aquí las mueve, como cancelar una reserva.
@@ -243,6 +264,9 @@ export const ManagerHome = () => {
      * estén. Desde aquí se cancela cualquiera.
      */
     const confirmDrop = async () => {
+        // El servidor exige el motivo al encargado: sin él ni se intenta.
+        if (!reason.trim()) return;
+
         setBusy(true);
 
         const result = await cancelBooking(dropping.booking_id, store.token, reason.trim());
@@ -254,7 +278,9 @@ export const ManagerHome = () => {
             return;
         }
 
-        setDropping(null);
+        // close() y no setDropping(null): así sale bien de la capa de
+        // modales, y su onClose pone dropping a null.
+        dropRef.current?.close();
         setReason("");
 
         // Las dos cosas: el día pierde la reserva y las cifras de arriba
@@ -271,11 +297,12 @@ export const ManagerHome = () => {
     if (error) return <p className="cf-dash-alert" role="alert">{error}</p>;
 
     // Solo se enseña lo que pide algo. Un "0 incidencias" ocupa el sitio
-    // de lo que sí importa.
+    // de lo que sí importa. Afectadas e incidencias llevan a su vista de
+    // Reservas (PANEL-04); las candidaturas, a su bandeja.
     const inbox = [
-        { key: "affected", n: stats.inbox.affected, to: "/dashboard/affected-bookings", one: "reserva afectada", many: "reservas afectadas", hot: true },
-        { key: "incidents", n: stats.inbox.incidents, to: "/dashboard/incidents", one: "incidencia", many: "incidencias", hot: true },
-        { key: "applications", n: stats.inbox.applications, to: "/dashboard/applications", one: "candidatura", many: "candidaturas", hot: false },
+        { key: "affected", n: stats.inbox.affected, to: "/dashboard/bookings?vista=afectadas", icon: "fa-user-slash", one: "reserva afectada", many: "reservas afectadas", hot: true },
+        { key: "incidents", n: stats.inbox.incidents, to: "/dashboard/bookings?vista=incidencias", icon: "fa-triangle-exclamation", one: "incidencia", many: "incidencias", hot: true },
+        { key: "applications", n: stats.inbox.applications, to: "/dashboard/applications", icon: "fa-envelope-open-text", one: "candidatura", many: "candidaturas", hot: false },
         // TODO (#47): los mensajes de contacto. El número ya viene en
         // /api/stats, pero todavía no hay pantalla a la que enlazar.
     ].filter((tray) => tray.n > 0);
@@ -286,9 +313,8 @@ export const ManagerHome = () => {
             <section className="cf-home__hero">
                 <div className="cf-home__in">
                     <div>
-                        <p className="cf-home__date">{longToday()}</p>
                         <h1 className="cf-home__hi">Hola, {store.user?.name}</h1>
-                        <p className="cf-home__sub">{summaryLine(stats)}</p>
+                        <p className="cf-home__sub">{longToday()} · {summaryLine(stats)}</p>
 
                         {inbox.length > 0 && (
                             <div className="cf-home__pills">
@@ -298,7 +324,8 @@ export const ManagerHome = () => {
                                         className={`cf-home__pill${tray.hot ? " cf-home__pill--hot" : ""}`}
                                         to={tray.to}
                                     >
-                                        <b>{tray.n}</b> {tray.n === 1 ? tray.one : tray.many}
+                                        <i className={`fa-solid ${tray.icon}`} aria-hidden="true" />
+                                        {tray.n} {tray.n === 1 ? tray.one : tray.many}
                                     </Link>
                                 ))}
                             </div>
@@ -306,11 +333,14 @@ export const ManagerHome = () => {
                     </div>
 
                     <div className="cf-home__money">
-                        <span className="cf-home__tag">Este mes</span>
+                        <p className="cf-home__tag">Este mes</p>
                         <p className="cf-home__fig">{EUROS.format(stats.revenue_month)}</p>
-                        <p className="cf-home__what">Servicios ya finalizados</p>
-                        <p className="cf-home__where">
-                            {stats.hours_month} {stats.hours_month === 1 ? "hora vendida" : "horas vendidas"}
+                        <p className="cf-home__m2">
+                            <span><i className="fa-solid fa-circle-check" aria-hidden="true" /> Servicios ya finalizados</span>
+                            <span>
+                                <i className="fa-regular fa-clock" aria-hidden="true" />{" "}
+                                {stats.hours_month} {stats.hours_month === 1 ? "hora vendida" : "horas vendidas"}
+                            </span>
                         </p>
                     </div>
                 </div>
@@ -320,8 +350,7 @@ export const ManagerHome = () => {
 
                 <section className="cf-home__kpi cf-home__kpi--wide">
                     <p className="cf-home__kpi-label">Reservas vivas</p>
-                    <span className="cf-home__num">{stats.bookings.active}</span>
-                    <span className="cf-home__unit">en la agenda</span>
+                    <p className="cf-home__num">{stats.bookings.active}</p>
 
                     {stats.bookings.active > 0 && (
                         <>
@@ -341,18 +370,9 @@ export const ManagerHome = () => {
                             </div>
 
                             <p className="cf-home__legend">
-                                <span>
-                                    <i style={{ backgroundColor: "var(--cf-primary)" }} />
-                                    {stats.bookings.confirmed} confirmadas
-                                </span>
-                                <span>
-                                    <i style={{ backgroundColor: "var(--cf-accent)" }} />
-                                    {stats.bookings.in_progress} en curso
-                                </span>
-                                <span>
-                                    <i style={{ backgroundColor: "var(--cf-border)" }} />
-                                    {stats.bookings.pending} pendientes
-                                </span>
+                                <span className="cf-home__legend-ok">{stats.bookings.confirmed} confirmadas</span>
+                                <span className="cf-home__legend-doing">{stats.bookings.in_progress} en curso</span>
+                                <span className="cf-home__legend-wait">{stats.bookings.pending} pendientes</span>
                             </p>
                         </>
                     )}
@@ -360,8 +380,9 @@ export const ManagerHome = () => {
 
                 <section className="cf-home__kpi">
                     <p className="cf-home__kpi-label">Equipo en activo</p>
-                    <span className="cf-home__num">{stats.workers.active}</span>
-                    <span className="cf-home__unit">de {stats.workers.total}</span>
+                    <p className="cf-home__num">
+                        {stats.workers.active} <span className="cf-home__unit">de {stats.workers.total}</span>
+                    </p>
                     <p className="cf-home__note">
                         {stats.workers.total === stats.workers.active
                             ? "Nadie de baja ni inactivo"
@@ -373,26 +394,25 @@ export const ManagerHome = () => {
                     <p className="cf-home__kpi-label">El más pedido este mes</p>
                     {stats.top_service ? (
                         <>
-                            <span className="cf-home__num">{stats.top_service.count}</span>
-                            <span className="cf-home__unit">
-                                {stats.top_service.count === 1 ? "vez" : "veces"}
-                            </span>
-                            <p className="cf-home__note">{stats.top_service.name}</p>
+                            <p className="cf-home__name">{stats.top_service.name}</p>
+                            <p className="cf-home__note">
+                                {stats.top_service.count} {stats.top_service.count === 1 ? "reserva" : "reservas"}
+                            </p>
                         </>
                     ) : (
                         <p className="cf-home__note">Todavía no se ha contratado nada este mes.</p>
                     )}
                 </section>
 
-                <section className="cf-home__kpi">
+                <section className="cf-home__kpi cf-home__kpi--grad">
                     <p className="cf-home__kpi-label">La nota de CleanFlow</p>
                     {stats.rating.total > 0 ? (
                         <>
-                            <span className="cf-home__num">
+                            <p className="cf-home__num cf-home__num--rating">
                                 {/* La coma es lo que se escribe en español. */}
                                 {String(stats.rating.average).replace(".", ",")}
-                            </span>
-                            <Stars value={stats.rating.average} size={16} />
+                                <Stars value={stats.rating.average} size={14} />
+                            </p>
                             <p className="cf-home__note">
                                 Sobre {stats.rating.total}{" "}
                                 {stats.rating.total === 1 ? "valoración" : "valoraciones"}
@@ -411,30 +431,32 @@ export const ManagerHome = () => {
                     <h2 className="cf-home__t">Cómo va el {longDay(date)}</h2>
 
                     <div className="cf-home__picks">
-                        <button
-                            type="button"
-                            className="cf-home__chip"
-                            aria-pressed={date === shiftDay(today, -1)}
-                            onClick={() => setDate(shiftDay(today, -1))}
-                        >
-                            Ayer
-                        </button>
-                        <button
-                            type="button"
-                            className="cf-home__chip"
-                            aria-pressed={date === today}
-                            onClick={() => setDate(today)}
-                        >
-                            Hoy
-                        </button>
-                        <button
-                            type="button"
-                            className="cf-home__chip"
-                            aria-pressed={date === shiftDay(today, 1)}
-                            onClick={() => setDate(shiftDay(today, 1))}
-                        >
-                            Mañana
-                        </button>
+                        <div className="cf-home__chips" role="group" aria-label="Elegir el día">
+                            <button
+                                type="button"
+                                className="cf-home__chip"
+                                aria-pressed={date === shiftDay(today, -1)}
+                                onClick={() => setDate(shiftDay(today, -1))}
+                            >
+                                Ayer
+                            </button>
+                            <button
+                                type="button"
+                                className="cf-home__chip"
+                                aria-pressed={date === today}
+                                onClick={() => setDate(today)}
+                            >
+                                Hoy
+                            </button>
+                            <button
+                                type="button"
+                                className="cf-home__chip"
+                                aria-pressed={date === shiftDay(today, 1)}
+                                onClick={() => setDate(shiftDay(today, 1))}
+                            >
+                                Mañana
+                            </button>
+                        </div>
 
                         <input
                             type="date"
@@ -454,16 +476,17 @@ export const ManagerHome = () => {
 
                         {day.bookings.map((service) => (
                             <div className="cf-home__svc" key={service.booking_day_id}>
-                                <span className={`cf-home__dot cf-home__dot--${service.state}`} />
+                                <span className={`cf-home__dot cf-home__dot--${service.state}`} aria-hidden="true" />
 
                                 <span className="cf-home__hour">
                                     {hourOf(service.starts_at)} – {hourOf(service.ends_at)}
                                 </span>
 
                                 <span className="cf-home__svc-name">
-                                    {/* El nombre abre el detalle. Botón y no
-                                        la fila entera: dentro ya hay otro
-                                        botón, y anidarlos no vale. */}
+                                    {/* El nombre abre la ficha, y con él toda la
+                                        fila (su ::after la cubre). Botón y no la
+                                        fila: dentro va el de cancelar, y anidar
+                                        botones no vale. */}
                                     <button
                                         type="button"
                                         className="cf-home__open"
@@ -475,26 +498,29 @@ export const ManagerHome = () => {
                                         <span className="cf-home__warn">
                                             <i className="fa-solid fa-triangle-exclamation" aria-hidden="true" />
                                             {service.open_incidents === 1
-                                                ? "Una incidencia abierta"
+                                                ? "1 incidencia abierta"
                                                 : `${service.open_incidents} incidencias abiertas`}
                                         </span>
                                     )}
                                 </span>
 
+                                {/* Trabajador y cliente, cada uno con su
+                                    etiqueta: que no se confundan nunca. */}
                                 <span className="cf-home__who">
-                                    <b>{service.worker_name}</b> · {service.client_name}
+                                    <span><em>Trabajador</em>{service.worker_name || "Sin asignar"}</span>
+                                    <span><em>Cliente</em>{service.client_name}</span>
                                 </span>
 
-                                {/* El estado siempre, y debajo el botón si aún
-                                    se puede parar: el punto de color solo no
-                                    dice lo suficiente. */}
+                                {/* El estado siempre: el punto de color solo
+                                    no dice lo suficiente. */}
                                 <span className="cf-home__end">
-                                    <span>
-                                        {STATES[service.state].label}
-                                        {service.tasks.total > 0
-                                            && ` · ${service.tasks.done} de ${service.tasks.total} tareas`}
-                                    </span>
+                                    <b>{STATES[service.state].label}</b>
+                                    {service.tasks.total > 0 && (
+                                        <small>{service.tasks.done} de {service.tasks.total} tareas</small>
+                                    )}
+                                </span>
 
+                                <span className="cf-home__act">
                                     {service.can_cancel && (
                                         <button
                                             type="button"
@@ -513,14 +539,21 @@ export const ManagerHome = () => {
                 )}
             </section>
 
-            {/* El detalle: la línea de tiempo, las fotos del antes y el
-                después y las incidencias. Los tres componentes son los
-                mismos que ve el cliente, que solo pintan lo que reciben. */}
+            {/* La ficha: la línea de tiempo, las fotos del antes y el después
+                y las incidencias. Los tres componentes son los mismos que ve
+                el cliente, que solo pintan lo que reciben. Por la derecha,
+                como una hoja (maqueta 06). */}
             {opened && (
-                <dialog className="cf-home__sheet" open>
+                <dialog
+                    ref={sheetRef}
+                    className="cf-home__sheet"
+                    aria-labelledby="sheet-title"
+                    onClose={() => setOpened(null)}
+                    onClick={(event) => event.target === event.currentTarget && sheetRef.current?.close()}
+                >
                     <div className="cf-home__sheet-in">
                         <div className="cf-home__sheet-head">
-                            <h2 className="cf-home__t">
+                            <h2 className="cf-home__t" id="sheet-title">
                                 {opened.booking
                                     ? `${opened.booking.service?.name} · n.º ${opened.booking.booking_id}`
                                     : "Detalle del servicio"}
@@ -530,7 +563,7 @@ export const ManagerHome = () => {
                                 type="button"
                                 className="cf-home__close"
                                 aria-label="Cerrar"
-                                onClick={() => setOpened(null)}
+                                onClick={() => sheetRef.current?.close()}
                             >
                                 <i className="fa-solid fa-xmark" aria-hidden="true" />
                             </button>
@@ -547,8 +580,11 @@ export const ManagerHome = () => {
                         {opened.booking && (
                             <div className="cf-home__sheet-body">
                                 <p className="cf-home__sheet-who">
-                                    <b>{opened.booking.worker_name}</b> · {opened.booking.client_name}
-                                    {opened.booking.client_phone && ` · ${opened.booking.client_phone}`}
+                                    <span><em>Trabajador</em>{opened.booking.worker_name || "Sin asignar"}</span>
+                                    <span>
+                                        <em>Cliente</em>{opened.booking.client_name}
+                                        {opened.booking.client_phone && ` · ${opened.booking.client_phone}`}
+                                    </span>
                                 </p>
 
                                 <BookingTimeline booking={opened.booking} />
@@ -568,13 +604,18 @@ export const ManagerHome = () => {
             {/* Cancelar como empresa: el cliente lo verá en Mis servicios,
                 así que el motivo importa. */}
             {dropping && (
-                <dialog className="cf-dash-modal" open>
+                <dialog
+                    ref={dropRef}
+                    className="cf-dash-modal"
+                    aria-labelledby="drop-title"
+                    onClose={() => setDropping(null)}
+                >
                     <div className="cf-dash-modal__body">
                         <span className="cf-dash-modal__icon">
                             <i className="fa-solid fa-ban" aria-hidden="true" />
                         </span>
 
-                        <h2 className="cf-dash-modal__title">
+                        <h2 className="cf-dash-modal__title" id="drop-title">
                             ¿Cancelar la reserva n.º {dropping.booking_id}?
                         </h2>
 
@@ -595,14 +636,24 @@ export const ManagerHome = () => {
                                 value={reason}
                                 onChange={(event) => setReason(event.target.value)}
                                 disabled={busy}
+                                aria-describedby={reason.trim() ? undefined : "drop-reason-why"}
                             ></textarea>
                         </div>
+
+                        {/* El motivo es obligatorio, como en Reservas (FIX-02):
+                            se dice antes de pulsar, no con un error después. */}
+                        {!reason.trim() && (
+                            <p className="cf-inc-hint" id="drop-reason-why">
+                                <i className="fa-solid fa-circle-exclamation" aria-hidden="true" />
+                                Escribe el motivo para poder cancelar
+                            </p>
+                        )}
 
                         <div className="cf-dash-modal__actions">
                             <button
                                 type="button"
                                 className="cf-dash-btn cf-dash-btn--ghost"
-                                onClick={() => setDropping(null)}
+                                onClick={() => dropRef.current?.close()}
                                 disabled={busy}
                                 autoFocus
                             >
@@ -613,7 +664,7 @@ export const ManagerHome = () => {
                                 type="button"
                                 className="cf-dash-btn cf-dash-btn--danger"
                                 onClick={confirmDrop}
-                                disabled={busy}
+                                disabled={busy || !reason.trim()}
                             >
                                 {busy ? "Cancelando…" : "Confirmar cancelación"}
                             </button>

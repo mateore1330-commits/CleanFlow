@@ -31,9 +31,8 @@ import { useEffect, useState } from "react"
 import useGlobalReducer from "../../../hooks/useGlobalReducer"
 import { getAccount, changePassword, createPassword, connectGoogle } from "../../../services/accountService"
 import { GoogleButton } from "../../../components/web/GoogleButton"
-
-// El mismo mínimo que pide el backend en /register y en /account/password.
-const PASSWORD_MIN_LENGTH = 6
+import { PasswordRules } from "../../../components/PasswordRules"
+import { passwordProblem } from "../../../utils/passwordRule"
 
 const EMPTY_FORM = { current_password: "", new_password: "", repeat_password: "" }
 
@@ -46,8 +45,9 @@ const validate = (form, hasPassword) => {
         errors.current_password = "La contraseña actual es obligatoria"
 
     if (!form.new_password) errors.new_password = "La contraseña nueva es obligatoria"
-    else if (form.new_password.length < PASSWORD_MIN_LENGTH)
-        errors.new_password = `La contraseña nueva debe tener mínimo ${PASSWORD_MIN_LENGTH} caracteres`
+    // La regla de toda la app, con la misma frase que el servidor (FIX-04).
+    else if (passwordProblem(form.new_password))
+        errors.new_password = passwordProblem(form.new_password, hasPassword ? "La contraseña nueva" : "La contraseña")
     else if (hasPassword && form.new_password === form.current_password)
         errors.new_password = "La contraseña nueva tiene que ser distinta de la actual"
 
@@ -214,9 +214,12 @@ export const AccountSecurity = () => {
     // Los tres campos son iguales: mismo marcado con el ojo dentro. Es una
     // función que devuelve JSX, no un componente: así no se vuelve a montar
     // en cada tecla y el campo no pierde el cursor.
-    const passwordField = (name, label, autoComplete, hint) => {
+    // withRules: la lista de requisitos debajo (FIX-04), solo en la nueva.
+    const passwordField = (name, label, autoComplete, hint, withRules = false) => {
         const visible = Boolean(shown[name])
         const error = errors[name]
+        const rulesId = withRules ? `${name}-rules` : null
+        const noteId = error ? `${name}-error` : hint ? `${name}-hint` : null
 
         return (
             <div className="cf-dash-field">
@@ -236,7 +239,7 @@ export const AccountSecurity = () => {
                         value={form[name]}
                         onChange={handleChange}
                         aria-invalid={Boolean(error)}
-                        aria-describedby={error ? `${name}-error` : hint ? `${name}-hint` : undefined}
+                        aria-describedby={[noteId, rulesId].filter(Boolean).join(" ") || undefined}
                     />
 
                     {/* aria-pressed dice si está activado; el aria-label
@@ -263,6 +266,8 @@ export const AccountSecurity = () => {
                         </p>
                     )
                 )}
+
+                {withRules && <PasswordRules id={rulesId} value={form[name]} />}
             </div>
         )
     }
@@ -321,104 +326,118 @@ export const AccountSecurity = () => {
     // ------------------------------------------------------------------
     // 3 · YA SE SABE
     // ------------------------------------------------------------------
+    // Dos tarjetas, como en la maqueta 04: cómo entras y, aparte, la
+    // contraseña, que es lo único que se cambia aquí.
     return (
-        <div className="cf-account__card">
-            {header}
+        <>
+            <div className="cf-account__card">
+                {header}
 
-            <div className="cf-account__keys">
-                {/* Al empleado no se le nombra Google: no es una forma de
-                    entrar que tenga, ni que pueda llegar a tener. */}
-                {isClient && (
+                <div className="cf-account__keys">
+                    {/* Al empleado no se le nombra Google: no es una forma de
+                        entrar que tenga, ni que pueda llegar a tener. */}
+                    {isClient && (
+                        <div className="cf-account__key">
+                            <span className="cf-account__key-icon">
+                                <i className="fa-brands fa-google" aria-hidden="true" />
+                            </span>
+                            <span>Google</span>
+                            <span className={keys.hasGoogle ? "cf-account__key-on" : "cf-account__key-off"}>
+                                {keys.hasGoogle ? "Conectado" : "Sin conectar"}
+                            </span>
+                        </div>
+                    )}
+
                     <div className="cf-account__key">
-                        <i className="fa-brands fa-google" aria-hidden="true" />
-                        <span>Google</span>
-                        <span className={keys.hasGoogle ? "cf-account__key-on" : "cf-account__key-off"}>
-                            {keys.hasGoogle ? "Conectado" : "Sin conectar"}
+                        <span className="cf-account__key-icon">
+                            <i className="fa-solid fa-key" aria-hidden="true" />
+                        </span>
+                        <span>Contraseña</span>
+                        <span className={keys.hasPassword ? "cf-account__key-on" : "cf-account__key-off"}>
+                            {keys.hasPassword ? "Configurada" : "Sin configurar"}
                         </span>
                     </div>
-                )}
-
-                <div className="cf-account__key">
-                    <i className="fa-solid fa-lock" aria-hidden="true" />
-                    <span>Contraseña</span>
-                    <span className={keys.hasPassword ? "cf-account__key-on" : "cf-account__key-off"}>
-                        {keys.hasPassword ? "Configurada" : "Sin configurar"}
-                    </span>
                 </div>
+
+                {/* Sin Google conectado, la forma de añadirlo: quien se
+                    registró con contraseña no podía usar nunca el botón. Solo
+                    al cliente, que es el único que entra por esa puerta. */}
+                {isClient && !keys.hasGoogle && (
+                    <div className="cf-account__connect">
+                        {/* El correo se dice ANTES de abrir el selector de Google.
+                            Quien tiene varias sesiones abiertas elegiría a ciegas y
+                            se comería el error de "ese Google usa otro correo".
+
+                            store.user existe seguro: isClient lee su rol. */}
+                        <p className="cf-account__lede">
+                            Conecta tu Google y podrás entrar con un botón, sin escribir
+                            la contraseña. Tiene que ser el de <strong>{store.user.email}</strong>,
+                            el correo de tu cuenta.
+                        </p>
+
+                        {linkError && (
+                            <p className="cf-dash-alert" role="alert">{linkError}</p>
+                        )}
+
+                        {linking
+                            ? <p className="cf-account__lede" role="status">Conectando…</p>
+                            : <GoogleButton
+                                className="cf-account__google"
+                                onCredential={handleGoogle}
+                                onError={setLinkError}
+                            />}
+                    </div>
+                )}
             </div>
 
-            {/* Sin Google conectado, la forma de añadirlo: quien se
-                registró con contraseña no podía usar nunca el botón. Solo
-                al cliente, que es el único que entra por esa puerta. */}
-            {isClient && !keys.hasGoogle && (
-                <div className="cf-account__connect">
-                    {/* El correo se dice ANTES de abrir el selector de Google.
-                        Quien tiene varias sesiones abiertas elegiría a ciegas y
-                        se comería el error de "ese Google usa otro correo".
+            <div className="cf-account__card">
+                <h2 className="cf-account__subtitle">
+                    {hasPassword ? "Cambiar contraseña" : "Crear contraseña"}
+                </h2>
+                <p className="cf-account__lede">
+                    {hasPassword
+                        ? "Cambia tu contraseña. Tendrás que usar la nueva la próxima vez que entres."
+                        : "Crea una contraseña para poder entrar también sin Google."}
+                </p>
 
-                        store.user existe seguro: isClient lee su rol. */}
-                    <p className="cf-account__lede">
-                        Conecta tu Google y podrás entrar con un botón, sin escribir
-                        la contraseña. Tiene que ser el de <strong>{store.user.email}</strong>,
-                        el correo de tu cuenta.
-                    </p>
-
-                    {linkError && (
-                        <p className="cf-dash-alert" role="alert">{linkError}</p>
+                {/* noValidate: los avisos los damos nosotros, en español.
+                    autoComplete: así el gestor de contraseñas sabe cuál es cuál. */}
+                <form className="cf-account__grid cf-account__grid--one" onSubmit={handleSubmit} noValidate>
+                    {hasPassword && passwordField("current_password", "Contraseña actual", "current-password")}
+                    {passwordField(
+                        "new_password",
+                        hasPassword ? "Contraseña nueva" : "Contraseña",
+                        "new-password",
+                        undefined,
+                        true
+                    )}
+                    {passwordField(
+                        "repeat_password",
+                        hasPassword ? "Repite la contraseña nueva" : "Repite la contraseña",
+                        "new-password"
                     )}
 
-                    {linking
-                        ? <p className="cf-account__lede" role="status">Conectando…</p>
-                        : <GoogleButton
-                            className="cf-account__google"
-                            onCredential={handleGoogle}
-                            onError={setLinkError}
-                        />}
-                </div>
-            )}
+                    <div className="cf-account__actions">
+                        {saveError && (
+                            <p className="cf-dash-alert" role="alert">
+                                {saveError}
+                            </p>
+                        )}
+                        {saved && (
+                            <p className="cf-account__saved" role="status">
+                                <i className="fa-solid fa-check" aria-hidden="true" />
+                                {hasPassword ? "Contraseña actualizada" : "Contraseña creada"}
+                            </p>
+                        )}
 
-            <p className="cf-account__lede">
-                {hasPassword
-                    ? "Cambia tu contraseña. Tendrás que usar la nueva la próxima vez que entres."
-                    : "Crea una contraseña para poder entrar también sin Google."}
-            </p>
-
-            {/* noValidate: los avisos los damos nosotros, en español.
-                autoComplete: así el gestor de contraseñas sabe cuál es cuál. */}
-            <form className="cf-account__grid cf-account__grid--one" onSubmit={handleSubmit} noValidate>
-                {hasPassword && passwordField("current_password", "Contraseña actual", "current-password")}
-                {passwordField(
-                    "new_password",
-                    hasPassword ? "Contraseña nueva" : "Contraseña",
-                    "new-password",
-                    `Mínimo ${PASSWORD_MIN_LENGTH} caracteres.`
-                )}
-                {passwordField(
-                    "repeat_password",
-                    hasPassword ? "Repite la contraseña nueva" : "Repite la contraseña",
-                    "new-password"
-                )}
-
-                <div className="cf-account__actions">
-                    {saveError && (
-                        <p className="cf-dash-alert" role="alert">
-                            {saveError}
-                        </p>
-                    )}
-                    {saved && (
-                        <p className="cf-account__saved" role="status">
-                            <i className="fa-solid fa-check" aria-hidden="true" />
-                            {hasPassword ? "Contraseña actualizada" : "Contraseña creada"}
-                        </p>
-                    )}
-
-                    <button type="submit" className="cf-dash-btn" disabled={saving}>
-                        {saving
-                            ? "Guardando..."
-                            : hasPassword ? "Cambiar contraseña" : "Crear contraseña"}
-                    </button>
-                </div>
-            </form>
-        </div>
+                        <button type="submit" className="cf-dash-btn" disabled={saving}>
+                            {saving
+                                ? "Guardando..."
+                                : hasPassword ? "Cambiar contraseña" : "Crear contraseña"}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </>
     )
 }

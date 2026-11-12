@@ -5,7 +5,7 @@
  * { ok, data }. No toca el store ni localStorage.
  */
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+import { BACKEND_URL, apiFetch } from "./backend";
 
 /**
  * Pide al backend el usuario dueño del token.
@@ -16,7 +16,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
  */
 export const getProfile = async (token) => {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/profile`, {
+    const response = await apiFetch(`${BACKEND_URL}/api/profile`, {
       method: "GET",
       // Así se envía un JWT: la palabra "Bearer", un espacio, y el token.
       // El backend lo lee de aquí y saca de él el user_id; por eso no hace

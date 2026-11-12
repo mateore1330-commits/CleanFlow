@@ -1,0 +1,92 @@
+# Comprueba cada PR a develop y a main. El único check obligatorio es "CI",
+# que resume a los demás (SETUP-02). Se comprueban siempre el front y el servidor:
+# es un solo proyecto y tarda poco.
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+    # edited: para que vuelva a comprobar la descripción si se corrige.
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web · lint y build
+    runs-on: ubuntu-latest
+    steps:
+      # Acciones fijadas por hash: una etiqueta se puede mover, un hash no.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  servidor:
+    name: Servidor · arranque
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - run: pip install pipenv==2026.7.1
+      - run: pipenv sync
+      # Arranca la aplicación sin servirla: falla si algo no importa o falta config.
+      # Los valores son de prueba, no secretos (32 caracteres o más, el mínimo
+      # que pide app.py). Sin FLASK_DEBUG arranca en modo producción, con
+      # /admin cerrado, y ahí DATABASE_URL es obligatoria: un SQLite temporal
+      # basta, porque «flask routes» no llega a conectarse.
+      - run: pipenv run flask --app app routes
+        working-directory: src
+        env:
+          JWT_SECRET_KEY: solo-para-ci-no-es-un-secreto-jwt-0001
+          FLASK_APP_KEY: solo-para-ci-no-es-un-secreto-flask-0001
+          DATABASE_URL: sqlite:////tmp/ci.db
+
+  pr:
+    name: PR enlazado a su issue
+    # Los PR a main agrupan muchas issues: no cierran una concreta.
+    if: github.base_ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          # Por variable de entorno, nunca dentro del script: el texto lo escribe una persona.
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if printf '%s' "$BODY" | grep -Eiq '(close[sd]?|fix(e[sd])?|resolve[sd]?) #[0-9]+'; then
+            echo "Enlazado a su issue."
+          else
+            echo "::error::La descripción del PR tiene que incluir 'Closes #N' con el número de su issue."
+            exit 1
+          fi
+
+  ci:
+    name: CI
+    if: always()
+    needs: [web, servidor, pr]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          RESULTADOS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Resultados: $RESULTADOS"
+          for r in $RESULTADOS; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "::error::Algún trabajo ha fallado o se ha cancelado."; exit 1 ;;
+            esac
+          done

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img" aria-label="Antes: foto de demostración">
+  <!-- Foto de demostración de CleanFlow (DATOS-02). La usan las tareas de la
+       demo, que en la app real siempre llevan su foto del antes. Cuadrada:
+       las miniaturas de la app recortan en cuadrado. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3ebec"/>
+      <stop offset="1" stop-color="#c9d6d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#g)"/>
+  <g fill="#9fb0b3" opacity=".5">
+    <circle cx="120" cy="470" r="40"/><circle cx="200" cy="520" r="24"/><circle cx="480" cy="120" r="32"/>
+    <circle cx="500" cy="470" r="20"/><circle cx="110" cy="130" r="16"/>
+  </g>
+  <g transform="translate(300 215)" fill="none" stroke="#56676c" stroke-width="14" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="-95" y="-58" width="190" height="130" rx="22"/>
+    <path d="M-38 -58 l14 -26 h48 l14 26"/>
+    <circle cx="0" cy="7" r="36"/>
+  </g>
+  <text x="300" y="360" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="30" font-weight="600" fill="#56676c">Foto de demostración</text>
+</svg>

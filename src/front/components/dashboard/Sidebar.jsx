@@ -1,15 +1,17 @@
 /**
- * SIDEBAR DEL DASHBOARD.
+ * MENÚ LATERAL DEL PANEL (maquetas 04, 05 y 06; PANEL-01).
  *
- * Tarjeta verde con la marca arriba, las secciones del rol en medio
- * (agrupadas y con icono) y abajo quién ha entrado, sus ajustes y salir.
+ * Pegado al borde y a toda la altura: la marca arriba, las secciones del
+ * rol en medio y abajo quién ha entrado, Ajustes, Salir y «Plegar menú».
  *
  * Lo que NO debe cambiar al tocar el diseño: el array LINKS y el filtro
  * por rol, que hacen que cada usuario vea solo sus secciones.
  *
- * En móvil (menos de 768px) se esconde tras una barra con hamburguesa y se
- * abre como panel lateral. En tablet y escritorio se ve fijo.
- * Estilos: dashboard.css, bloques "SIDEBAR" y "SIDEBAR EN MÓVIL".
+ * Escritorio y tablet: fijo, y se pliega a una barra de iconos con la
+ * fila de abajo o con la tecla [. Móvil (menos de 768px): un cajón que
+ * abre la hamburguesa de la barra de arriba (DashboardTopbar.jsx).
+ *
+ * Estilos: dashboard.css, bloques "MENÚ LATERAL" y "MENÚ EN MÓVIL".
  */
 
 import { useEffect, useRef, useState } from "react"
@@ -17,7 +19,9 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import useGlobalReducer from "../../hooks/useGlobalReducer"
 import { Avatar } from "./Avatar"
 import { Logo } from "../Logo"
-import { BookingsCount } from "./bookings/BookingsCount"
+import { Wordmark } from "../Wordmark"
+import { AffectedCount } from "./absences/AffectedCount"
+import { IncidentCount } from "./incidents/IncidentCount"
 // Estilos del menú (cf-side__*).
 import "../../dashboard.css"
 import { loginPathForRole } from "../../authPaths";
@@ -32,39 +36,36 @@ import { loginPathForRole } from "../../authPaths";
 //
 //   roles: ["manager"] / ["worker"] / ["client"]  -> solo ese rol
 //   roles: ["client", "worker", "manager"]         -> común a todos
-//   icon: "fa-users"                -> icono de Font Awesome, al lado del nombre
-//   group: "Equipo"                 -> título bajo el que se agrupa; sin él, va suelto arriba
-//   children: [...] en vez de `to`  -> grupo desplegable; sus `roles` valen para los hijos
-//   end: true (solo Inicio)         -> sin él, saldría activo en todo /dashboard
+//   icon: "fa-users"     -> icono de Font Awesome, al lado del nombre
+//   group: "Equipo"      -> título bajo el que se agrupa; sin él, va suelto
+//   count: "affected"    -> el contador que lleva al lado (COUNTERS, abajo)
+//   end: true (Inicio)   -> sin él, saldría activo en todo /dashboard
 //
-// "Mi cuenta" ya no está aquí: se entra por "Ajustes", en el bloque de
-// usuario de abajo.
+// Cliente y trabajador tienen menú plano, sin grupos: son dos o tres
+// secciones. El encargado sí agrupa, porque son diez (maqueta 06).
+// Ajustes y Salir no están aquí: van en el pie, con el usuario.
 //
 // El menú sale en el orden de esta lista, así que los enlaces de un mismo
-// grupo van seguidos. Quién ve qué lo decide `roles`, no el orden: los
-// comentarios por rol son solo para leer.
+// grupo van seguidos.
 
 const LINKS = [
-    // --- Comunes a todos los roles (sin grupo: van sueltos arriba) ---
+    // --- Comunes a todos los roles ---
     { to: "/dashboard", label: "Inicio", icon: "fa-house", roles: ["client", "worker", "manager"], end: true },
 
     // --- Solo CLIENT ---
-    { to: "/dashboard/service-catalog", label: "Catálogo de servicios", icon: "fa-list", group: "Servicios", roles: ["client"] },
-    { to: "/dashboard/contracted-services", label: "Mis servicios", icon: "fa-calendar-check", group: "Servicios", roles: ["client"] },
+    // «Reservar limpieza»: el catálogo y la reserva en una sola pantalla.
+    { to: "/dashboard/book", label: "Reservar limpieza", icon: "fa-calendar-plus", roles: ["client"] },
+    { to: "/dashboard/contracted-services", label: "Servicios contratados", icon: "fa-calendar-check", roles: ["client"] },
 
     // --- Solo WORKER ---
-    { to: "/dashboard/tasks", label: "Mis tareas", icon: "fa-clipboard-check", group: "Mi trabajo", roles: ["worker"] },
+    { to: "/dashboard/tasks", label: "Mis servicios", icon: "fa-clipboard-check", roles: ["worker"] },
 
     // --- Solo MANAGER ---
-    // Reservas afectadas e Incidencias ya no están aquí: viven dentro de
-    // Reservas, como pestañas y como marca en cada tarjeta. Sus pantallas
-    // NO se han borrado —/dashboard/affected-bookings y
-    // /dashboard/incidents siguen respondiendo—, lo que se quitó es el
-    // enlace. A Incidencias se entra desde la marca de la reserva.
-    //
-    // El contador de Reservas suma las dos cosas: el menú solo tiene que
-    // decir "mira esto", y al entrar ya se ve de qué es cada una.
-    { to: "/dashboard/bookings", label: "Reservas", icon: "fa-calendar-check", group: "Operativa", roles: ["manager"], bookings: true },
+    // Reservas cuenta las afectadas por una ausencia; Incidencias, las que
+    // siguen abiertas. Cada una con su número: lo que hay que mirar se ve
+    // en el menú antes de entrar.
+    { to: "/dashboard/bookings", label: "Reservas", icon: "fa-calendar-check", group: "Operativa", roles: ["manager"], count: "affected" },
+    { to: "/dashboard/incidents", label: "Incidencias", icon: "fa-triangle-exclamation", group: "Operativa", roles: ["manager"], count: "incidents" },
     { to: "/dashboard/messages", label: "Mensajes", icon: "fa-envelope", group: "Operativa", roles: ["manager"] },
     // Clientes va en Operativa y no en Equipo: "Equipo" es la gente de
     // dentro, y estos son los de fuera.
@@ -72,22 +73,21 @@ const LINKS = [
     { to: "/dashboard/workers", label: "Trabajadores", icon: "fa-users", group: "Equipo", roles: ["manager"] },
     { to: "/dashboard/shifts", label: "Turnos", icon: "fa-clock", group: "Equipo", roles: ["manager"] },
     { to: "/dashboard/applications", label: "Candidaturas", icon: "fa-envelope-open-text", group: "Equipo", roles: ["manager"] },
-    {
-        label: "Administrar catálogo",
-        icon: "fa-broom",
-        group: "Catálogo",
-        roles: ["manager"],
-        children: [
-            { to: "/dashboard/services-catalog", label: "Servicios" },
-            { to: "/dashboard/tasks-catalog", label: "Tareas de servicios" },
-        ],
-    },
+    { to: "/dashboard/services-catalog", label: "Servicios", icon: "fa-broom", group: "Catálogo", roles: ["manager"] },
+    { to: "/dashboard/tasks-catalog", label: "Tareas", icon: "fa-list-check", group: "Catálogo", roles: ["manager"] },
 ]
 
-// Mismo corte que el bloque "SIDEBAR EN MÓVIL" de dashboard.css.
+// Los contadores del menú. Cada uno pide su número y lo mantiene al día él
+// solo (cada 30 s, al volver a la pestaña y cuando otra pantalla avisa).
+const COUNTERS = {
+    affected: AffectedCount,
+    incidents: IncidentCount,
+}
+
+// Mismo corte que el bloque "MENÚ EN MÓVIL" de dashboard.css.
 const MOBILE_QUERY = "(max-width: 767.98px)"
 
-// En qué panel estás, bajo el bloque de usuario.
+// En qué panel estás, bajo el nombre.
 const PANEL_LABEL = {
     client: "Panel del cliente",
     worker: "Panel del trabajador",
@@ -106,10 +106,6 @@ const COLLAPSED_KEY = "cleanflow:sidebar-collapsed"
 
 // Por debajo de 1024px el menú desplegado se come la página: si nunca se
 // ha elegido nada en este navegador, arranca plegado.
-//
-// Esto también da `true` en un móvil, y se queda guardado. Da igual: allí
-// el menú es un cajón y la clase del modo icono no se le pone. Sirve para
-// que, al girar el teléfono a tablet, salga plegado como toca.
 const TABLET_QUERY = "(max-width: 1023.98px)"
 
 const readCollapsed = () => {
@@ -126,10 +122,16 @@ const readCollapsed = () => {
     }
 }
 
-export const Sidebar = () => {
+// ¿Está escribiendo? Entonces la tecla [ es una letra, no un atajo.
+const isTyping = (target) =>
+    target instanceof HTMLElement &&
+    (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))
+
+
+export const Sidebar = ({ open, onClose, toggleRef }) => {
 
     // ----------------------------------------------------------------------
-    // SESIÓN, SECCIONES Y GRUPOS
+    // SESIÓN Y SECCIONES
     // ----------------------------------------------------------------------
 
     const { store, dispatch } = useGlobalReducer()
@@ -141,21 +143,9 @@ export const Sidebar = () => {
     // corruptos) no sale nada: ante la duda, no enseñar de más.
     const visibleLinks = LINKS.filter(link => link.roles.includes(role))
 
-    // Nombre completo del bloque de usuario. Con filter: si a una sesión
-    // guardada antes de la #13 le falta el apellido, sale solo el nombre.
+    // Nombre completo. Con filter: si a una sesión guardada antes de la #13
+    // le falta el apellido, sale solo el nombre.
     const fullName = [store.user?.name, store.user?.last_name].filter(Boolean).join(" ")
-
-    // Grupos abiertos o cerrados a mano, junto a la URL donde se tocaron. Al
-    // cambiar de página se olvidan: cada grupo se abre si contiene la página actual.
-    const [toggled, setToggled] = useState({ pathname, groups: {} })
-    const manualGroups = toggled.pathname === pathname ? toggled.groups : {}
-
-    const isGroupCurrent = (group) => group.children.some(child => pathname.startsWith(child.to))
-    const isGroupOpen = (group) => manualGroups[group.label] ?? isGroupCurrent(group)
-
-    const toggleGroup = (group) => {
-        setToggled({ pathname, groups: { ...manualGroups, [group.label]: !isGroupOpen(group) } })
-    }
 
     // ----------------------------------------------------------------------
     // PLEGAR EL MENÚ (ESCRITORIO Y TABLET)
@@ -176,41 +166,74 @@ export const Sidebar = () => {
         }
     }, [collapsed])
 
-    // ----------------------------------------------------------------------
-    // MENÚ DE MÓVIL
-    // ----------------------------------------------------------------------
-    // `menuOpen` solo actúa por debajo de 768px; en tablet y escritorio el CSS
-    // muestra siempre el sidebar.
+    // En móvil el menú es un cajón entero, así que plegarlo a iconos no
+    // tiene sentido. Va en un estado para que al girar el teléfono el menú
+    // se vuelva a pintar con el valor nuevo.
+    const [isMobile, setIsMobile] = useState(
+        () => window.matchMedia(MOBILE_QUERY).matches
+    )
 
-    const [menuOpen, setMenuOpen] = useState(false)
-    const toggleRef = useRef(null)
-    const closeRef = useRef(null)
-    const isFirstRender = useRef(true)
-
-    const closeMenu = () => setMenuOpen(false)
-
-    // El foco sigue al menú: al abrir va a la ✕ y al cerrar vuelve a la
-    // hamburguesa. En el primer render no se mueve, para no robárselo a la página.
+    // Si la pantalla crece a tablet con el cajón abierto, se cierra: allí
+    // el menú ya se ve fijo.
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false
-            return
+        const mobile = window.matchMedia(MOBILE_QUERY)
+
+        const handleChange = (event) => {
+            setIsMobile(event.matches)
+            if (!event.matches) onClose()
         }
 
-        if (menuOpen) {
-            closeRef.current?.focus()
-        } else if (window.matchMedia(MOBILE_QUERY).matches) {
-            toggleRef.current?.focus()
-        }
-    }, [menuOpen])
+        mobile.addEventListener("change", handleChange)
+        return () => mobile.removeEventListener("change", handleChange)
+    }, [onClose])
 
-    // Con el menú abierto: Escape lo cierra y la página de detrás no hace
-    // scroll. El return deshace las dos cosas al cerrar.
+    // La tecla [ pliega y despliega, como en la maqueta. Nunca mientras se
+    // escribe en un campo, ni con Ctrl, Cmd o Alt (son de otros atajos).
     useEffect(() => {
-        if (!menuOpen) return
+        if (isMobile) return
 
         const handleKeyDown = (event) => {
-            if (event.key === "Escape") closeMenu()
+            if (event.key !== "[" || event.ctrlKey || event.metaKey || event.altKey) return
+            if (isTyping(event.target)) return
+            event.preventDefault()
+            setCollapsed(value => !value)
+        }
+
+        document.addEventListener("keydown", handleKeyDown)
+        return () => document.removeEventListener("keydown", handleKeyDown)
+    }, [isMobile])
+
+    // ----------------------------------------------------------------------
+    // CAJÓN DEL MÓVIL
+    // ----------------------------------------------------------------------
+    // `open` llega de DashboardLayout: lo abre la hamburguesa de la barra de
+    // arriba y lo cierra cualquier cosa de aquí (la ✕, una sección, el fondo).
+
+    const closeRef = useRef(null)
+    const wasOpen = useRef(open)
+
+    // El foco sigue al cajón: al abrir va a la ✕ y al cerrar vuelve a la
+    // hamburguesa. Solo cuando el cajón cambia de verdad: al cargar la
+    // página no se mueve, para no robárselo (tampoco cuando React, en
+    // desarrollo, monta los efectos dos veces).
+    useEffect(() => {
+        if (wasOpen.current === open) return
+        wasOpen.current = open
+
+        if (open) {
+            closeRef.current?.focus()
+        } else if (window.matchMedia(MOBILE_QUERY).matches) {
+            toggleRef?.current?.focus()
+        }
+    }, [open, toggleRef])
+
+    // Con el cajón abierto: Escape lo cierra y la página de detrás no hace
+    // scroll. El return deshace las dos cosas al cerrar.
+    useEffect(() => {
+        if (!open) return
+
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") onClose()
         }
 
         document.addEventListener("keydown", handleKeyDown)
@@ -220,30 +243,7 @@ export const Sidebar = () => {
             document.removeEventListener("keydown", handleKeyDown)
             document.body.style.overflow = ""
         }
-    }, [menuOpen])
-
-    // En móvil el menú es un cajón entero, así que plegarlo a iconos no
-    // tiene sentido. Hace falta saberlo al pintar, y por eso va en un
-    // estado y no en un matchMedia leído al vuelo: al girar el teléfono
-    // el componente tiene que volver a pintarse con el valor nuevo.
-    const [isMobile, setIsMobile] = useState(
-        () => window.matchMedia(MOBILE_QUERY).matches
-    )
-
-    // Un solo efecto para las dos cosas que dependen del ancho: apuntar
-    // si estamos en móvil y, si la pantalla crece a tablet con el menú
-    // abierto, cerrarlo —allí el sidebar ya se ve fijo—.
-    useEffect(() => {
-        const mobile = window.matchMedia(MOBILE_QUERY)
-
-        const handleChange = (event) => {
-            setIsMobile(event.matches)
-            if (!event.matches) closeMenu()
-        }
-
-        mobile.addEventListener("change", handleChange)
-        return () => mobile.removeEventListener("change", handleChange)
-    }, [])
+    }, [open, onClose])
 
     // ----------------------------------------------------------------------
     // CIERRE DE SESIÓN
@@ -271,194 +271,141 @@ export const Sidebar = () => {
     //   3. Mantener la lógica de cerrar sesión.
 
     // Título del grupo, solo cuando cambia respecto al enlace anterior.
+    // Plegado se queda en una raya fina (CSS).
     const groupTitle = (link, index) => {
         const previous = visibleLinks[index - 1]
 
         if (!link.group || link.group === previous?.group) return null
 
-        return <p className="cf-side__eyebrow">{link.group}</p>
+        return <p className="cf-side__eyebrow"><span>{link.group}</span></p>
     }
 
-    // El modo icono solo fuera del móvil: dentro del cajón escondía el
-    // submenú del catálogo y sacaba las etiquetas emergentes, que ahí no
-    // pintan nada. `collapsed` se guarda igual, así que quien pliegue el
-    // menú en el ordenador se lo encuentra plegado al volver.
+    // El modo icono solo fuera del móvil: dentro del cajón, los avisos
+    // emergentes no pintan nada. `collapsed` se guarda igual, así que quien
+    // pliegue el menú en el ordenador se lo encuentra plegado al volver.
+    const rail = collapsed && !isMobile
+
+    // Los avisos de la barra de iconos van fijos en la pantalla (para que no
+    // los corte el scroll de la lista): aquí se les dice a qué altura salir,
+    // la del icono por el que se pasa o al que llega el tabulador.
+    const placeTip = (event) => {
+        if (!rail) return
+        const item = event.target.closest?.(".cf-side__link, .cf-side__collapse, .cf-side__brand, .cf-side__user")
+        if (!item) return
+        const box = item.getBoundingClientRect()
+        item.style.setProperty("--tip-y", `${box.top + box.height / 2}px`)
+    }
+
     const clasesDelMenu = [
         "cf-side",
-        collapsed && !isMobile ? "cf-side--rail" : "",
-        menuOpen ? "cf-side--open" : "",
+        rail ? "cf-side--rail" : "",
+        open ? "cf-side--open" : "",
     ].filter(Boolean).join(" ")
 
     return (
         <>
-            {/* Solo en móvil: barra superior con la hamburguesa a la derecha.
-                En tablet y escritorio, dashboard.css la oculta. */}
-            <header className="cf-side-topbar">
-                <Link to="/dashboard" className="cf-side-topbar__brand" onClick={closeMenu}>
-                    <span className="cf-side__logo">
-                        <Logo size={28} />
-                    </span>
-                    <span className="cf-side__name">
-                        <b>CLEAN</b>
-                        <span>FLOW</span>
-                    </span>
-                </Link>
-
-                {/* aria-controls dice QUÉ abre y aria-expanded si está abierto. */}
-                <button
-                    ref={toggleRef}
-                    type="button"
-                    className="cf-side-toggle"
-                    onClick={() => setMenuOpen(true)}
-                    aria-controls="dashboard-sidebar"
-                    aria-expanded={menuOpen}
-                    aria-label="Abrir menú"
-                >
-                    <i className="fa-solid fa-bars" aria-hidden="true" />
-                </button>
-            </header>
-
-            {/* Solo en móvil: el fondo oscuro. Pulsarlo cierra el menú. */}
-            <div className="cf-side-backdrop" hidden={!menuOpen} onClick={closeMenu} />
+            {/* Solo en móvil: el fondo oscuro. Pulsarlo cierra el cajón. */}
+            <div className="cf-side-backdrop" hidden={!open} onClick={onClose} />
 
             <aside
                 id="dashboard-sidebar"
                 className={clasesDelMenu}
                 aria-label="Menú del panel"
+                onPointerOver={placeTip}
+                onFocus={placeTip}
             >
-                {/* Plegar y desplegar. aria-expanded dice si el menú está
-                    abierto; la flecha gira con CSS. */}
-                <button
-                    type="button"
-                    className="cf-side__collapse"
-                    onClick={() => setCollapsed(!collapsed)}
-                    aria-controls="dashboard-sidebar"
-                    aria-expanded={!collapsed}
-                    aria-label={collapsed ? "Desplegar el menú" : "Plegar el menú"}
-                >
-                    <i className="fa-solid fa-chevron-left" aria-hidden="true" />
-                </button>
-
                 {/* Marca: el isotipo y el logotipo de la web. */}
-                <Link to="/dashboard" className="cf-side__brand" onClick={closeMenu}>
+                <Link to="/dashboard" className="cf-side__brand" onClick={onClose} aria-label="CleanFlow, inicio del panel">
                     <span className="cf-side__logo">
-                        <Logo size={34} />
+                        <Logo size={30} />
                     </span>
-                    <span className="cf-side__name">
-                        <b>CLEAN</b>
-                        <span>FLOW</span>
-                    </span>
+                    <Wordmark className="cf-side__name" dark />
+                    <span className="cf-side__tip">Inicio</span>
                 </Link>
 
-                {/* Solo en móvil: cerrar el panel. */}
+                {/* Solo en móvil: cerrar el cajón. */}
                 <button
                     ref={closeRef}
                     type="button"
                     className="cf-side-close"
-                    onClick={closeMenu}
+                    onClick={onClose}
                     aria-label="Cerrar menú"
                 >
                     <i className="fa-solid fa-xmark" aria-hidden="true" />
                 </button>
 
                 <nav className="cf-side__nav" aria-label="Secciones">
-                    {/* key: la URL, o el nombre en los grupos (no tienen URL).
-                        onClick={closeMenu}: en móvil, elegir un enlace cierra el panel. */}
+                    {/* onClick={onClose}: en móvil, elegir una sección cierra el cajón. */}
                     {visibleLinks.map((link, index) => {
-                        if (!link.children) {
-                            return (
-                                <div key={link.to}>
-                                    {groupTitle(link, index)}
-
-                                    <NavLink to={link.to} end={link.end} className="cf-side__link" onClick={closeMenu}>
-                                        <i className={`fa-solid ${link.icon}`} aria-hidden="true" />
-                                        <span>{link.label}</span>
-                                        {link.bookings && <BookingsCount token={store.token} pathname={pathname} />}
-                                        {/* Plegado, el nombre sale al pasar por encima. */}
-                                        <span className="cf-side__tip">{link.label}</span>
-                                    </NavLink>
-                                </div>
-                            )
-                        }
-
-                        // Grupo: <button> y no enlace, porque no navega; solo abre y cierra.
-                        const open = isGroupOpen(link)
-                        const groupId = `sidebar-group-${index}`
+                        const Count = COUNTERS[link.count]
 
                         return (
-                            <div key={link.label}>
+                            <div key={link.to}>
                                 {groupTitle(link, index)}
 
-                                <button
-                                    type="button"
-                                    className="cf-side__link"
-                                    onClick={() => toggleGroup(link)}
-                                    aria-expanded={open}
-                                    aria-controls={groupId}
-                                    // Cerrado con la página actual dentro: se marca igual que una sección activa.
-                                    aria-current={!open && isGroupCurrent(link) ? "page" : undefined}
-                                >
+                                <NavLink to={link.to} end={link.end} className="cf-side__link" onClick={onClose}>
                                     <i className={`fa-solid ${link.icon}`} aria-hidden="true" />
-                                    <span>{link.label}</span>
-                                    <i className="fa-solid fa-chevron-down cf-side__chevron" aria-hidden="true" />
-                                    <span className="cf-side__tip">{link.label}</span>
-                                </button>
-
-                                <div id={groupId} className="cf-side__sub" hidden={!open}>
-                                    {link.children.map(child => (
-                                        <NavLink
-                                            key={child.to}
-                                            to={child.to}
-                                            className="cf-side__link"
-                                            onClick={closeMenu}
-                                        >
-                                            <span>{child.label}</span>
-                                        </NavLink>
-                                    ))}
-                                </div>
+                                    <span className="cf-side__label">{link.label}</span>
+                                    {Count && <Count token={store.token} pathname={pathname} />}
+                                    {/* Plegado, el nombre sale al pasar por encima o con el tabulador. */}
+                                    <span className="cf-side__tip" aria-hidden="true">{link.label}</span>
+                                </NavLink>
                             </div>
                         )
                     })}
                 </nav>
 
-                {/* BLOQUE DE USUARIO (#13): en qué panel estás, quién ha
-                    entrado, sus ajustes y salir. El avatar y el nombre cambian
-                    solos al guardar en Ajustes, porque esas pantallas
-                    despachan SET_USER. */}
+                {/* EL PIE: quién ha entrado y en qué panel, sus ajustes, salir y
+                    plegar. El avatar y el nombre cambian solos al guardar en
+                    Ajustes, porque esas pantallas despachan SET_USER. */}
                 <div className="cf-side__foot">
-                    <p className="cf-side__paneltag">{PANEL_LABEL[role]}</p>
-
                     <div className="cf-side__user">
-                        <Avatar user={store.user} size="md" />
+                        <Avatar user={store.user} size="sm" tone="accent" />
 
                         {/* Cada línea se recorta: el bloque mide igual con
-                            cualquier nombre y con cualquier correo. */}
+                            cualquier nombre. */}
                         <div className="cf-side__who">
                             <span className="cf-side__username">{fullName}</span>
-                            <span className="cf-side__mail">{store.user?.email}</span>
+                            <span className="cf-side__panel">{PANEL_LABEL[role]}</span>
                         </div>
 
-                        <span className="cf-side__tip">{fullName}</span>
+                        <span className="cf-side__tip" aria-hidden="true">{fullName}</span>
                     </div>
 
-                    <div className="cf-side__actions">
-                        <NavLink to="/dashboard/profile" className="cf-side__action" onClick={closeMenu}>
-                            <i className="fa-solid fa-gear" aria-hidden="true" />
-                            <span>Ajustes</span>
-                            <span className="cf-side__tip">Ajustes</span>
-                        </NavLink>
+                    <NavLink to="/dashboard/profile" className="cf-side__link" onClick={onClose}>
+                        <i className="fa-solid fa-gear" aria-hidden="true" />
+                        <span className="cf-side__label">Ajustes</span>
+                        <span className="cf-side__tip" aria-hidden="true">Ajustes</span>
+                    </NavLink>
 
-                        {/* <button> y no <a href="#">: cerrar sesión es una acción, no una navegación. */}
-                        <button
-                            type="button"
-                            className="cf-side__action cf-side__action--exit"
-                            onClick={handleLogout}
-                        >
-                            <i className="fa-solid fa-right-from-bracket" aria-hidden="true" />
-                            <span>Salir</span>
-                            <span className="cf-side__tip">Cerrar sesión</span>
-                        </button>
-                    </div>
+                    {/* <button> y no <a href="#">: cerrar sesión es una acción, no una navegación. */}
+                    <button
+                        type="button"
+                        className="cf-side__link cf-side__link--exit"
+                        onClick={handleLogout}
+                    >
+                        <i className="fa-solid fa-right-from-bracket" aria-hidden="true" />
+                        <span className="cf-side__label">Salir</span>
+                        <span className="cf-side__tip" aria-hidden="true">Cerrar sesión</span>
+                    </button>
+
+                    {/* Plegar y desplegar, siempre a la vista. aria-expanded dice
+                        si el menú está abierto; plegado, el aviso dice qué hace
+                        y su atajo. En móvil no sale (el cajón se cierra entero). */}
+                    <button
+                        type="button"
+                        className="cf-side__collapse"
+                        onClick={() => setCollapsed(value => !value)}
+                        aria-controls="dashboard-sidebar"
+                        aria-expanded={!collapsed}
+                        aria-keyshortcuts="["
+                        aria-label={collapsed ? "Desplegar menú" : "Plegar menú"}
+                    >
+                        <i className="fa-solid fa-angles-left" aria-hidden="true" />
+                        <span className="cf-side__label">Plegar menú</span>
+                        <kbd className="cf-side__kbd" aria-hidden="true">[</kbd>
+                        <span className="cf-side__tip" aria-hidden="true">Desplegar menú <kbd>[</kbd></span>
+                    </button>
                 </div>
             </aside>
         </>

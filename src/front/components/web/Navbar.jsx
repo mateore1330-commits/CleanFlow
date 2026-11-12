@@ -1,77 +1,53 @@
 /**
- * NAVBAR DE LA WEB.
+ * NAVBAR DE LA WEB (maqueta 02, WEB-01).
  *
- * Dos filas:
- *   - Superior: los accesos al área privada.
- *   - Principal: la marca, el botón de menú y la navegación.
+ * Una sola fila: la marca, la navegación por secciones, un único
+ * «Acceder» con las dos áreas y el botón de reservar. En móvil, todo se
+ * pliega detrás de la hamburguesa.
  *
- * Estilos: clases `cf-*` en web.css.
+ * Estilos: clases `cf-nav*` y `cf-access*` en web.css.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "../Logo";
-import { ServicesDropdown } from "./ServicesDropdown";
+import { Wordmark } from "../Wordmark";
 import { useActiveSection } from "../../hooks/useActiveSection";
 
 
-// Las dos puertas de acceso. Ambas llevan al mismo formulario: solo
-// cambia lo que se le ofrece a quien todavía no tiene cuenta.
-//
-// Los nombres van sin "de" a propósito: así los dos miden casi lo mismo y
-// quedan del ancho de "Reservar ahora" (ver .cf-access en web.css).
+// Las dos puertas de acceso, dentro del menú «Acceder». Antes eran dos
+// botones en una barra aparte (maqueta 02: una sola entrada, menos ruido).
 const ACCESS_LINKS = [
-    { label: "Área clientes", to: "/login-clients", icon: "fa-user" },
-    { label: "Área empleados", to: "/login-workers", icon: "fa-briefcase" },
+    { label: "Área clientes", hint: "Tus reservas y tus datos", to: "/login-clients", icon: "fa-user" },
+    { label: "Área empleados", hint: "Servicios, turnos y ausencias", to: "/login-workers", icon: "fa-briefcase" },
 ]
 
 
 // Navegación principal.
 //
-// Cada item tiene tres campos, y conviene no confundirlos:
+//   to       -> adónde navega al pulsarlo.
+//   section  -> qué sección de la landing lo enciende (resaltado).
 //
-//   to        -> adónde navega al pulsarlo.
-//   section   -> qué sección de la landing lo enciende (resaltado).
-//   dropdown  -> si despliega un submenú. Hoy solo "Servicios".
-//
-// PARA AÑADIR O CAMBIAR UN ITEM, la clave está en el `to`:
-//
-//   - ¿Lleva a una SECCIÓN de la landing? Va con almohadilla:
-//         to: "/#about-us"      y   section: "about-us"
-//     Ese id tiene que existir en una <section> de Home.jsx, o el enlace
-//     no llevará a ninguna parte y no dará ningún error.
-//
-//   - ¿Lleva a una PÁGINA propia? Va sin almohadilla:
-//         to: "/work-with-us"   y   section: null
-//     Las páginas no se resaltan por scroll, sino por la URL: de ahí el
-//     null.
-//
-// "Inicio" es la excepción que confirma la regla: navega a "/" sin ancla
-// porque el hero ya está arriba del todo, pero lleva section: "hero" para
-// que se marque mientras se está viendo esa primera pantalla.
-
+// ¿Lleva a una SECCIÓN de la landing? Va con almohadilla ("/#about-us") y
+// ese id tiene que existir en una <section> de Home.jsx. ¿A una PÁGINA
+// propia? Sin almohadilla y con section: null (se resalta por la URL).
+// "Inicio" navega a "/" sin ancla, pero se enciende con la portada.
 const NAV_LINKS = [
-    { label: "Inicio",           to: "/",             section: "hero" },
-    { label: "Servicios",        to: "/#services",    section: "services", dropdown: true },
-    { label: "Sobre CleanFlow",  to: "/#about-us",    section: "about-us" },
-    { label: "Contacto",         to: "/#contact",     section: "contact" },
+    { label: "Inicio",          to: "/",          section: "hero" },
+    { label: "Servicios",       to: "/#services", section: "services" },
+    { label: "Sobre CleanFlow", to: "/#about-us", section: "about-us" },
+    { label: "Contacto",        to: "/#contact",  section: "contact" },
 ]
 
 
-// El botón de acción va aparte y NO se añade al array de arriba: no es un
-// item de navegación, así que no se resalta con el scroll ni entra en
-// isActive. Es el mismo que el del hero: si cambia uno, cambian los dos.
-//
-// Apunta a la ruta protegida del catálogo, no al login: si no hay sesión,
-// ProtectedRoutes manda al login y después vuelve aquí (WEB-15).
-const CTA = { label: "Reservar ahora", to: "/dashboard/service-catalog" }
+// El botón de acción va aparte: no es un item de navegación. Apunta a
+// Reservar, que es ruta protegida; sin sesión, ProtectedRoutes manda al
+// login y después vuelve aquí (WEB-15).
+const CTA = { label: "Reservar", to: "/dashboard/book" }
 
 
-// Los ids a vigilar salen de los propios enlaces: al añadir un item con
-// su sección, el observador se entera solo.
-const SECTION_IDS = NAV_LINKS
-    .map((link) => link.section)
-    .filter(Boolean);
+// Los ids a vigilar salen de los propios enlaces.
+const SECTION_IDS = NAV_LINKS.map((link) => link.section).filter(Boolean);
 
 
 export const Navbar = () => {
@@ -79,39 +55,66 @@ export const Navbar = () => {
     const { pathname, hash } = useLocation();
     const activeSection = useActiveSection(SECTION_IDS);
 
-    // Solo importa en pantalla pequeña: en escritorio el CSS enseña la
-    // lista siempre y este valor da igual.
+    // El menú de móvil y el desplegable de «Acceder».
     const [menuOpen, setMenuOpen] = useState(false);
+    const [accessOpen, setAccessOpen] = useState(false);
+    // Para el borde de abajo al bajar por la página (como en la maqueta).
+    const [scrolled, setScrolled] = useState(false);
+
+    const accessRef = useRef(null);
+    const accessButtonRef = useRef(null);
 
 
-    // Cierra el menú al navegar. Mirando la ubicación en vez de poner un
-    // onClick en cada enlace, se cierra también al elegir un servicio del
-    // desplegable, sin pasarle nada a ese componente.
+    // Al navegar se cierra todo: así también al elegir un enlace de dentro.
     useEffect(() => {
         setMenuOpen(false);
+        setAccessOpen(false);
     }, [pathname, hash]);
 
 
-    // Escape cierra el menú. Se escucha en todo el documento porque el
-    // foco puede estar en cualquier parte al pulsarlo.
+    // Escape cierra lo que esté abierto. Si era «Acceder», el foco vuelve a
+    // su botón: quien usa teclado no se queda perdido en la página.
     useEffect(() => {
-        if (!menuOpen) return;
+        if (!menuOpen && !accessOpen) return;
 
         const onKeyDown = (e) => {
-            if (e.key === "Escape") setMenuOpen(false);
+            if (e.key !== "Escape") return;
+            if (accessOpen) {
+                setAccessOpen(false);
+                accessButtonRef.current?.focus();
+            } else {
+                setMenuOpen(false);
+            }
         };
 
         document.addEventListener("keydown", onKeyDown);
         return () => document.removeEventListener("keydown", onKeyDown);
-    }, [menuOpen]);
+    }, [menuOpen, accessOpen]);
 
 
-    // Un item se marca por uno de dos motivos, según su tipo:
-    //   con section -> cuando esa sección es la que se está viendo.
-    //   sin section -> cuando la URL coincide (el caso de una página).
-    //
+    // Un clic fuera de «Acceder» lo cierra.
+    useEffect(() => {
+        if (!accessOpen) return;
+
+        const onPointerDown = (e) => {
+            if (!accessRef.current?.contains(e.target)) setAccessOpen(false);
+        };
+
+        document.addEventListener("pointerdown", onPointerDown);
+        return () => document.removeEventListener("pointerdown", onPointerDown);
+    }, [accessOpen]);
+
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 8);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
+
     // Se calcula a mano porque <NavLink> ignora el "#": marcaría a la vez
-    // Inicio, Servicios y Sobre CleanFlow, que apuntan los tres a "/".
+    // los cuatro, que apuntan todos a "/".
     const isActive = (link) => {
         if (link.section) return pathname === "/" && activeSection === link.section;
         return pathname === link.to;
@@ -119,100 +122,92 @@ export const Navbar = () => {
 
 
     return (
-        <header className="cf-header">
+        <header className={scrolled ? "cf-header is-scrolled" : "cf-header"}>
+            <nav className="cf-container cf-navbar" aria-label="Navegación principal">
 
-            {/* ---------- FILA SUPERIOR: ACCESOS ---------- */}
-            <nav className="cf-header__utility" aria-label="Accesos de usuario">
-                <div className="cf-container">
-                    <ul className="cf-utility-list">
-                        {ACCESS_LINKS.map((link) => (
+                <Link to="/" className="cf-brand" aria-label="CleanFlow, ir al inicio">
+                    <Logo size={32} />
+                    <Wordmark className="cf-brand__name" />
+                </Link>
+
+                {/* Botón de menú, solo visible en móvil. */}
+                <button
+                    type="button"
+                    className="cf-nav-toggle"
+                    aria-controls="main-menu"
+                    aria-expanded={menuOpen}
+                    aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+                    onClick={() => setMenuOpen((open) => !open)}
+                >
+                    <i className={menuOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars"} aria-hidden="true"></i>
+                </button>
+
+                <div id="main-menu" className={menuOpen ? "cf-nav is-open" : "cf-nav"}>
+                    <ul className="cf-nav__links">
+                        {NAV_LINKS.map((link) => (
                             <li key={link.to}>
-                                <Link to={link.to} className="cf-access">
-                                    <i className={`fa-solid ${link.icon}`} aria-hidden="true" />
+                                {/* La clase para el CSS y aria-current para
+                                    quien usa lector de pantalla. */}
+                                <Link
+                                    to={link.to}
+                                    className={isActive(link) ? "cf-nav__link is-active" : "cf-nav__link"}
+                                    aria-current={isActive(link) ? "page" : undefined}
+                                >
                                     {link.label}
                                 </Link>
                             </li>
                         ))}
                     </ul>
+
+                    <div className="cf-nav__right">
+                        {/* ---------- ACCEDER ----------
+                            Un botón que abre una lista de dos enlaces. Con
+                            teclado: Intro o espacio lo abren, Tab recorre
+                            los enlaces y Escape lo cierra. */}
+                        {/* onBlur: si el foco sale del menú (Tab tras el último
+                            enlace), se cierra solo. relatedTarget es adónde va. */}
+                        <div
+                            className="cf-access"
+                            ref={accessRef}
+                            onBlur={(e) => {
+                                if (!accessRef.current?.contains(e.relatedTarget)) setAccessOpen(false);
+                            }}
+                        >
+                            <button
+                                type="button"
+                                ref={accessButtonRef}
+                                className="cf-access__button"
+                                aria-expanded={accessOpen}
+                                aria-controls="access-menu"
+                                onClick={() => setAccessOpen((open) => !open)}
+                            >
+                                <i className="fa-solid fa-circle-user" aria-hidden="true"></i>
+                                Acceder
+                                <i className="fa-solid fa-chevron-down cf-access__chevron" aria-hidden="true"></i>
+                            </button>
+
+                            <ul id="access-menu" className={accessOpen ? "cf-access__menu is-open" : "cf-access__menu"}>
+                                {ACCESS_LINKS.map((link) => (
+                                    <li key={link.to}>
+                                        <Link to={link.to} className="cf-access__link">
+                                            <i className={`fa-solid ${link.icon}`} aria-hidden="true"></i>
+                                            <span>
+                                                <b>{link.label}</b>
+                                                <span>{link.hint}</span>
+                                            </span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <Link to={CTA.to} className="cf-btn cf-btn--sm cf-nav__cta">
+                            {CTA.label}
+                        </Link>
+                    </div>
                 </div>
+
             </nav>
-
-            {/* ---------- FILA PRINCIPAL: MARCA Y NAVEGACIÓN ---------- */}
-            {/* Cada <nav> lleva su aria-label: sin ellos, un lector de
-                pantalla anuncia "navegación" dos veces sin distinguirlas. */}
-            <nav aria-label="Navegación principal">
-                <div className="cf-container cf-navbar">
-
-                    <Link to="/" className="cf-brand">
-                        <Logo size={36} />
-                        <span className="cf-brand__name"><b>CLEAN</b><span>FLOW</span></span>
-                    </Link>
-
-                    {/* Botón de menú, solo visible en móvil.
-                        aria-controls dice QUÉ abre y aria-expanded si está
-                        abierto. El icono es decorativo, así que el nombre
-                        del botón viaja en aria-label. */}
-                    <button
-                        type="button"
-                        className="cf-nav-toggle"
-                        aria-controls="main-menu"
-                        aria-expanded={menuOpen}
-                        aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-                        onClick={() => setMenuOpen((abierto) => !abierto)}
-                    >
-                        <i
-                            className={menuOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars"}
-                            aria-hidden="true"
-                        ></i>
-                    </button>
-
-                    <ul
-                        id="main-menu"
-                        className={menuOpen ? "cf-nav is-open" : "cf-nav"}
-                    >
-                        {NAV_LINKS.map((link) => (
-                            // El item con desplegable pinta su propio <li>:
-                            // necesita estado y eventos propios.
-                            link.dropdown ? (
-                                <ServicesDropdown
-                                    key={link.to}
-                                    to={link.to}
-                                    label={link.label}
-                                    active={isActive(link)}
-                                />
-                            ) : (
-                                <li key={link.to}>
-                                    {/* Dos marcas y las dos hacen falta: la clase
-                                        para el CSS, aria-current para quien usa
-                                        lector de pantalla (un color no le dice nada). */}
-                                    <Link
-                                        to={link.to}
-                                        className={
-                                            isActive(link)
-                                                ? "cf-nav__link is-active"
-                                                : "cf-nav__link"
-                                        }
-                                        aria-current={isActive(link) ? "page" : undefined}
-                                    >
-                                        {link.label}
-                                    </Link>
-                                </li>
-                            )
-                        ))}
-
-                        {/* Último de la lista y no fuera de ella: así en
-                            móvil se pliega con el resto del menú, en vez de
-                            competir por sitio con el logo y la hamburguesa. */}
-                        <li className="cf-nav__cta">
-                            <Link to={CTA.to} className="cf-btn cf-btn--sm">
-                                {CTA.label}
-                            </Link>
-                        </li>
-                    </ul>
-
-                </div>
-            </nav>
-
         </header>
     )
 }

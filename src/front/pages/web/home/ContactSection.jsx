@@ -1,17 +1,18 @@
 /**
- * Sección de contacto de la landing (WEB-09).
+ * CONTACTO Y DÓNDE ESTAMOS (maqueta 02, WEB-01).
  *
- * Muestra los datos de contacto (data/company.js) y un formulario que
- * guarda el mensaje en base de datos (POST /api/contact-messages,
- * WEB-03). El encargado los consulta desde su panel (WEB-13): no se
- * envían por correo.
+ * «Contacto» y «Dónde estamos» son ahora una sola sección: a la izquierda
+ * el formulario, a la derecha los datos (data/company.js) y el mapa real.
  *
- * El mapa no va aquí: lo lleva LocationSection (WEB-07), justo debajo.
+ * El formulario guarda el mensaje en la base de datos (POST
+ * /api/contact-messages) y el encargado lo lee en su panel: no se envía
+ * por correo.
  */
 
 import { useState } from "react";
 import { sendContactMessage } from "../../../services/contactService";
 import { COMPANY } from "../../../data/company";
+import { OfficeMap } from "../../../components/OfficeMap";
 
 const INITIAL_FORM_DATA = {
     name: "",
@@ -84,146 +85,110 @@ export const ContactSection = () => {
     };
 
     return (
-        <section id="contact" className="cf-section cf-contact">
+        <section id="contact" className="cf-home-section cf-home-contact">
             <div className="cf-container">
-                <p className="cf-section__label">Hablemos</p>
-                <h2 className="cf-section__title">Contacta con nosotros</h2>
-                <p className="cf-section__lede">
-                    ¿Tienes alguna duda antes de contratar? Escríbenos y te
-                    responderemos lo antes posible.
-                </p>
-
-                <div className="cf-contact__card">
-                    <div className="cf-contact__information">
-                        <div className="cf-contact__block">
-                            <i className="fa-solid fa-phone" aria-hidden="true" />
-                            <div>
-                                <h3>Teléfono</h3>
-                                <a href={`tel:${COMPANY.phoneLink}`}>{COMPANY.phone}</a>
-                            </div>
-                        </div>
-
-                        <div className="cf-contact__block">
-                            <i className="fa-solid fa-envelope" aria-hidden="true" />
-                            <div>
-                                <h3>Email</h3>
-                                <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
-                            </div>
-                        </div>
-
-                        <div className="cf-contact__block">
-                            <i className="fa-regular fa-clock" aria-hidden="true" />
-                            <div>
-                                <h3>Horario</h3>
-                                <ul>
-                                    {COMPANY.schedule.map((schedule) => (
-                                        <li key={schedule}>{schedule}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
+                <header className="cf-home-head">
+                    <div>
+                        <p className="cf-eyebrow">Contacto</p>
+                        <h2 className="cf-home-title">Hablemos</h2>
+                        <p className="cf-home-lede">
+                            ¿Un presupuesto para tu oficina o una duda concreta? Te respondemos rápido.
+                        </p>
                     </div>
+                </header>
 
-                    <form className="cf-contact__form" onSubmit={handleSubmit} noValidate>
-                        {error && (
-                            <p className="cf-contact__alert cf-contact__alert--error" role="alert">
-                                {error}
-                            </p>
-                        )}
+                <div className="cf-home-contact__grid">
+                    <form className="cf-card cf-home-contact__form" onSubmit={handleSubmit} noValidate>
+                        {error && <p className="cf-alert" role="alert">{error}</p>}
+                        {success && <p className="cf-alert cf-alert--success" role="status">{success}</p>}
 
-                        {success && (
-                            <p className="cf-contact__alert cf-contact__alert--success" role="status">
-                                {success}
-                            </p>
-                        )}
-
-                        <div className="cf-contact__row">
-                            <div className="cf-contact__field">
+                        <div className="cf-home-contact__fields">
+                            <div className="cf-field">
                                 <label htmlFor="contact-name">Nombre</label>
-                                <input
-                                    id="contact-name"
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    autoComplete="name"
-                                    required
-                                />
+                                <input id="contact-name" className="cf-input" type="text" name="name"
+                                    value={formData.name} onChange={handleChange} autoComplete="name"
+                                    placeholder="Tu nombre" required />
                             </div>
 
-                            <div className="cf-contact__field">
+                            <div className="cf-field">
                                 <label htmlFor="contact-email">Correo electrónico</label>
-                                <input
-                                    id="contact-email"
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    autoComplete="email"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="cf-contact__row">
-                            <div className="cf-contact__field">
-                                <label htmlFor="contact-phone">Teléfono (opcional)</label>
-                                <input
-                                    id="contact-phone"
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    autoComplete="tel"
-                                />
+                                <input id="contact-email" className="cf-input" type="email" name="email"
+                                    value={formData.email} onChange={handleChange} autoComplete="email"
+                                    placeholder="tu@correo.com" required />
                             </div>
 
-                            <div className="cf-contact__field">
+                            <div className="cf-field">
+                                <label htmlFor="contact-phone">Teléfono <span>(opcional)</span></label>
+                                <input id="contact-phone" className="cf-input" type="tel" name="phone"
+                                    value={formData.phone} onChange={handleChange} autoComplete="tel"
+                                    placeholder="600 000 000" />
+                            </div>
+
+                            <div className="cf-field">
                                 <label htmlFor="contact-subject">Asunto</label>
-                                <input
-                                    id="contact-subject"
-                                    type="text"
-                                    name="subject"
-                                    value={formData.subject}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <input id="contact-subject" className="cf-input" type="text" name="subject"
+                                    value={formData.subject} onChange={handleChange}
+                                    placeholder="Presupuesto para oficina" required />
+                            </div>
+
+                            <div className="cf-field cf-field--full">
+                                <label htmlFor="contact-message">Mensaje</label>
+                                <textarea id="contact-message" className="cf-input" name="message"
+                                    value={formData.message} onChange={handleChange} rows="5"
+                                    placeholder="Cuéntanos qué necesitas" required />
                             </div>
                         </div>
 
-                        <div className="cf-contact__field">
-                            <label htmlFor="contact-message">Mensaje</label>
-                            <textarea
-                                id="contact-message"
-                                name="message"
-                                value={formData.message}
-                                onChange={handleChange}
-                                rows="5"
-                                required
-                            />
-                        </div>
-
+                        {/* Trampa para bots: invisible para las personas, y si
+                            llega rellena, el servidor descarta el mensaje. */}
                         <div className="sr-only" aria-hidden="true">
                             <label htmlFor="contact-website">Sitio web</label>
-                            <input
-                                id="contact-website"
-                                type="text"
-                                name="website"
-                                value={formData.website}
-                                onChange={handleChange}
-                                tabIndex="-1"
-                                autoComplete="off"
-                            />
+                            <input id="contact-website" type="text" name="website" value={formData.website}
+                                onChange={handleChange} tabIndex="-1" autoComplete="off" />
                         </div>
 
-                        <button
-                            className="cf-contact__submit"
-                            type="submit"
-                            disabled={!formIsValid || loading}
-                        >
-                            {loading ? "Enviando..." : "Enviar mensaje"}
-                        </button>
+                        <div className="cf-home-contact__foot">
+                            <small>Usaremos tus datos solo para responderte.</small>
+                            <button className="cf-btn" type="submit" disabled={!formIsValid || loading}>
+                                {loading ? "Enviando…" : "Enviar mensaje"}
+                            </button>
+                        </div>
                     </form>
+
+                    <div className="cf-card cf-home-contact__info">
+                        <ul className="cf-home-contact__rows">
+                            <li>
+                                <i className="fa-solid fa-phone" aria-hidden="true"></i>
+                                <span>
+                                    <b>Teléfono</b>
+                                    <a href={`tel:${COMPANY.phoneLink}`}>{COMPANY.phone}</a>
+                                </span>
+                            </li>
+                            <li>
+                                <i className="fa-solid fa-envelope" aria-hidden="true"></i>
+                                <span>
+                                    <b>Correo</b>
+                                    <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>
+                                </span>
+                            </li>
+                            <li>
+                                <i className="fa-regular fa-clock" aria-hidden="true"></i>
+                                <span>
+                                    <b>Horario</b>
+                                    {COMPANY.schedule.map((line) => <span key={line}>{line}</span>)}
+                                </span>
+                            </li>
+                            <li>
+                                <i className="fa-solid fa-location-dot" aria-hidden="true"></i>
+                                <span>
+                                    <b>Oficina</b>
+                                    <span>{COMPANY.street} · {COMPANY.city}</span>
+                                </span>
+                            </li>
+                        </ul>
+
+                        <OfficeMap address={`${COMPANY.street}, ${COMPANY.city}`} />
+                    </div>
                 </div>
             </div>
         </section>

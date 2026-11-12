@@ -1,12 +1,14 @@
 /**
- * PANEL DE CONTRATACIÓN (CLIENTE).
+ * RESERVAR LIMPIEZA (CLIENTE, maqueta 04, PANEL-02).
  *
- * Una sola página para contratar: servicio, tareas, horas, trabajador, día
- * y hora, dirección y descripción. La reserva nace confirmada, porque el
- * cliente elige a quién quiere.
+ * Una sola página para contratar: el servicio (en tarjetas, arriba), las
+ * tareas, las horas, quién viene, el día y la hora, la dirección y las
+ * notas. A la derecha, el resumen con el precio. La reserva nace
+ * confirmada, porque el cliente elige a quién quiere.
  *
- * Se llega desde "Contratar" en el catálogo, que trae ?servicio=<slug>. Sin
- * ese parámetro, o con un servicio que ya no existe, se pide elegir uno.
+ * Es también el catálogo: /dashboard/service-catalog redirige aquí. Puede
+ * llegar con ?servicio=<slug> (las tarjetas de la web, «Repetir» en el
+ * Inicio) y entonces ese servicio sale ya elegido.
  *
  * Cuentas:      booking/bookingRules.js, las mismas que hace el backend.
  * Componentes:  components/dashboard/booking/ (calendario y trabajador).
@@ -26,6 +28,8 @@ import { AddressForm } from "../../../components/dashboard/AddressForm"
 import { formatPrice, taskWord } from "../../../components/dashboard/ServiceForm"
 import { hoursNeeded, hourOptions, spareTasks, splitIntoDays, totalPrice } from "./bookingRules"
 import { BookingCalendar } from "../../../components/dashboard/booking/BookingCalendar"
+import { PageHead } from "../../../components/dashboard/PageHead"
+import { getServiceImage, servicePlaceholder } from "../../../data/serviceImages"
 import { ANY_WORKER, WorkerPicker } from "../../../components/dashboard/booking/WorkerPicker"
 import "../../../dashboard.css"
 
@@ -34,7 +38,8 @@ import "../../../dashboard.css"
 // ----------------------------------------------------------------------
 
 // Nombre del parámetro con el que llega el servicio elegido. Es un CONTRATO
-// con ServiceCatalog.jsx: si cambia aquí, cambia allí.
+// con la web (ServiceCard.jsx) y con «Repetir» del Inicio: si cambia aquí,
+// cambia allí.
 const SERVICE_PARAM = "servicio"
 
 // Bloques grises que se ven mientras carga.
@@ -52,6 +57,18 @@ const BOOKINGS_PATH = "/dashboard/contracted-services"
 
 // El mismo tope que client_notes en la API.
 const NOTES_MAX_LENGTH = 1000
+
+// Hasta cuándo se puede cambiar o cancelar gratis: 24 h antes, lo mismo
+// que Booking.change_deadline en el servidor.
+const CHANGE_HOURS = 24
+
+// El icono de cada servicio en su tarjeta. Uno nuevo lleva la escoba.
+const SERVICE_ICONS = {
+    "limpieza-esencial": "fa-broom",
+    "limpieza-integral": "fa-house",
+    "limpieza-profunda": "fa-spray-can-sparkles",
+    "limpieza-fin-de-obra": "fa-helmet-safety",
+}
 
 // ----------------------------------------------------------------------
 // TEXTOS Y FECHAS
@@ -87,6 +104,15 @@ const bookedDayText = (bookedDay) => {
     return `${dayText(date)} · ${time.slice(0, 5)} a ${bookedDay.ends_at.split("T")[1].slice(0, 5)}`
 }
 
+/** "el viernes 13 a las 10:00": hasta cuándo se puede cambiar o cancelar. */
+const changeDeadlineText = (day, start) => {
+    const deadline = new Date(Date.parse(`${day}T${start}:00`) - CHANGE_HOURS * 3600 * 1000)
+    const weekday = deadline.toLocaleDateString("es-ES", { weekday: "long", day: "numeric" })
+    const time = deadline.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })
+
+    return `el ${weekday} a las ${time}`
+}
+
 /** "Calle de Alcalá 42, 3º B · 28014 Madrid". */
 const addressText = (address) => {
     const floor = address.floor ? `, ${address.floor}` : ""
@@ -110,22 +136,25 @@ const taskTimeText = (minutes) => {
 
 // Título y entradilla. También salen mientras carga y con error.
 const PageHeader = () => (
-    <div className="cf-booking__header">
-        <p className="cf-dash-eyebrow">Reservar</p>
-        <h1 className="cf-booking__title">Contratar un servicio</h1>
-        <p className="cf-booking__lede">
-            Elige el servicio, las tareas y cuándo quieres que vayamos. Verás el
-            precio antes de confirmar y podrás cancelar hasta 1 hora antes.
-        </p>
-    </div>
+    <PageHead
+        title="Reservar limpieza"
+        subtitle={`Pagas por horas. Puedes cambiarla o cancelarla gratis hasta ${CHANGE_HOURS} h antes.`}
+    />
 )
 
-// Cabecera de un paso: su número, su título y una nota a la derecha.
-const BlockHead = ({ step, title, note }) => (
+// Cabecera de un paso: su número (o una marca verde si ya está hecho), su
+// título y una nota debajo.
+const BlockHead = ({ step, title, note, done = false }) => (
     <div className="cf-booking__block-head">
-        <span className="cf-booking__step">{step}</span>
-        <h2 className="cf-booking__block-title">{title}</h2>
-        {note && <p className="cf-booking__block-note">{note}</p>}
+        <span className={done ? "cf-booking__step cf-booking__step--done" : "cf-booking__step"}>
+            {done
+                ? <><i className="fa-solid fa-check" aria-hidden="true" /><span className="sr-only">Paso {step}, hecho</span></>
+                : step}
+        </span>
+        <div>
+            <h2 className="cf-booking__block-title">{title}</h2>
+            {note && <p className="cf-booking__block-note">{note}</p>}
+        </div>
     </div>
 )
 
@@ -155,10 +184,6 @@ export const BookingPanel = () => {
     const [chosenTasks, setChosenTasks] = useState([])
     const [hours, setHours] = useState(0)
     const [worker, setWorker] = useState(ANY_WORKER)
-
-    // La tarea que está marcada en el desplegable de "Añadir", todavía sin
-    // añadir. Vacío = la primera de la lista.
-    const [taskToAdd, setTaskToAdd] = useState("")
 
     // Los huecos del mes que se está viendo: {"2026-10-05": [{start, options}]}.
     const [month, setMonth] = useState(monthOf(new Date()))
@@ -450,8 +475,21 @@ export const BookingPanel = () => {
 
     const addTask = (taskId) => changeTasks([...chosenTasks, taskId])
 
-    // Se quita por posición y no por id: la misma tarea puede estar repetida.
-    const removeTask = (index) => changeTasks(chosenTasks.filter((_, position) => position !== index))
+    // Quita una sola de esa tarea (la última que se añadió): la misma
+    // tarea puede estar repetida.
+    const removeOne = (taskId) => {
+        const position = chosenTasks.lastIndexOf(taskId)
+        changeTasks(chosenTasks.filter((_, index) => index !== position))
+    }
+
+    // Las elegidas, agrupadas y en el orden en que se eligieron:
+    // [{ taskId, count }]. Así cada una sale una sola vez.
+    const chosenGroups = chosenTasks.reduce((groups, taskId) => {
+        const group = groups.find((item) => item.taskId === taskId)
+        if (group) group.count += 1
+        else groups.push({ taskId, count: 1 })
+        return groups
+    }, [])
 
     // Crea una dirección sin salir del panel y la deja elegida. La lista se
     // vuelve a pedir para que la principal siga saliendo la primera.
@@ -533,10 +571,6 @@ export const BookingPanel = () => {
 
     const taskById = (taskId) => tasks.find((task) => task.task_id === taskId)
 
-    // Sin tocar el desplegable, se añade la primera de la lista.
-    const [firstTask] = tasks
-    const nextTaskId = Number(taskToAdd) || firstTask?.task_id
-
     // ------------------------------------------------------------------
     // CONFIRMACIÓN
     // ------------------------------------------------------------------
@@ -591,14 +625,17 @@ export const BookingPanel = () => {
                         </dl>
                     </div>
 
-                    <p className="cf-booking__cancel-note">Puedes cancelar hasta 1 hora antes</p>
+                    <p className="cf-booking__cancel-note">
+                        <i className="fa-solid fa-circle-check" aria-hidden="true" />
+                        {`Puedes cambiarla o cancelarla gratis hasta ${CHANGE_HOURS} h antes, desde Servicios contratados.`}
+                    </p>
 
                     <div className="cf-booking__done-actions">
                         <Link className="cf-dash-btn" to={BOOKINGS_PATH}>
-                            Ver mis servicios
+                            Ver servicios contratados
                         </Link>
                         <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={bookAnother}>
-                            Contratar otro servicio
+                            Reservar otra limpieza
                         </button>
                     </div>
                 </div>
@@ -617,108 +654,100 @@ export const BookingPanel = () => {
             <div className="cf-booking__layout">
                 <div className="cf-booking__steps">
 
-                    {/* ---- 1 · SERVICIO ---- */}
+                    {/* ---- 1 · SERVICIO ----
+                        Tarjetas y no un desplegable: se ven todos de un
+                        vistazo, con su precio. Son radios de verdad, así que
+                        se recorren con las flechas del teclado. */}
                     <section className="cf-booking__block">
-                        <BlockHead step={step.service} title="Servicio" />
+                        <BlockHead
+                            step={step.service}
+                            title="¿Qué necesitas?"
+                            note="Elige el tipo de limpieza"
+                            done={Boolean(service)}
+                        />
 
-                        <div className="cf-dash-field">
-                            <label className="cf-dash-field__label" htmlFor="booking-service">
-                                ¿Qué necesitas?
-                            </label>
-                            <select
-                                id="booking-service"
-                                className="cf-dash-input"
-                                value={slug}
-                                onChange={(event) => changeService(event.target.value)}
-                            >
-                                <option value="">Elige un servicio</option>
-                                {services.map((item) => (
-                                    <option key={item.slug} value={item.slug}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {service && (
-                            <ul className="cf-booking__facts">
-                                <li>
-                                    <i className="fa-solid fa-tag" aria-hidden="true" />
-                                    {` ${formatPrice(service.base_hourly_rate)}/hora`}
-                                </li>
-                                {withTasks && (
-                                    <li>
-                                        <i className="fa-solid fa-clock" aria-hidden="true" />
-                                        {` ${service.minutes_per_task} min por tarea`}
-                                    </li>
-                                )}
-                                <li>
-                                    <i className="fa-solid fa-hourglass-start" aria-hidden="true" />
-                                    {` De ${service.min_hours} a ${service.max_hours || "muchas"} h`}
-                                </li>
-                            </ul>
-                        )}
+                        <fieldset className="cf-booking__services">
+                            <legend className="sr-only">Servicio</legend>
+                            {services.map((item) => (
+                                <label className="cf-booking__service" key={item.slug}>
+                                    <input
+                                        type="radio"
+                                        name="booking-service"
+                                        value={item.slug}
+                                        checked={slug === item.slug}
+                                        onChange={() => changeService(item.slug)}
+                                    />
+                                    <span className="cf-booking__service-card">
+                                        <i className={`fa-solid ${SERVICE_ICONS[item.slug] || "fa-broom"}`} aria-hidden="true" />
+                                        <b>{item.name}</b>
+                                        <span>
+                                            {`${formatPrice(item.base_hourly_rate)}/h · desde ${item.min_hours} h`}
+                                        </span>
+                                    </span>
+                                </label>
+                            ))}
+                        </fieldset>
                     </section>
 
                     {/* ---- 2 · TAREAS ----
-                        Solo en los servicios que las llevan. */}
+                        Solo en los servicios que las llevan. Las elegidas,
+                        en verde con su ✕; debajo, las que se pueden añadir.
+                        Una tarea puede ir varias veces (tres habitaciones). */}
                     {withTasks && (
                         <section className="cf-booking__block">
                             <BlockHead
                                 step={step.tasks}
                                 title="Tareas"
-                                note={`${chosenTasks.length} ${taskWord(chosenTasks.length)} · ${taskTimeText(chosenTasks.length * service.minutes_per_task)}`}
+                                note={chosenTasks.length
+                                    ? `${service.minutes_per_task} min por tarea · ${chosenTasks.length} ${chosenTasks.length === 1 ? "elegida" : "elegidas"} (${taskTimeText(chosenTasks.length * service.minutes_per_task)})`
+                                    : `${service.minutes_per_task} min por tarea · elige las que necesitas`}
+                                done={chosenTasks.length > 0}
                             />
 
-                            {chosenTasks.length > 0 && (
-                                <ul className="cf-booking__tasks">
-                                    {chosenTasks.map((taskId, index) => (
-                                        // La clave lleva la posición: la misma tarea
-                                        // puede repetirse y su id no es único aquí.
-                                        <li className="cf-booking__task" key={`${taskId}-${index}`}>
-                                            <span className="cf-booking__task-name">
-                                                {taskById(taskId)?.task_name}
-                                            </span>
-                                            <span className="cf-booking__task-time">
-                                                {service.minutes_per_task} min
-                                            </span>
+                            {/* Cada tarea elegida, una vez y con cuántas van: «+»
+                                añade otra igual y «×» quita una. Debajo, solo las
+                                que faltan por elegir. */}
+                            <div className="cf-booking__chips">
+                                {chosenGroups.map(({ taskId, count }) => {
+                                    const name = taskById(taskId)?.task_name
+
+                                    return (
+                                        <span className="cf-booking__chip cf-booking__chip--on" key={taskId}>
+                                            {name}{count > 1 && <b>×{count}</b>}
                                             <button
                                                 type="button"
-                                                className="cf-booking__remove"
-                                                onClick={() => removeTask(index)}
-                                                aria-label={`Quitar ${taskById(taskId)?.task_name}`}
+                                                onClick={() => addTask(taskId)}
+                                                disabled={!roomForTasks}
+                                                aria-label={`Añadir otra vez ${name}`}
+                                            >
+                                                <i className="fa-solid fa-plus" aria-hidden="true" />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeOne(taskId)}
+                                                aria-label={count > 1 ? `Quitar una de ${name}` : `Quitar ${name}`}
                                             >
                                                 <i className="fa-solid fa-xmark" aria-hidden="true" />
                                             </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                                        </span>
+                                    )
+                                })}
 
-                            <div className="cf-booking__add">
-                                <select
-                                    id="booking-task"
-                                    className="cf-dash-input"
-                                    value={nextTaskId || ""}
-                                    onChange={(event) => setTaskToAdd(event.target.value)}
-                                    disabled={!roomForTasks}
-                                    aria-label="Tarea que añadir"
-                                >
-                                    {tasks.map((task) => (
-                                        <option key={task.task_id} value={task.task_id}>
+                                {tasks
+                                    .filter((task) => !chosenTasks.includes(task.task_id))
+                                    .map((task) => (
+                                        <button
+                                            type="button"
+                                            className="cf-booking__chip cf-booking__chip--add"
+                                            key={task.task_id}
+                                            disabled={!roomForTasks}
+                                            onClick={() => addTask(task.task_id)}
+                                            aria-label={`Añadir ${task.task_name}`}
+                                        >
+                                            <i className="fa-solid fa-plus" aria-hidden="true" />
                                             {task.task_name}
-                                        </option>
+                                        </button>
                                     ))}
-                                </select>
-                                <button
-                                    type="button"
-                                    className="cf-dash-btn cf-dash-btn--ghost"
-                                    disabled={!nextTaskId || !roomForTasks}
-                                    onClick={() => addTask(nextTaskId)}
-                                >
-                                    <i className="fa-solid fa-plus" aria-hidden="true" />
-                                    Añadir
-                                </button>
                             </div>
 
                             {chosenTasks.length === 0 && (
@@ -738,49 +767,62 @@ export const BookingPanel = () => {
                             )}
 
                             {spare > 0 && chosenTasks.length > 0 && (
-                                <p className="cf-booking__hint">
-                                    <i className="fa-solid fa-circle-info" aria-hidden="true" />
+                                <p className="cf-booking__hint cf-booking__hint--ok">
+                                    <i className="fa-solid fa-lightbulb" aria-hidden="true" />
                                     {` Te ${spare === 1 ? "cabe" : "caben"} ${spare} ${taskWord(spare)} más en ${hours} h: la hora se cobra entera igual.`}
                                 </p>
                             )}
                         </section>
                     )}
 
-                    {/* ---- 3 · HORAS ---- */}
-                    {service && (
-                        <section className="cf-booking__block">
-                            <BlockHead step={step.hours} title="Horas" />
+                    {/* ---- 3 · HORAS ----
+                        − y + en vez de un desplegable: solo llegan a las
+                        horas que valen (las de hourOptions). */}
+                    {service && (() => {
+                        const options = hourOptions(service, chosenTasks.length)
+                        const position = options.indexOf(hours)
 
-                            <div className="cf-booking__hours">
-                                <div className="cf-dash-field">
-                                    <label className="cf-dash-field__label" htmlFor="booking-hours">
-                                        Duración
-                                    </label>
-                                    <select
-                                        id="booking-hours"
-                                        className="cf-dash-input"
-                                        value={hours}
-                                        onChange={(event) => setHours(Number(event.target.value))}
-                                    >
-                                        {hourOptions(service, chosenTasks.length).map((option) => (
-                                            <option key={option} value={option}>
-                                                {option} {option === 1 ? "hora" : "horas"}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                        return (
+                            <section className="cf-booking__block">
+                                <BlockHead
+                                    step={step.hours}
+                                    title="Horas"
+                                    note={withTasks && chosenTasks.length > 0
+                                        ? `Tus tareas necesitan ${needed} h`
+                                        : `Desde ${needed} h`}
+                                    done
+                                />
 
-                                <p className="cf-booking__price-line">
-                                    {withTasks && chosenTasks.length > 0
-                                        ? `Tus tareas necesitan ${needed} h · `
-                                        : `Desde ${needed} h · `}
-                                    <strong>
+                                <div className="cf-booking__hours">
+                                    <div className="cf-booking__stepper" role="group" aria-label="Horas">
+                                        <button
+                                            type="button"
+                                            onClick={() => setHours(options[position - 1])}
+                                            disabled={position <= 0}
+                                            aria-label="Una hora menos"
+                                        >
+                                            <i className="fa-solid fa-minus" aria-hidden="true" />
+                                        </button>
+                                        {/* aria-live: al pulsar − o +, el lector dice las horas nuevas. */}
+                                        <b aria-live="polite">{hours} h</b>
+                                        <button
+                                            type="button"
+                                            onClick={() => setHours(options[position + 1])}
+                                            disabled={position === -1 || position >= options.length - 1}
+                                            aria-label="Una hora más"
+                                        >
+                                            <i className="fa-solid fa-plus" aria-hidden="true" />
+                                        </button>
+                                    </div>
+
+                                    <p className="cf-booking__price-line">
                                         {hours} h × {formatPrice(service.base_hourly_rate)}/h
-                                    </strong>
-                                </p>
-                            </div>
-                        </section>
-                    )}
+                                        {" · "}Más de 8 h se reparten en varios días.
+                                    </p>
+                                </div>
+                            </section>
+                        )
+                    })()}
 
                     {/* ---- 4 · QUIÉN VIENE ----
                         "Cualquiera" no es un trabajador: lo elige la
@@ -789,8 +831,9 @@ export const BookingPanel = () => {
                         <section className="cf-booking__block">
                             <BlockHead
                                 step={step.worker}
-                                title="Quién viene"
-                                note={workers.length ? null : "Ahora mismo no hay nadie disponible"}
+                                title="¿Quién viene?"
+                                note={workers.length ? "Elige a alguien o deja que lo asignemos" : "Ahora mismo no hay nadie disponible"}
+                                done
                             />
 
                             <WorkerPicker
@@ -809,7 +852,8 @@ export const BookingPanel = () => {
                             <BlockHead
                                 step={step.when}
                                 title="Día y hora"
-                                note={`Hasta ${BOOKING_HORIZON_DAYS} días vista`}
+                                note={`Hasta ${BOOKING_HORIZON_DAYS} días vista · el punto verde indica que hay huecos`}
+                                done={Boolean(start)}
                             />
 
                             {slotsError && (
@@ -818,41 +862,52 @@ export const BookingPanel = () => {
                                 </p>
                             )}
 
-                            <BookingCalendar
-                                days={slots}
-                                month={month}
-                                chosen={day}
-                                spill={spillDays}
-                                loading={slotsLoading}
-                                canGoBack={month > firstMonth}
-                                canGoForward={month < lastMonth}
-                                onMonthChange={(offset) => setMonth(shiftMonth(month, offset))}
-                                onChoose={(key) => {
-                                    setDay(key)
-                                    setStart("")
-                                }}
-                            />
-
-                            {/* Solo al elegir día: antes no hay horas que enseñar. */}
-                            {day && (
-                                <div className="cf-booking__slots">
-                                    <p className="cf-booking__slots-title">
-                                        Horas libres del {dayText(day)}
-                                    </p>
-
-                                    {slots[day].map((slot) => (
-                                        <button
-                                            type="button"
-                                            className={`cf-booking__slot${slot.start === start ? " cf-booking__slot--chosen" : ""}`}
-                                            key={slot.start}
-                                            aria-pressed={slot.start === start}
-                                            onClick={() => setStart(slot.start)}
-                                        >
-                                            {slot.start}
-                                        </button>
-                                    ))}
+                            {/* El calendario y, a su lado, las horas del día elegido. */}
+                            <div className="cf-booking__when">
+                                <div className="cf-booking__calendar">
+                                    <BookingCalendar
+                                        days={slots}
+                                        month={month}
+                                        chosen={day}
+                                        spill={spillDays}
+                                        loading={slotsLoading}
+                                        canGoBack={month > firstMonth}
+                                        canGoForward={month < lastMonth}
+                                        onMonthChange={(offset) => setMonth(shiftMonth(month, offset))}
+                                        onChoose={(key) => {
+                                            setDay(key)
+                                            setStart("")
+                                        }}
+                                    />
                                 </div>
-                            )}
+
+                                {/* Antes de elegir día no hay horas que enseñar. */}
+                                <div className="cf-booking__times">
+                                    {day ? (
+                                        <>
+                                            <p className="cf-booking__slots-title">{dayText(day)}</p>
+                                            <div className="cf-booking__slots">
+                                                {slots[day].map((slot) => (
+                                                    <button
+                                                        type="button"
+                                                        className={`cf-booking__slot${slot.start === start ? " cf-booking__slot--chosen" : ""}`}
+                                                        key={slot.start}
+                                                        aria-pressed={slot.start === start}
+                                                        onClick={() => setStart(slot.start)}
+                                                    >
+                                                        {slot.start}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <p className="cf-booking__times-empty">
+                                            <i className="fa-regular fa-calendar" aria-hidden="true" />
+                                            Elige un día con punto verde y aquí saldrán sus horas libres.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
 
                             {/* Reserva de varios días: se avisa antes de reservar. */}
                             {bookedDays.length > 1 && (
@@ -876,7 +931,12 @@ export const BookingPanel = () => {
                         una o se crea, con el mismo formulario de los ajustes. */}
                     {service && (
                         <section className="cf-booking__block">
-                            <BlockHead step={step.address} title="Dirección" />
+                            <BlockHead
+                                step={step.address}
+                                title="¿Dónde limpiamos?"
+                                note={addresses.length ? "Tu dirección principal está marcada" : "Añade dónde quieres que vayamos"}
+                                done={Boolean(addressId) && !addingAddress}
+                            />
 
                             {addingAddress ? (
                                 <AddressForm
@@ -887,45 +947,45 @@ export const BookingPanel = () => {
                                 />
                             ) : (
                                 <>
-                                    {/* Sin direcciones no hay desplegable que enseñar. */}
-                                    {addresses.length === 0 ? (
-                                        <p className="cf-booking__hint">
-                                            <i className="fa-solid fa-circle-info" aria-hidden="true" />
-                                            {" Todavía no tienes ninguna dirección: añade dónde quieres que vayamos."}
-                                        </p>
-                                    ) : (
-                                        <div className="cf-dash-field">
-                                            <label className="cf-dash-field__label" htmlFor="booking-address">
-                                                ¿Dónde limpiamos?
+                                    {/* Tarjetas, como los servicios: radios de verdad. */}
+                                    <fieldset className="cf-booking__addresses">
+                                        <legend className="sr-only">Dirección</legend>
+                                        {addresses.map((item) => (
+                                            <label className="cf-booking__address" key={item.address_id}>
+                                                <input
+                                                    type="radio"
+                                                    name="booking-address"
+                                                    value={item.address_id}
+                                                    checked={addressId === String(item.address_id)}
+                                                    onChange={() => setAddressId(String(item.address_id))}
+                                                />
+                                                <span className="cf-booking__address-card">
+                                                    <i className={`fa-solid ${item.is_default ? "fa-house" : "fa-location-dot"}`} aria-hidden="true" />
+                                                    <span>
+                                                        <b>
+                                                            {`${item.street} ${item.number}`}
+                                                            {item.is_default && <span className="cf-booking__badge">Principal</span>}
+                                                        </b>
+                                                        <span>{addressText(item)}</span>
+                                                    </span>
+                                                </span>
                                             </label>
-                                            <select
-                                                id="booking-address"
-                                                className="cf-dash-input"
-                                                value={addressId}
-                                                onChange={(event) => setAddressId(event.target.value)}
-                                            >
-                                                {addresses.map((item) => (
-                                                    <option key={item.address_id} value={item.address_id}>
-                                                        {addressText(item)}
-                                                        {item.is_default ? " (principal)" : ""}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    )}
+                                        ))}
 
-                                    <div className="cf-booking__address-links">
                                         <button
                                             type="button"
-                                            className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
+                                            className="cf-booking__address-new"
                                             onClick={() => setAddingAddress(true)}
                                         >
                                             <i className="fa-solid fa-plus" aria-hidden="true" />
                                             Añadir dirección
                                         </button>
-                                        {/* En otra pestaña: si se saliera del panel, se
-                                            perdería todo lo elegido. Al volver, la lista
-                                            se actualiza sola. */}
+                                    </fieldset>
+
+                                    {/* En otra pestaña: si se saliera del panel, se
+                                        perdería todo lo elegido. Al volver, la lista
+                                        se actualiza sola. */}
+                                    {addresses.length > 0 && (
                                         <Link
                                             className="cf-booking__link"
                                             to={ADDRESSES_PATH}
@@ -936,7 +996,7 @@ export const BookingPanel = () => {
                                             <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden="true" />
                                             <span className="sr-only">(se abre en una pestaña nueva)</span>
                                         </Link>
-                                    </div>
+                                    )}
                                 </>
                             )}
                         </section>
@@ -945,7 +1005,7 @@ export const BookingPanel = () => {
                     {/* ---- 7 · DESCRIPCIÓN ---- */}
                     {service && (
                         <section className="cf-booking__block">
-                            <BlockHead step={step.notes} title="Algo que debamos saber" note="Opcional" />
+                            <BlockHead step={step.notes} title="Algo que debamos saber" note="Opcional" done={notes.trim().length > 0} />
 
                             <div className="cf-dash-field">
                                 <textarea
@@ -965,79 +1025,102 @@ export const BookingPanel = () => {
                     )}
                 </div>
 
-                {/* ---- RESUMEN ---- */}
-                <aside className="cf-booking__summary">
-                    <h2 className="cf-booking__summary-title">Tu reserva</h2>
+                {/* ---- RESUMEN ----
+                    Fijo al bajar, con la foto del servicio elegido. */}
+                <aside className="cf-booking__summary" aria-labelledby="booking-summary-title">
+                    {/* Sin servicio elegido, solo el fondo de marca. */}
+                    <div className="cf-booking__summary-photo">
+                        {service && (
+                            <img
+                                src={getServiceImage(service)}
+                                alt=""
+                                width="480"
+                                height="160"
+                                onError={(event) => {
+                                    event.currentTarget.onerror = null
+                                    event.currentTarget.src = servicePlaceholder
+                                }}
+                            />
+                        )}
+                        <h2 className="cf-booking__summary-title" id="booking-summary-title">
+                            {service ? service.name : "Tu reserva"}
+                        </h2>
+                    </div>
 
-                    <div className="cf-booking__rows">
-                        <dl className="cf-booking__row">
-                            <dt>Servicio</dt>
-                            <dd>{service ? service.name : "Sin elegir"}</dd>
-                        </dl>
-                        {withTasks && (
+                    <div className="cf-booking__summary-body">
+                        <div className="cf-booking__rows">
+                            {withTasks && (
+                                <dl className="cf-booking__row">
+                                    <dt>Tareas</dt>
+                                    <dd>
+                                        {chosenTasks.length
+                                            ? `${chosenTasks.length} ${taskWord(chosenTasks.length)}`
+                                            : "Sin elegir"}
+                                    </dd>
+                                </dl>
+                            )}
                             <dl className="cf-booking__row">
-                                <dt>Tareas</dt>
+                                <dt>Quién</dt>
+                                <dd>{chosenWorker ? chosenWorker.name : "Cualquiera"}</dd>
+                            </dl>
+                            <dl className="cf-booking__row cf-booking__row--days">
+                                <dt>Cuándo</dt>
                                 <dd>
-                                    {chosenTasks.length
-                                        ? `${chosenTasks.length} ${taskWord(chosenTasks.length)}`
+                                    {bookedDays.length
+                                        ? bookedDays.map((key, index) => (
+                                            // Cada día con lo que se trabaja en él: una
+                                            // reserva larga son varias jornadas.
+                                            <span key={key}>
+                                                {`${dayText(key)} · ${start} · ${splitIntoDays(hours)[index]} h`}
+                                            </span>
+                                        ))
                                         : "Sin elegir"}
                                 </dd>
                             </dl>
-                        )}
-                        <dl className="cf-booking__row">
-                            <dt>Quién</dt>
-                            <dd>{chosenWorker ? chosenWorker.name : "Cualquiera"}</dd>
-                        </dl>
-                        <dl className="cf-booking__row cf-booking__row--days">
-                            <dt>Cuándo</dt>
-                            <dd>
-                                {bookedDays.length
-                                    ? bookedDays.map((key, index) => (
-                                        // Cada día con lo que se trabaja en él: una
-                                        // reserva larga son varias jornadas.
-                                        <span key={key}>
-                                            {`${dayText(key)} · ${start} · ${splitIntoDays(hours)[index]} h`}
-                                        </span>
-                                    ))
-                                    : "Sin elegir"}
-                            </dd>
-                        </dl>
-                        <dl className="cf-booking__row">
-                            <dt>Dónde</dt>
-                            <dd>
-                                {chosenAddress
-                                    ? `${chosenAddress.street} ${chosenAddress.number}`
-                                    : "Sin elegir"}
-                            </dd>
-                        </dl>
-                    </div>
-
-                    {service && (
-                        <div className="cf-booking__total">
-                            <span>
-                                {hours} h × {formatPrice(service.base_hourly_rate)}/h
-                            </span>
-                            <strong>{formatPrice(totalPrice(service, hours))}</strong>
+                            <dl className="cf-booking__row">
+                                <dt>Dónde</dt>
+                                <dd>
+                                    {chosenAddress
+                                        ? `${chosenAddress.street} ${chosenAddress.number}`
+                                        : "Sin elegir"}
+                                </dd>
+                            </dl>
+                            {service && (
+                                <dl className="cf-booking__row">
+                                    <dt>Precio</dt>
+                                    <dd>{hours} h × {formatPrice(service.base_hourly_rate)}</dd>
+                                </dl>
+                            )}
                         </div>
-                    )}
 
-                    {bookingError && (
-                        <p className="cf-dash-alert" role="alert">
-                            {bookingError}
+                        <div className="cf-booking__total">
+                            <span>Total</span>
+                            <strong>{service ? formatPrice(totalPrice(service, hours)) : "—"}</strong>
+                        </div>
+
+                        {bookingError && (
+                            <p className="cf-dash-alert" role="alert">
+                                {bookingError}
+                            </p>
+                        )}
+
+                        <button type="button" className="cf-dash-btn cf-booking__confirm" disabled={!canBook} onClick={book}>
+                            {saving ? "Reservando..." : "Confirmar reserva"}
+                        </button>
+
+                        {/* Qué falta para poder reservar, en vez de un botón
+                            apagado sin explicación. */}
+                        {!canBook && !saving && (
+                            <p className="cf-booking__missing">{missing}</p>
+                        )}
+
+                        <p className="cf-booking__cancel-note">
+                            <i className="fa-solid fa-circle-check" aria-hidden="true" />
+                            {start
+                                ? `Cambia o cancela gratis hasta ${changeDeadlineText(day, start)}.`
+                                : `Cambia o cancela gratis hasta ${CHANGE_HOURS} h antes.`}
                         </p>
-                    )}
-
-                    <button type="button" className="cf-dash-btn" disabled={!canBook} onClick={book}>
-                        {saving ? "Reservando..." : "Confirmar reserva"}
-                    </button>
-
-                    {/* Qué falta para poder reservar, en vez de un botón
-                        apagado sin explicación. */}
-                    {!canBook && !saving && (
-                        <p className="cf-booking__cancel-note">{missing}</p>
-                    )}
-
-                    <p className="cf-booking__cancel-note">Puedes cancelar hasta 1 hora antes</p>
+                    </div>
                 </aside>
             </div>
         </section>

@@ -280,15 +280,15 @@ export const AccountAddresses = () => {
                                 </div>
 
                                 <div className="cf-account__address-actions">
-                                    {/* aria-label: con varios botones iguales, el
-                                        lector de pantalla necesita saber cuál es cuál. */}
+                                    {/* Enlaces de texto, sin iconos (maqueta 04): los tres
+                                        caben en una línea. aria-label: con varios botones
+                                        iguales, el lector de pantalla necesita saber cuál es cuál. */}
                                     <button
                                         type="button"
                                         className="cf-dash-btn cf-dash-btn--ghost cf-dash-btn--sm"
                                         onClick={() => openForm(address)}
                                         aria-label={`Editar ${address.street}, ${address.number}`}
                                     >
-                                        <i className="fa-solid fa-pen" aria-hidden="true" />
                                         Editar
                                     </button>
 
@@ -300,7 +300,6 @@ export const AccountAddresses = () => {
                                             disabled={workingId === address.address_id}
                                             aria-label={`Marcar como principal ${address.street}, ${address.number}`}
                                         >
-                                            <i className="fa-solid fa-star" aria-hidden="true" />
                                             Marcar como principal
                                         </button>
                                     )}
@@ -312,20 +311,21 @@ export const AccountAddresses = () => {
                                         disabled={workingId === address.address_id}
                                         aria-label={`Quitar ${address.street}, ${address.number}`}
                                     >
-                                        <i className="fa-solid fa-trash" aria-hidden="true" />
                                         Quitar
                                     </button>
                                 </div>
                             </li>
                         ))}
-                    </ul>
 
-                    <div className="cf-account__actions">
-                        <button type="button" className="cf-dash-btn" onClick={() => openForm(null)}>
-                            <i className="fa-solid fa-plus" aria-hidden="true" />
-                            Añadir dirección
-                        </button>
-                    </div>
+                        {/* Añadir, como una tarjeta más al final, con el borde
+                            discontinuo de lo que todavía no existe (maqueta 04). */}
+                        <li>
+                            <button type="button" className="cf-account__address-new" onClick={() => openForm(null)}>
+                                <i className="fa-solid fa-plus" aria-hidden="true" />
+                                Añadir dirección
+                            </button>
+                        </li>
+                    </ul>
                 </>
             )}
 

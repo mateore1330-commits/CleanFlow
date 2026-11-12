@@ -32,15 +32,6 @@ export const timeOf = (isoDate) => isoDate.slice(11, 16);
 export const dayOf = (isoDate) => isoDate.slice(8, 10);
 export const monthOf = (isoDate) => SHORT_MONTHS[Number(isoDate.slice(5, 7)) - 1];
 
-// "Ana G." -> "AG", para cuando el trabajador no tiene foto.
-export const initialsOf = (name) =>
-    (name || "")
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((word) => word[0].toUpperCase())
-        .join("");
-
 // "Martes 23 de septiembre". El Date se arma con los números sueltos,
 // que para eso no tiene zona: solo se usa para saber el día de la semana.
 export const longDate = (isoDate) => {

@@ -17,6 +17,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { photoTooBig, PHOTO_MAX_MB } from "../../../utils/photo";
 
 // Lo mismo que acepta el backend.
 const MAX_LENGTH = 500;
@@ -48,6 +49,8 @@ export const IncidentForm = ({ open, tasks = [], notDone = false, saving, onSubm
     const [taskId, setTaskId] = useState("");
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState(null);
+    // La foto que no se acepta por pesar más de PHOTO_MAX_MB (PANEL-03).
+    const [photoError, setPhotoError] = useState("");
 
     // Abrir y cerrar lo decide la prop: el dialog solo obedece.
     useEffect(() => {
@@ -67,6 +70,7 @@ export const IncidentForm = ({ open, tasks = [], notDone = false, saving, onSubm
         setTaskId("");
         setPhoto(null);
         setPreview(null);
+        setPhotoError("");
     }, [open]);
 
     // createObjectURL reserva memoria hasta que se suelta.
@@ -79,8 +83,14 @@ export const IncidentForm = ({ open, tasks = [], notDone = false, saving, onSubm
 
         if (!file) return;
 
-        setPhoto(file);
-        setPreview(URL.createObjectURL(file));
+        const tooBig = photoTooBig(file);
+
+        setPhotoError(tooBig || "");
+
+        if (!tooBig) {
+            setPhoto(file);
+            setPreview(URL.createObjectURL(file));
+        }
 
         // Se limpia: si no, elegir el mismo archivo otra vez no dispara
         // el evento y no se podría reintentar.
@@ -220,7 +230,7 @@ export const IncidentForm = ({ open, tasks = [], notDone = false, saving, onSubm
 
                     <div className="cf-inc-field">
                         <span className="cf-inc-field__label">
-                            Foto <span className="cf-inc-field__hint">— opcional</span>
+                            Foto <span className="cf-inc-field__hint">— opcional, hasta {PHOTO_MAX_MB} MB</span>
                         </span>
 
                         {preview ? (
@@ -256,6 +266,10 @@ export const IncidentForm = ({ open, tasks = [], notDone = false, saving, onSubm
                                     onChange={handlePick}
                                 />
                             </>
+                        )}
+
+                        {photoError && (
+                            <p className="cf-inc-field__error" role="alert">{photoError}</p>
                         )}
                     </div>
 

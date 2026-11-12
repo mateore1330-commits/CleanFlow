@@ -15,10 +15,11 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { photoTooBig } from "../../../utils/photo";
 
 const LABELS = { before: "Antes", after: "Después" };
 
-export const WorkerShot = ({ kind, photo, uploading, canEdit, onPick, onDelete }) => {
+export const WorkerShot = ({ kind, photo, uploading, canEdit, onPick, onDelete, onReject }) => {
     const input = useRef(null);
 
     // Vista previa local del archivo recién elegido, para poder enseñar
@@ -41,6 +42,16 @@ export const WorkerShot = ({ kind, photo, uploading, canEdit, onPick, onDelete }
 
         if (!file) return;
 
+        // Demasiado grande: ni vista previa ni subida, el aviso al momento.
+        const tooBig = photoTooBig(file);
+
+        if (tooBig) {
+            onReject?.(tooBig);
+            event.target.value = "";
+            return;
+        }
+
+        onReject?.(null);
         setPreview(URL.createObjectURL(file));
         onPick(kind, file);
 

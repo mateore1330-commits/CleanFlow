@@ -1,41 +1,36 @@
 /**
- * TARJETA DE UNA RESERVA, VISTA POR EL ENCARGADO.
+ * UNA FILA DE RESERVAS, VISTA POR EL ENCARGADO (maqueta 06, PANEL-04).
  *
- * La misma forma que la del cliente (cf-bookcard), con lo que a él le
- * falta: de quién es la reserva y qué le pasa.
+ * La fecha, el servicio con el día y la hora, el Cliente y el Trabajador
+ * en columnas separadas (con su nombre, para no confundirlos), el estado y
+ * el precio. En el móvil, cliente y trabajador bajan con su etiqueta
+ * delante.
  *
- * Las dos marcas viven en la línea del título y no en una fila aparte:
- * todas las tarjetas miden lo mismo, tengan avisos o no, y la lista se
- * recorre sin que el ojo tenga que recolocarse en cada salto. Que algo
- * pasa se ve por la banda terracota del borde.
+ * Las dos marcas van junto al servicio y NO se pintan igual, a propósito:
  *
- * Las dos son botones y NO se pintan igual, a propósito:
+ *   Afectada       ámbar -> se resuelve aquí mismo, en un diálogo
+ *   N incidencias  rojo  -> lleva a Incidencias, que tiene su pantalla
  *
- *   Afectada     rellena   -> se resuelve aquí mismo, en un diálogo
- *   N incidencias contorno -> lleva a Incidencias, que tiene su pantalla
- *
- * La forma dice lo que hace cada una. Pintadas iguales habría que
- * aprenderse cuál es cuál.
- *
- * Es una tarjeta aparte y no la del cliente con más props: aquella está
- * aprobada y en uso, y tocarla para esto arriesga una pantalla que
- * funciona. Unificarlas queda apuntado como deuda.
+ * La fila no se abre: el detalle desde Reservas no entra (PENDIENTES.md).
  *
  * Solo pinta: avisa con onAffected y onIncidents.
  *
- * En pantalla estrecha los sellos se quedan en su icono, sin texto: es
- * lo que permite que sigan cupiendo en la línea del título. Se ven de
- * 22px pero se tocan en 44, con un área invisible por fuera.
- *
- * Estilos: dashboard.css (cf-bookcard y cf-bookings__mark).
+ * Estilos: dashboard.css, sección «Reservas (encargado)» (cf-mrow).
  */
 
 import { BookingStatusPill } from "./BookingStatusPill"
-import { EUROS, dayOf, monthOf, timeOf, initialsOf } from "./bookingFormat"
+import { EUROS, dayOf, monthOf, timeOf } from "./bookingFormat"
+import { Avatar } from "../Avatar"
 
 // "Ausencia: baja" -> "baja". El motivo se lee dentro de la frase de la
 // marca, así que va en minúscula y sin la etiqueta de delante.
 const motivoCorto = (reason) => reason.replace(/^Ausencia:\s*/, "").toLowerCase()
+
+// "Jueves": el día de la semana del primer día.
+const diaSemana = (iso) => {
+    const texto = new Date(`${iso.slice(0, 10)}T12:00:00`).toLocaleDateString("es-ES", { weekday: "long" })
+    return texto.charAt(0).toUpperCase() + texto.slice(1)
+}
 
 export const ManagedBookingCard = ({ booking, onAffected, onIncidents }) => {
     const [primero] = booking.days
@@ -43,92 +38,71 @@ export const ManagedBookingCard = ({ booking, onAffected, onIncidents }) => {
 
     const motivos = booking.affected_reasons || []
     const incidencias = booking.open_incidents || 0
-    const pendiente = motivos.length > 0 || incidencias > 0
+    const cancelada = booking.status === "cancelled"
 
     return (
-        <li className={`cf-bookcard${pendiente ? " cf-bookcard--todo" : ""}`}>
-            <div className="cf-bookcard__date">
-                <span className="cf-bookcard__day">{dayOf(primero.starts_at)}</span>
-                <span className="cf-bookcard__month">{monthOf(primero.starts_at)}</span>
-            </div>
+        <li className="cf-mrow">
+            <span className="cf-mrow__date" aria-hidden="true">
+                <b>{dayOf(primero.starts_at)}</b>
+                <small>{monthOf(primero.starts_at)}</small>
+            </span>
 
-            <div className="cf-bookcard__main">
-                {/* Las marcas van en la línea del título, no en una fila
-                    propia: esa fila existe en TODAS las tarjetas, así que
-                    aquí no añaden alto y la lista se lee pareja. */}
-                <div className="cf-bookings__head">
-                    <h2 className="cf-bookcard__service">{booking.service_name}</h2>
+            <div className="cf-mrow__main">
+                <p className="cf-mrow__service">
+                    {booking.service_name}
 
-                    {pendiente && (
-                        <div className="cf-bookings__marks">
-                            {motivos.length > 0 && (
-                                <button
-                                    type="button"
-                                    className="cf-bookings__mark cf-bookings__mark--affected"
-                                    onClick={() => onAffected(booking)}
-                                >
-                                    <i className="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                                    {/* El texto va envuelto porque en pantalla
-                                        estrecha se esconde y queda solo el
-                                        icono: así el sello cabe en la línea del
-                                        título y la tarjeta no crece. Escondido,
-                                        no borrado: el lector de pantalla lo
-                                        sigue leyendo entero. */}
-                                    <span className="cf-bookings__mark-text">
-                                        Afectada · {motivos.map(motivoCorto).join(", ")}
-                                    </span>
-                                </button>
-                            )}
-
-                            {incidencias > 0 && (
-                                <button
-                                    type="button"
-                                    className="cf-bookings__mark cf-bookings__mark--incident"
-                                    onClick={() => onIncidents(booking)}
-                                >
-                                    <i className="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
-                                    <span className="cf-bookings__mark-text">
-                                        {incidencias === 1 ? "1 incidencia" : `${incidencias} incidencias`}
-                                    </span>
-                                </button>
-                            )}
-                        </div>
-                    )}
-                </div>
-
-                <p className="cf-bookcard__meta">
-                    <span>
-                        <i className="fa-regular fa-clock" aria-hidden="true"></i>
-                        {timeOf(primero.starts_at)} – {timeOf(primero.ends_at)}
-                    </span>
-
-                    {masDias > 0 && (
-                        <span>+{masDias} {masDias === 1 ? "día" : "días"}</span>
+                    {motivos.length > 0 && (
+                        <button
+                            type="button"
+                            className="cf-mrow__mark cf-mrow__mark--affected"
+                            onClick={() => onAffected(booking)}
+                        >
+                            <i className="fa-solid fa-user-slash" aria-hidden="true"></i>
+                            Afectada · {motivos.map(motivoCorto).join(", ")}
+                        </button>
                     )}
 
-                    {/* El cliente primero y en negrita: es lo que distingue
-                        esta lista de la del cliente, donde sobra decirlo. */}
-                    <span>
-                        <span className="cf-bookcard__who cf-bookcard__who--client" aria-hidden="true">
-                            {initialsOf(booking.client_name)}
-                        </span>
-                        <strong>{booking.client_name}</strong>
-                    </span>
-
-                    <span>
-                        <span className="cf-bookcard__worker" aria-hidden="true">
-                            {initialsOf(booking.worker_name)}
-                        </span>
-                        {booking.worker_name || "Sin asignar"}
-                    </span>
+                    {incidencias > 0 && (
+                        <button
+                            type="button"
+                            className="cf-mrow__mark cf-mrow__mark--incident"
+                            onClick={() => onIncidents(booking)}
+                        >
+                            <i className="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                            {incidencias === 1 ? "1 incidencia" : `${incidencias} incidencias`}
+                        </button>
+                    )}
                 </p>
 
+                <p className="cf-mrow__sub">
+                    {diaSemana(primero.starts_at)} {dayOf(primero.starts_at)} {monthOf(primero.starts_at)}
+                    {" · "}{timeOf(primero.starts_at)} – {timeOf(primero.ends_at)}
+                    {masDias > 0 && <b className="cf-mrow__more">+{masDias} {masDias === 1 ? "día" : "días"}</b>}
+                </p>
             </div>
 
-            <div className="cf-bookcard__side">
+            <p className="cf-mrow__who" data-label="Cliente">
+                <span className="cf-mrow__label">Cliente</span>
+                <Avatar name={booking.client_name} src={booking.client_avatar_url} size="sm" />
+                <span className="cf-mrow__name">{booking.client_name}</span>
+            </p>
+
+            <p className="cf-mrow__who" data-label="Trabajador">
+                <span className="cf-mrow__label">Trabajador</span>
+                <Avatar name={booking.worker_name} src={booking.worker_avatar_url} size="sm" tone="accent" />
+                <span className={`cf-mrow__name${booking.worker_name ? "" : " cf-mrow__name--none"}`}>
+                    {booking.worker_name || "Sin asignar"}
+                </span>
+            </p>
+
+            <span className="cf-mrow__state">
                 <BookingStatusPill status={booking.status} />
-                <span className="cf-bookcard__price">{EUROS.format(booking.total_price)}</span>
-            </div>
+            </span>
+
+            {/* Cancelada, tachado: ya no se cobra. */}
+            <span className={`cf-mrow__price${cancelada ? " cf-mrow__price--cancelled" : ""}`}>
+                {EUROS.format(booking.total_price)}
+            </span>
         </li>
     )
 }

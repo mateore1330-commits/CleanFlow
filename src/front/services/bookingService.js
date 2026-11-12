@@ -8,6 +8,7 @@
  * El precio lo calcula el backend: lo que envíe el panel ni se lee.
  */
 
+import { shrinkPhoto, shrinkPhotos } from "../utils/photo";
 import { apiRequest } from "./apiClient";
 
 /**
@@ -80,11 +81,12 @@ export const finishBookingDay = (bookingId, dayId, token) =>
  * Va en un FormData y no en JSON: es un archivo. apiRequest lo detecta y
  * deja que el navegador ponga el Content-Type con su separador.
  */
-export const uploadTaskPhoto = (taskId, kind, file, token) => {
+export const uploadTaskPhoto = async (taskId, kind, file, token) => {
   const body = new FormData();
 
   body.append("kind", kind);
-  body.append("photo", file);
+  // Reducida antes de enviarla: Vercel corta los envíos de más de 4,5 MB.
+  body.append("photo", await shrinkPhoto(file));
 
   return apiRequest(`/api/booking-tasks/${taskId}/photos`, {
     method: "POST",
@@ -121,11 +123,12 @@ export const confirmBooking = (bookingId, token) =>
  * Las fotos van todas en el mismo campo "photo": el backend las lee con
  * getlist(), así que repetir el nombre es justo lo que espera.
  */
-export const claimBooking = (bookingId, { description, photos = [] }, token) => {
+export const claimBooking = async (bookingId, { description, photos = [] }, token) => {
   const body = new FormData();
 
   body.append("description", description);
-  photos.forEach((photo) => body.append("photo", photo));
+  // Reducidas: las cinco tienen que caber en un envío de menos de 4,5 MB.
+  (await shrinkPhotos(photos)).forEach((photo) => body.append("photo", photo));
 
   return apiRequest(`/api/bookings/${bookingId}/claim`, {
     method: "POST",

@@ -17,13 +17,15 @@ import useGlobalReducer from "../../hooks/useGlobalReducer"
 import { getWorkers, toggleWorkerStatus } from "../../services/workerService"
 import { SearchBox, matchesSearch } from "../../components/dashboard/SearchBox"
 import { WorkerRow } from "../../components/dashboard/workers/WorkerRow"
+import { PageHead } from "../../components/dashboard/PageHead"
+import { ListViews } from "../../components/dashboard/list/ListViews"
 import "../../dashboard.css"
 
 // Pestañas. Filtran en el navegador: la API ya devuelve a todo el equipo.
 const FILTERS = [
-    { value: "all", label: "Todos" },
-    { value: "active", label: "Activos" },
-    { value: "inactive", label: "Desactivados" },
+    { value: "all", label: "Todos", hint: "en el equipo", icon: "fa-users" },
+    { value: "active", label: "Activos", hint: "reciben reservas", icon: "fa-user-check" },
+    { value: "inactive", label: "Desactivados", hint: "sin acceso", icon: "fa-user-slash" },
 ]
 
 // Filas grises que se ven mientras carga.
@@ -31,23 +33,16 @@ const SKELETON_ROWS = 5
 
 // Título, frase y botón de crear. Sin onCreate, el botón no se pinta.
 const PageHeader = ({ onCreate }) => (
-    <div className="cf-workers__header">
-        <div>
-            <p className="cf-dash-eyebrow">Equipo</p>
-            <h1 className="cf-workers__title">Trabajadores</h1>
-            <p className="cf-workers__lede">
-                Las personas del equipo, su turno y cómo las valoran los clientes. Desactivar a alguien lo quita
-                de los huecos libres sin borrar su historial.
-            </p>
-        </div>
-
-        {onCreate && (
-            <button type="button" className="cf-dash-btn" onClick={onCreate}>
+    <PageHead
+        title="Trabajadores"
+        subtitle="Tu equipo, sus turnos y su valoración."
+        actions={onCreate && (
+            <button type="button" className="cf-dash-btn cf-dash-btn--accent" onClick={onCreate}>
                 <i className="fa-solid fa-plus" aria-hidden="true" />
                 Nuevo trabajador
             </button>
         )}
-    </div>
+    />
 )
 
 export const ListadoTrabajadores = () => {
@@ -86,7 +81,9 @@ export const ListadoTrabajadores = () => {
         if (result.ok) {
             setWorkers(result.data.workers)
         } else {
-            setLoadError(result.data.error || result.data.msg || "No se han podido cargar los trabajadores.")
+            // El servidor manda su motivo en «message» (FIX-02): antes se
+            // leía error o msg, que nunca llegan, y salía siempre el genérico.
+            setLoadError(result.data?.message || "No se han podido cargar los trabajadores.")
         }
 
         setLoading(false)
@@ -180,7 +177,7 @@ export const ListadoTrabajadores = () => {
                     este texto sí, y no se ve. */}
                 <p className="sr-only">Cargando trabajadores...</p>
 
-                <ul className="cf-workers__list" aria-hidden="true">
+                <ul className="cf-lpanel cf-workers__list" aria-hidden="true">
                     <li className="cf-workers__head">
                         <span>Nombre</span>
                         <span>Puesto y turno</span>
@@ -287,97 +284,84 @@ export const ListadoTrabajadores = () => {
                 </div>
             ) : (
                 <>
-                    {/* Pestañas a la izquierda y buscador a la derecha. aria-pressed
-                        y no role="tab": son filtros de una misma lista. */}
-                    <div className="cf-workers__toolbar">
-                        <div className="cf-services__tabs" role="group" aria-label="Filtrar trabajadores">
-                            {FILTERS.map((option) => (
-                                <button
-                                    key={option.value}
-                                    type="button"
-                                    className="cf-services__tab"
-                                    aria-pressed={filter === option.value}
-                                    onClick={() => setFilter(option.value)}
-                                >
-                                    {option.label}
-                                    {/* Los desactivados, en terracota: son lo que hay que mirar. */}
-                                    <span
-                                        className={`cf-services__count${
-                                            option.value === "inactive" && counts.inactive > 0 ? " cf-dash-count--attention" : ""
-                                        }`}
-                                    >
-                                        {counts[option.value]}
-                                    </span>
+                    {/* Las vistas en tarjetas y, debajo, un solo bloque con el
+                        buscador, la tabla y su pie (piezas comunes, PANEL-04). */}
+                    <ListViews
+                        label="Vistas de trabajadores"
+                        active={filter}
+                        onChange={setFilter}
+                        views={FILTERS.map((option) => ({ ...option, count: counts[option.value] }))}
+                    />
+
+                    <div className="cf-lpanel">
+                        <div className="cf-lbar cf-workers__bar">
+                            <SearchBox
+                                id="worker-search"
+                                label="Nombre, puesto o correo"
+                                value={query}
+                                onChange={setQuery}
+                                options={searchOptions}
+                                inactiveLabel="Desactivado"
+                                onSelect={selectSuggestion}
+                            />
+                        </div>
+
+                        {searching && (
+                            <p className="cf-dash-results" role="status">
+                                <span>
+                                    {foundWorkers.length} {foundWorkers.length === 1 ? "resultado" : "resultados"} para «{query.trim()}»
+                                </span>
+                                <button type="button" onClick={() => setQuery("")}>
+                                    Borrar búsqueda
                                 </button>
-                            ))}
-                        </div>
+                            </p>
+                        )}
 
-                        <SearchBox
-                            id="worker-search"
-                            label="Buscar por nombre, puesto o correo"
-                            value={query}
-                            onChange={setQuery}
-                            options={searchOptions}
-                            inactiveLabel="Desactivado"
-                            onSelect={selectSuggestion}
-                        />
+                        {foundWorkers.length === 0 ? (
+                            <div className="cf-dash-state">
+                                <span className="cf-dash-state__icon">
+                                    <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
+                                </span>
+                                <p className="cf-dash-state__title">Nadie coincide con «{query.trim()}»</p>
+                                <p className="cf-dash-state__text">
+                                    Prueba con otra palabra: se busca en el nombre, el puesto y el correo.
+                                </p>
+                                <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
+                                    Borrar búsqueda
+                                </button>
+                            </div>
+                        ) : visibleWorkers.length === 0 ? (
+                            <div className="cf-dash-state">
+                                <p className="cf-dash-state__text">
+                                    {filter === "active" ? "No hay trabajadores activos" : "No hay trabajadores desactivados"}
+                                    {searching ? " con esa búsqueda." : "."}
+                                </p>
+                            </div>
+                        ) : (
+                            <ul className="cf-workers__list">
+                                {/* Cabecera de columnas: solo visual. En pantallas
+                                    estrechas se oculta y cada fila pasa a tarjeta. */}
+                                <li className="cf-workers__head" aria-hidden="true">
+                                    <span>Nombre</span>
+                                    <span>Puesto y turno</span>
+                                    <span>Valoración</span>
+                                    <span>Estado</span>
+                                    <span />
+                                </li>
+
+                                {visibleWorkers.map((worker) => (
+                                    <WorkerRow
+                                        key={worker.worker_id}
+                                        worker={worker}
+                                        query={query}
+                                        isSelf={worker.user_id === store.user?.user_id}
+                                        busy={togglingId === worker.worker_id}
+                                        onSwitch={handleSwitch}
+                                    />
+                                ))}
+                            </ul>
+                        )}
                     </div>
-
-                    {searching && (
-                        <p className="cf-dash-results" role="status">
-                            <span>
-                                {foundWorkers.length} {foundWorkers.length === 1 ? "resultado" : "resultados"} para «{query.trim()}»
-                            </span>
-                            <button type="button" onClick={() => setQuery("")}>
-                                Borrar búsqueda
-                            </button>
-                        </p>
-                    )}
-
-                    {foundWorkers.length === 0 ? (
-                        <div className="cf-dash-state">
-                            <span className="cf-dash-state__icon">
-                                <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
-                            </span>
-                            <p className="cf-dash-state__title">Nadie coincide con «{query.trim()}»</p>
-                            <p className="cf-dash-state__text">
-                                Prueba con otra palabra: se busca en el nombre, el puesto y el correo.
-                            </p>
-                            <button type="button" className="cf-dash-btn cf-dash-btn--ghost" onClick={() => setQuery("")}>
-                                Borrar búsqueda
-                            </button>
-                        </div>
-                    ) : visibleWorkers.length === 0 ? (
-                        <div className="cf-dash-state">
-                            <p className="cf-dash-state__text">
-                                {filter === "active" ? "No hay trabajadores activos" : "No hay trabajadores desactivados"}
-                                {searching ? " con esa búsqueda." : "."}
-                            </p>
-                        </div>
-                    ) : (
-                        <ul className="cf-workers__list">
-                            {/* Cabecera de columnas: solo visual. En pantallas
-                                estrechas se oculta y cada fila pasa a tarjeta. */}
-                            <li className="cf-workers__head" aria-hidden="true">
-                                <span>Nombre</span>
-                                <span>Puesto y turno</span>
-                                <span>Valoración</span>
-                                <span>Estado</span>
-                                <span />
-                            </li>
-
-                            {visibleWorkers.map((worker) => (
-                                <WorkerRow
-                                    key={worker.worker_id}
-                                    worker={worker}
-                                    query={query}
-                                    isSelf={worker.user_id === store.user?.user_id}
-                                    busy={togglingId === worker.worker_id}
-                                    onSwitch={handleSwitch}
-                                />
-                            ))}
-                        </ul>
-                    )}
                 </>
             )}
 
@@ -401,7 +385,7 @@ export const ListadoTrabajadores = () => {
                         </h2>
                         <p className="cf-dash-modal__text" id="confirm-text">
                             Dejará de aparecer libre para reservas nuevas y no podrá entrar en la aplicación. Si
-                            tiene reservas pendientes, pasarán a Reservas afectadas para que las reasignes. Su
+                            tiene reservas pendientes, aparecerán en Reservas, en la vista Afectadas, para que las reasignes. Su
                             historial se conserva y puedes volver a activarlo cuando quieras.
                         </p>
                         <div className="cf-dash-modal__actions">

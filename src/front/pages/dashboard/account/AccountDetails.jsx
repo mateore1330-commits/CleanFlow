@@ -10,6 +10,7 @@
  * Estilos: dashboard.css (cf-dash-*, cf-account__*).
  */
 
+import { photoTooBig, PHOTO_MAX_MB } from "../../../utils/photo"
 import { useEffect, useRef, useState } from "react"
 import useGlobalReducer from "../../../hooks/useGlobalReducer"
 import { getAccount, updateAccount, uploadAvatar, removeAvatar } from "../../../services/accountService"
@@ -24,7 +25,6 @@ const PHONE_ALLOWED = /^\+?[0-9 ]+$/
 
 // Los mismos que acepta el backend en /account/avatar.
 const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"]
-const AVATAR_MAX_BYTES = 2 * 1024 * 1024
 
 // Los campos que se pueden editar. El correo y el rol no están: no se tocan.
 const EMPTY_FORM = { name: "", last_name: "", phone: "" }
@@ -88,15 +88,18 @@ const AvatarSection = ({ account, token, onUpdated, onSessionExpired }) => {
 
         setError("")
 
-        // Se comprueba aquí para no subir 2 MB y que el backend los rechace.
+        // Se comprueba aquí para no subir algo que el backend rechazaría.
         if (!AVATAR_TYPES.includes(file.type)) {
             setError("La foto tiene que ser JPG, PNG o WEBP")
             clearFileInput()
             return
         }
 
-        if (file.size > AVATAR_MAX_BYTES) {
-            setError("La foto no puede pesar más de 2 MB")
+        // El original: antes de subirla se reduce a 800 px (accountService),
+        // y el servidor mide ya la reducida (DEPLOY-01).
+        const tooBig = photoTooBig(file)
+        if (tooBig) {
+            setError(tooBig)
             clearFileInput()
             return
         }
@@ -190,7 +193,7 @@ const AvatarSection = ({ account, token, onUpdated, onSessionExpired }) => {
                     </div>
 
                     <p className="cf-account__photo-hint">
-                        JPG, PNG o WEBP. Máximo 2 MB. Sin foto se ven tus iniciales.
+                        JPG, PNG o WEBP, de hasta {PHOTO_MAX_MB} MB. Sin foto se ven tus iniciales.
                     </p>
 
                     {error && (
@@ -354,7 +357,7 @@ export const AccountDetails = () => {
                 {photo}
 
                 <div className="cf-account__card">
-                    <h2 className="cf-account__subtitle">Datos personales</h2>
+                    <h2 className="cf-account__subtitle">Tus datos</h2>
 
                     {/* <dl>: son pares de concepto y valor, no una lista suelta. */}
                     <dl className="cf-account__data">
@@ -396,7 +399,7 @@ export const AccountDetails = () => {
             {photo}
 
             <div className="cf-account__card">
-                <h2 className="cf-account__subtitle">Datos personales</h2>
+                <h2 className="cf-account__subtitle">Tus datos</h2>
                 <p className="cf-account__lede">
                     Así te identificamos en tus reservas y así te avisa quien va a tu casa.
                 </p>

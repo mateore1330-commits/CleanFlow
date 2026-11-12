@@ -1,11 +1,14 @@
 /**
- * DETALLE DE UN SERVICIO ASIGNADO.
+ * DETALLE DE UN SERVICIO ASIGNADO (maqueta 05, PANEL-03).
  *
  * La pantalla donde el trabajador trabaja: en qué punto está, qué tiene
  * que hacer, dónde y con quién, y los botones para empezar, cerrar las
- * tareas con sus fotos y finalizar.
+ * tareas con sus fotos y finalizar, abrir una incidencia o darlo por no
+ * realizado (#18).
  *
- * Aquí aterrizará también la #18, con su botón de abrir incidencia.
+ * A la izquierda lo que se toca (hoy y las tareas); a la derecha lo que se
+ * consulta (el cliente y el progreso) y las acciones. En el móvil, el
+ * botón del momento va además en una barra fija abajo.
  *
  * Estilos: dashboard.css, sección 10 (cf-wdetail).
  */
@@ -29,12 +32,13 @@ import { WorkerTimeline } from "../../components/dashboard/worker/WorkerTimeline
 import { WorkerToday } from "../../components/dashboard/worker/WorkerToday";
 import { WorkerWhere } from "../../components/dashboard/worker/WorkerWhere";
 import { WorkerTasks } from "../../components/dashboard/worker/WorkerTasks";
-import { WorkerActions } from "../../components/dashboard/worker/WorkerActions";
+import { WorkerActions, WorkerActionBar } from "../../components/dashboard/worker/WorkerActions";
 import { WorkerDays } from "../../components/dashboard/worker/WorkerDays";
 import { WorkerRecap } from "../../components/dashboard/worker/WorkerRecap";
 import { WorkerIncidents } from "../../components/dashboard/incidents/WorkerIncidents";
 import { IncidentForm } from "../../components/dashboard/incidents/IncidentForm";
 import { longDate, timeOf } from "../../components/dashboard/bookings/bookingFormat";
+import { PageHead } from "../../components/dashboard/PageHead";
 
 import { madridToday } from "../../utils/madridDate";
 
@@ -234,14 +238,10 @@ export const WorkerBookingDetail = () => {
     if (loading) {
         return (
             <div className="cf-wdetail" aria-busy="true">
-                <div className="cf-dash-skel" style={{ width: "110px", height: "13px" }}></div>
+                <div className="cf-dash-skel" style={{ width: "130px", height: "14px", margin: "15px 0 23px" }}></div>
 
-                <div className="cf-wdetail__header">
-                    <div style={{ flex: 1 }}>
-                        <div className="cf-dash-skel" style={{ width: "44%", height: "24px" }}></div>
-                        <div className="cf-dash-skel" style={{ width: "60%", height: "13px", marginTop: "10px" }}></div>
-                    </div>
-                </div>
+                {/* La forma de la cabecera, para que no salte al llegar. */}
+                <div className="cf-dash-skel" style={{ height: "110px", borderRadius: "24px", marginBottom: "24px" }}></div>
 
                 {/* Con la forma de lo que va a llegar: el bloque del día,
                     dos tareas y la columna de consulta. Así la pantalla no
@@ -266,8 +266,8 @@ export const WorkerBookingDetail = () => {
         return (
             <div className="cf-wdetail">
                 <Link to={LIST_PATH} className="cf-wdetail__back">
-                    <i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                    Mis tareas
+                    <i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    Mis servicios
                 </Link>
                 <p className="cf-dash-alert" role="alert">{error}</p>
             </div>
@@ -287,7 +287,7 @@ export const WorkerBookingDetail = () => {
                     <p className="cf-dash-state__text">
                         Puede que se haya cancelado o que el enlace no sea correcto.
                     </p>
-                    <Link to={LIST_PATH} className="cf-dash-btn">Volver a mis tareas</Link>
+                    <Link to={LIST_PATH} className="cf-dash-btn">Volver a Mis servicios</Link>
                 </div>
             </div>
         );
@@ -303,8 +303,8 @@ export const WorkerBookingDetail = () => {
         return (
             <div className="cf-wdetail">
                 <Link to={LIST_PATH} className="cf-wdetail__back">
-                    <i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                    Mis tareas
+                    <i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    Mis servicios
                 </Link>
                 <p className="cf-dash-alert" role="alert">
                     Este servicio no tiene horario asignado. Avisa al encargado.
@@ -314,76 +314,74 @@ export const WorkerBookingDetail = () => {
     }
 
     return (
-        <div className="cf-wdetail">
+        <>
+            <div className="cf-wdetail">
 
-            <Link to={LIST_PATH} className="cf-wdetail__back">
-                <i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
-                Mis tareas
-            </Link>
+                <Link to={LIST_PATH} className="cf-wdetail__back">
+                    <i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    Mis servicios
+                </Link>
 
-            <div className="cf-wdetail__header">
-                <div>
-                    <p className="cf-dash-eyebrow">Mi trabajo</p>
-                    <h1 className="cf-wdetail__title">
-                        {booking.service?.name || "Servicio no disponible"}
-                    </h1>
-                    <p className="cf-wdetail__sub">
-                        {longDate(first.starts_at)} · {timeOf(first.starts_at)} – {timeOf(first.ends_at)}
-                    </p>
+                <PageHead
+                    title={booking.service?.name || "Servicio no disponible"}
+                    subtitle={`${longDate(first.starts_at)} · ${timeOf(first.starts_at)} – ${timeOf(first.ends_at)} · Reserva n.º ${booking.booking_id}`}
+                    actions={<WorkerStatus status={booking.status} />}
+                />
+
+                {/* Un fallo al subir una foto o al marcar una tarea no debe
+                    tirar la pantalla: se avisa aquí y el trabajo sigue donde
+                    estaba. El error de carga tiene su propio bloque arriba. */}
+                {error && <p className="cf-dash-alert" role="alert">{error}</p>}
+
+                {/* La columna ancha es donde se toca; la estrecha se consulta. */}
+                <div className="cf-wdetail__grid">
+
+                    <div className="cf-wdetail__col">
+                        <WorkerToday booking={booking} today={madridToday()} />
+                        <WorkerRecap booking={booking} />
+                        <WorkerTasks
+                            booking={booking}
+                            busyTaskId={busyTaskId}
+                            uploading={uploading}
+                            onPick={handlePick}
+                            onDeletePhoto={handleDeletePhoto}
+                            onToggle={handleToggle}
+                        />
+                        <WorkerIncidents incidents={booking.incidents} />
+                    </div>
+
+                    <div className="cf-wdetail__col">
+                        <WorkerWhere booking={booking} />
+                        <WorkerTimeline booking={booking} />
+                        <WorkerDays booking={booking} today={madridToday()} busy={acting}
+                            onClosePast={(day) => handleAction("finishDay", day)} />
+                        <WorkerActions
+                            booking={booking}
+                            today={madridToday()}
+                            busy={acting}
+                            onAction={handleAction}
+                            onIncident={() => setSheet("incident")}
+                            onNotDone={() => setSheet("notDone")}
+                        />
+                    </div>
+
                 </div>
 
-                <WorkerStatus status={booking.status} />
+                {/* Fuera de la rejilla: es un diálogo, no una columna más. */}
+                <IncidentForm
+                    open={sheet !== null}
+                    notDone={sheet === "notDone"}
+                    tasks={booking.tasks}
+                    saving={reporting}
+                    onSubmit={handleReport}
+                    onClose={() => setSheet(null)}
+                />
+
             </div>
 
-            {/* Un fallo al subir una foto o al marcar una tarea no debe
-                tirar la pantalla: se avisa aquí y el trabajo sigue donde
-                estaba. El error de carga tiene su propio bloque arriba. */}
-            {error && <p className="cf-dash-alert" role="alert">{error}</p>}
-
-            {/* La columna ancha es donde se toca; la estrecha se consulta. */}
-            <div className="cf-wdetail__grid">
-
-                <div className="cf-wdetail__col">
-                    <WorkerToday booking={booking} today={madridToday()} />
-                    <WorkerRecap booking={booking} />
-                    <WorkerTasks
-                        booking={booking}
-                        busyTaskId={busyTaskId}
-                        uploading={uploading}
-                        onPick={handlePick}
-                        onDeletePhoto={handleDeletePhoto}
-                        onToggle={handleToggle}
-                    />
-                    <WorkerIncidents incidents={booking.incidents} />
-                </div>
-
-                <div className="cf-wdetail__col">
-                    <WorkerTimeline booking={booking} />
-                    <WorkerDays booking={booking} today={madridToday()} busy={acting}
-                        onClosePast={(day) => handleAction("finishDay", day)} />
-                    <WorkerWhere booking={booking} />
-                    <WorkerActions
-                        booking={booking}
-                        today={madridToday()}
-                        busy={acting}
-                        onAction={handleAction}
-                        onIncident={() => setSheet("incident")}
-                        onNotDone={() => setSheet("notDone")}
-                    />
-                </div>
-
-            </div>
-
-            {/* Fuera de la rejilla: es un diálogo, no una columna más. */}
-            <IncidentForm
-                open={sheet !== null}
-                notDone={sheet === "notDone"}
-                tasks={booking.tasks}
-                saving={reporting}
-                onSubmit={handleReport}
-                onClose={() => setSheet(null)}
-            />
-
-        </div>
+            {/* Fuera de cf-wdetail: su container-type no deja a nada quedarse
+                fijo a la pantalla. Solo se ve en el móvil. */}
+            <WorkerActionBar booking={booking} today={madridToday()} busy={acting} onAction={handleAction} />
+        </>
     );
 };
